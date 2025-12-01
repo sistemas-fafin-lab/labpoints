@@ -430,20 +430,9 @@ export function Admin() {
                         className="flex items-center justify-between p-16 bg-lab-gray-100 rounded-lab"
                       >
                         <div className="flex-1">
-                          <div className="flex items-start gap-3">
-                            <h3 className="font-ranade font-bold text-gray-900 flex-1">
-                              {reward.titulo}
-                            </h3>
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-dm-sans font-medium ${
-                                reward.ativo
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-gray-200 text-gray-700'
-                              }`}
-                            >
-                              {reward.ativo ? 'Ativo' : 'Inativo'}
-                            </span>
-                          </div>
+                          <h3 className="font-ranade font-bold text-gray-900">
+                            {reward.titulo}
+                          </h3>
                           <p className="text-sm font-dm-sans text-lab-gray-700 mt-1">
                             {reward.descricao}
                           </p>
@@ -454,7 +443,16 @@ export function Admin() {
                             </span>
                           </div>
                         </div>
-                        <div className="flex gap-2 ml-4">
+                        <div className="flex items-center gap-3 ml-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-dm-sans font-medium ${
+                              reward.ativo
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-gray-200 text-gray-700'
+                            }`}
+                          >
+                            {reward.ativo ? 'Ativo' : 'Inativo'}
+                          </span>
                           <Button
                             variant="secondary"
                             onClick={() => handleEditReward(reward)}

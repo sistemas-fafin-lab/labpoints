@@ -159,6 +159,31 @@ body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+@keyframes progress-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-progress-flow {
+  background: linear-gradient(
+    90deg,
+    #3E6BF7,
+    #5B7FFF,
+    #3E6BF7,
+    #2E53C8,
+    #3E6BF7
+  );
+  background-size: 200% 100%;
+  animation: progress-flow 3s ease-in-out infinite;
+}
+
 /* Hover Effects */
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;

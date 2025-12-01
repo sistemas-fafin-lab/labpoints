@@ -130,11 +130,9 @@ export function RewardsTimeline({
         </div>
         <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
           <div
-            className="absolute top-0 left-0 h-full bg-lab-gradient shadow-lab-sm transition-all duration-1000 ease-out rounded-full"
+            className="absolute top-0 left-0 h-full shadow-lab-sm transition-all duration-1000 ease-out rounded-full animate-progress-flow"
             style={{ width: `${progressPercentage}%` }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
-          </div>
+          />
         </div>
       </div>
 
