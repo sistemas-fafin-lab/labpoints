@@ -33,7 +33,7 @@ export function RewardMilestone({
       {/* Connector Line (appears before milestone) */}
       {position > 0 && (
         <div 
-          className={`absolute top-1/2 right-full w-12 sm:w-16 md:w-24 h-1 -translate-y-1/2 transition-all duration-700 ${
+          className={`absolute top-1/2 left-0 w-4 sm:w-6 h-1 -translate-x-full -translate-y-1/2 transition-all duration-700 ${
             isUnlocked 
               ? 'bg-lab-gradient shadow-lab-sm' 
               : 'bg-gray-300'

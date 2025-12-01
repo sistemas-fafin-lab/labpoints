@@ -48,15 +48,16 @@ export function Header() {
                 <img 
                   src={logoIcon} 
                   alt="Lab Points" 
-                  className="h-64 sm:h-64 w-auto transition-all duration-300 group-hover:scale-110" 
+                  className="w-auto transition-all duration-300 group-hover:scale-110" 
+                  style={{ height: '60px' }}
                 />
                 <div className="absolute -inset-1 bg-lab-gradient opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 rounded-full" />
               </div>
               <div className="hidden sm:flex flex-col">
-                <span className="text-xl sm:text-2xl font-bold bg-lab-gradient bg-clip-text text-transparent">
+                <span className="text-2xl sm:text-3xl font-bold bg-lab-gradient bg-clip-text text-transparent">
                   Lab Points
                 </span>
-                <span className="text-xs text-lab-gray tracking-wide">
+                <span className="text-xs sm:text-sm text-lab-gray tracking-wide">
                   Sistema de Recompensas
                 </span>
               </div>
@@ -94,12 +95,13 @@ export function Header() {
               <img 
                 src={logoIcon} 
                 alt="Lab Points" 
-                className="h-64 sm:h-64 w-auto transition-all duration-300 group-hover:scale-110" 
+                className="w-auto transition-all duration-300 group-hover:scale-110" 
+                style={{ height: '60px' }}
               />
               <div className="absolute -inset-1 bg-lab-gradient opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 rounded-full" />
             </div>
             <div className="hidden lg:flex flex-col">
-              <span className="text-xl font-bold bg-lab-gradient bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-lab-gradient bg-clip-text text-transparent">
                 Lab Points
               </span>
               <span className="text-xs text-lab-gray tracking-wide">
