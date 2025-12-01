@@ -54,19 +54,19 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-lab-gray-100 flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-4">
-          <div className="flex justify-center mb-12">
-            <img src={logoIcon} alt="Lab Points" className="h-68 w-auto" />
+    <div className="min-h-screen bg-gradient-to-br from-lab-light via-white to-lab-primary-light flex items-center justify-center px-4 py-8">
+      <div className="max-w-md w-full animate-scale-in">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex justify-center mb-8 sm:mb-12">
+            <img src={logoIcon} alt="Lab Points" className="h-48 sm:h-64 w-auto drop-shadow-lg" />
           </div>
-          <p className="text-lab-gray mt-2 mb-6 mt-6">
+          <p className="text-lab-gray text-sm sm:text-base mb-6">
             Entre com sua conta para acessar suas recompensas
           </p>
         </div>
 
-        <div className="bg-white rounded-lab shadow-md p-24">
-          <form onSubmit={handleSubmit} className="space-y-16">
+        <div className="bg-white rounded-lab shadow-lab-md p-6 sm:p-8 border border-gray-100">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <Input
               type="email"
               label="Email"
@@ -93,7 +93,7 @@ export function Login() {
               type="submit"
               variant="primary"
               loading={loading}
-              className="w-full"
+              className="w-full mt-6"
             >
               Entrar
             </Button>
@@ -104,7 +104,7 @@ export function Login() {
               Não tem uma conta?{' '}
               <Link
                 to="/cadastro"
-                className="text-lab-primary font-medium hover:text-lab-primary-dark transition-colors"
+                className="text-lab-primary font-semibold hover:text-lab-primary-dark transition-colors hover:underline"
               >
                 Cadastre-se
               </Link>

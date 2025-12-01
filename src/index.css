@@ -9,6 +9,10 @@
 @tailwind utilities;
 
 /* Global Typography and Base Styles */
+html {
+  font-size: 120%; /* 25% larger base font size for better readability */
+}
+
 body, p, span, input, button, textarea, select, label, div {
   font-family: var(--lab-font-family);
   font-weight: var(--lab-font-weight-regular);
@@ -99,6 +103,95 @@ body {
   background: var(--lab-gradient);
 }
 
+.lab-transition {
+  transition: var(--lab-transition-normal);
+}
+
+.lab-transition-fast {
+  transition: var(--lab-transition-fast);
+}
+
+/* Improved Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-size: 1000px 100%;
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(62, 107, 247, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(62, 107, 247, 0);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--lab-shadow-lg);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(62, 107, 247, 0.3);
+}
+
+/* Glass Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: var(--lab-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .lab-gradient-hover:hover {
   background: var(--lab-gradient-hover);
 }
@@ -140,4 +233,20 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--lab-primary);
+}
+
+/* Custom Scrollbar Utilities */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thumb-lab-primary::-webkit-scrollbar-thumb {
+  background: var(--lab-primary);
+  border-radius: 9999px;
+}
+
+.scrollbar-track-gray-200::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 9999px;
 }

@@ -34,29 +34,32 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md">
-        {toasts.map((toast) => (
+      <div className="fixed top-24 right-4 z-50 flex flex-col gap-2 max-w-xs sm:max-w-md">
+        {toasts.map((toast, index) => (
           <div
             key={toast.id}
             className={`
-              flex items-start gap-3 p-4 rounded-lab shadow-lg animate-slide-in
-              ${toast.type === 'success' ? 'bg-lab-accent text-white' : 'bg-red-600 text-white'}
+              flex items-start gap-3 p-4 rounded-lab shadow-lab-lg backdrop-blur-sm animate-slide-in border
+              ${toast.type === 'success' 
+                ? 'bg-green-600 text-white border-green-700' 
+                : 'bg-red-600 text-white border-red-700'}
             `}
+            style={{ animationDelay: `${index * 0.1}s` }}
             role="alert"
             aria-live="polite"
           >
             {toast.type === 'success' ? (
-              <CheckCircle size={20} className="flex-shrink-0 mt-0.5" />
+              <CheckCircle size={20} className="flex-shrink-0 mt-0.5 drop-shadow" />
             ) : (
-              <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+              <AlertCircle size={20} className="flex-shrink-0 mt-0.5 drop-shadow" />
             )}
-            <p className="flex-1 font-dm-sans text-sm">{toast.message}</p>
+            <p className="flex-1 font-dm-sans text-sm font-medium">{toast.message}</p>
             <button
               onClick={() => removeToast(toast.id)}
-              className="flex-shrink-0 hover:opacity-70 transition-opacity"
+              className="flex-shrink-0 hover:bg-white hover:bg-opacity-20 rounded transition-all p-1"
               aria-label="Fechar notificação"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
         ))}

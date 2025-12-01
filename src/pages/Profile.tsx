@@ -52,7 +52,7 @@ export function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-lab-gray-100">
+    <div className="min-h-screen bg-lab-gray-100 pt-6">
       <div className="max-w-5xl mx-auto px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lab shadow-md hover:shadow-lg transition-shadow border border-gray-100 overflow-hidden">
           {/* Banner superior */}

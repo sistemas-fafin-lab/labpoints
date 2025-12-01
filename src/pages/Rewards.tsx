@@ -62,23 +62,25 @@ export function Rewards() {
   };
 
   return (
-    <div className="min-h-screen bg-lab-gray-100 mt-20">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-ranade font-bold text-gray-900 mb-2">
-            Catálogo de Recompensas
+    <div className="min-h-screen bg-lab-gray-100 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8 animate-fade-in">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-gray-900 mb-2">
+            Catálogo de Recompensas 🎁
           </h1>
-          <p className="text-lab-gray-700 font-dm-sans">
+          <p className="text-sm sm:text-base text-lab-gray-700 font-dm-sans">
             Escolha suas recompensas e resgate com seus Lab Points
           </p>
         </div>
 
-        <div className="bg-white rounded-lab p-24 shadow-sm border border-gray-100 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
+        {/* Filters */}
+        <div className="bg-white rounded-lab p-4 sm:p-6 shadow-lab-sm border border-gray-100 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
               <div className="relative">
                 <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-lab-gray-700"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-lab-gray-700 pointer-events-none"
                   size={20}
                 />
                 <input
@@ -86,7 +88,7 @@ export function Rewards() {
                   placeholder="Buscar recompensas..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lab border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-lab-accent focus:border-transparent font-dm-sans"
+                  className="w-full pl-10 pr-4 py-3 rounded-lab border-2 border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-lab-primary focus:border-lab-primary font-dm-sans transition-all duration-300 placeholder:text-gray-400"
                 />
               </div>
             </div>
@@ -95,7 +97,7 @@ export function Rewards() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                className="w-full px-4 py-3 rounded-lab border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-lab-accent focus:border-transparent font-dm-sans"
+                className="w-full px-4 py-3 rounded-lab border-2 border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-lab-primary focus:border-lab-primary font-dm-sans transition-all duration-300 cursor-pointer"
               >
                 <option value="recente">Mais Recentes</option>
                 <option value="preco-asc">Menor Preço</option>
@@ -108,10 +110,10 @@ export function Rewards() {
             <div className="mt-4 flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedCategory('')}
-                className={`px-4 py-2 rounded-full font-dm-sans text-sm transition-colors ${
+                className={`px-4 py-2 rounded-full font-dm-sans text-sm font-medium transition-all duration-300 ${
                   !selectedCategory
-                    ? 'bg-lab-gradient text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'bg-lab-gradient text-white shadow-lab-sm scale-105'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:scale-105'
                 }`}
               >
                 <Filter size={16} className="inline mr-2" />
@@ -121,10 +123,10 @@ export function Rewards() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full font-dm-sans text-sm transition-colors ${
+                  className={`px-4 py-2 rounded-full font-dm-sans text-sm font-medium transition-all duration-300 ${
                     selectedCategory === category
-                      ? 'bg-lab-gradient text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-lab-gradient text-white shadow-lab-sm scale-105'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:scale-105'
                   }`}
                 >
                   {category}
@@ -134,27 +136,29 @@ export function Rewards() {
           )}
         </div>
 
+        {/* Rewards Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-lab h-96 animate-pulse" />
+              <div key={i} className="bg-white rounded-lab h-96 animate-shimmer border border-gray-100" />
             ))}
           </div>
         ) : filteredRewards.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRewards.map((reward) => (
-              <RewardCard
-                key={reward.id}
-                reward={reward}
-                userPoints={user.lab_points}
-                onRedeem={() => setSelectedReward(reward)}
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {filteredRewards.map((reward, index) => (
+              <div key={reward.id} className="animate-scale-in" style={{ animationDelay: `${index * 0.05}s` }}>
+                <RewardCard
+                  reward={reward}
+                  userPoints={user.lab_points}
+                  onRedeem={() => setSelectedReward(reward)}
+                />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lab p-24 text-center">
-            <Search size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-50" />
-            <p className="text-lab-gray-700 font-dm-sans">
+          <div className="bg-white rounded-lab p-8 sm:p-12 text-center shadow-lab-sm border border-gray-100">
+            <Search size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-30" />
+            <p className="text-lab-gray-700 font-dm-sans text-sm sm:text-base">
               Nenhuma recompensa encontrada com os filtros selecionados
             </p>
           </div>

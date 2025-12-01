@@ -5,16 +5,32 @@ import { useRewards } from '../hooks/useRewards';
 import { useTransactions } from '../hooks/useTransactions';
 import { RewardCard } from '../components/RewardCard';
 import { PointsBadge } from '../components/ui/PointsBadge';
+import { RewardsTimeline } from '../components/RewardsTimeline';
+import { useState } from 'react';
+import { createRedemption } from '../hooks/useRedemptions';
+import { useToast } from '../components/ui/Toast';
 
 export function Dashboard() {
-  const { user } = useAuth();
-  const { rewards, loading: rewardsLoading } = useRewards(true);
+  const { user, refreshUser } = useAuth();
+  const { rewards, loading: rewardsLoading, refetch: refetchRewards } = useRewards(true);
   const { transactions, loading: transactionsLoading } = useTransactions(user?.id);
+  const { showToast } = useToast();
+  const [redeeming, setRedeeming] = useState(false);
 
   if (!user) return null;
 
   const featuredRewards = rewards.slice(0, 6);
   const recentTransactions = transactions.slice(0, 5);
+
+  // Timeline rewards - top 5 by points
+  const timelineRewards = [...rewards]
+    .sort((a, b) => a.custo_points - b.custo_points)
+    .slice(0, 5)
+    .map(r => ({
+      id: r.id,
+      name: r.titulo,
+      points: r.custo_points
+    }));
 
   const totalEarned = transactions
     .filter((t) => t.tipo === 'credito')
@@ -24,26 +40,58 @@ export function Dashboard() {
     .filter((t) => t.tipo === 'debito')
     .reduce((sum, t) => sum + t.valor, 0);
 
+  const handleRewardRedeem = async (rewardId: string) => {
+    if (!user) return;
+
+    const reward = rewards.find(r => r.id === rewardId);
+    if (!reward) return;
+
+    if (user.lab_points < reward.custo_points) {
+      showToast('Pontos insuficientes para resgatar esta recompensa', 'error');
+      return;
+    }
+
+    setRedeeming(true);
+
+    try {
+      await createRedemption({
+        user_id: user.id,
+        reward_id: rewardId,
+        custo_points: reward.custo_points,
+      });
+
+      await refreshUser();
+      await refetchRewards();
+      showToast('Recompensa resgatada com sucesso!', 'success');
+    } catch (error) {
+      showToast('Erro ao resgatar recompensa', 'error');
+    } finally {
+      setRedeeming(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-lab-gray-100">
-      <div className="max-w-7xl mx-auto px-4 py-8 mt-20 flex flex-col">
-        <div className="mb-8">
-          <h1 className="text-3xl font-ranade font-bold text-gray-900 mb-2">
-            Olá, {user.nome.split(' ')[0]}!
+    <div className="min-h-screen bg-lab-gray-100 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Welcome Section */}
+        <div className="mb-6 sm:mb-8 animate-fade-in">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-gray-900 mb-2">
+            Olá, {user.nome.split(' ')[0]}! 👋
           </h1>
-          <p className="text-lab-gray-700 font-dm-sans">
+          <p className="text-sm sm:text-base text-lab-gray-700 font-dm-sans">
             Bem-vindo ao seu painel de recompensas
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lab p-24 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 bg-lab-gradient rounded-lg">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-lab p-5 sm:p-6 shadow-lab-sm hover-lift border border-gray-100 animate-scale-in">
+            <div className="flex items-center gap-5 sm:gap-6">
+              <div className="p-3 bg-lab-gradient rounded-lg shadow-lab-sm mr-2">
                 <Award className="text-white" size={24} />
               </div>
-              <div>
-                <p className="text-sm font-dm-sans text-lab-gray-700">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm sm:text-base font-dm-sans text-lab-gray-700 mb-1">
                   Saldo Atual
                 </p>
                 <PointsBadge points={user.lab_points} size="md" />
@@ -51,32 +99,32 @@ export function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lab p-24 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 bg-green-500 rounded-lg">
+          <div className="bg-white rounded-lab p-5 sm:p-6 shadow-lab-sm hover-lift border border-gray-100 animate-scale-in" style={{ animationDelay: '0.1s' }}>
+            <div className="flex items-center gap-5 sm:gap-6">
+              <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lab-sm mr-2">
                 <TrendingUp className="text-white" size={24} />
               </div>
-              <div>
-                <p className="text-sm font-dm-sans text-lab-gray-700">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm sm:text-base font-dm-sans text-lab-gray-700 mb-1">
                   Total Ganho
                 </p>
-                <p className="text-2xl font-ranade font-bold text-gray-900">
+                <p className="text-2xl sm:text-3xl font-ranade font-bold text-gray-900">
                   {totalEarned.toLocaleString('pt-BR')}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lab p-24 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 bg-lab-accent rounded-lg">
+          <div className="bg-white rounded-lab p-5 sm:p-6 shadow-lab-sm hover-lift border border-gray-100 animate-scale-in sm:col-span-2 lg:col-span-1" style={{ animationDelay: '0.2s' }}>
+            <div className="flex items-center gap-5 sm:gap-6">
+              <div className="p-3 bg-gradient-to-br from-lab-accent to-red-500 rounded-lg shadow-lab-sm mr-2">
                 <History className="text-white" size={24} />
               </div>
-              <div>
-                <p className="text-sm font-dm-sans text-lab-gray-700">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm sm:text-base font-dm-sans text-lab-gray-700 mb-1">
                   Total Resgatado
                 </p>
-                <p className="text-2xl font-ranade font-bold text-gray-900">
+                <p className="text-2xl sm:text-3xl font-ranade font-bold text-gray-900">
                   {totalRedeemed.toLocaleString('pt-BR')}
                 </p>
               </div>
@@ -84,111 +132,128 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-2xl font-ranade font-bold text-gray-900">
-                Recompensas em Destaque
-              </h2>
-              <Link
-                to="/recompensas"
-                className="text-lab-primary hover:text-lab-primary-dark font-dm-sans font-medium transition-colors"
-              >
-                Ver Todas
-              </Link>
-            </div>
+        {/* Rewards Timeline Section */}
+        <div className="mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          {timelineRewards.length > 0 && (
+            <RewardsTimeline
+              rewards={timelineRewards}
+              userPoints={user.lab_points}
+              onRedeem={handleRewardRedeem}
+              loading={redeeming}
+              orientation="horizontal"
+            />
+          )}
+        </div>
 
-            {rewardsLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div
-                    key={i}
-                    className="bg-white rounded-lab h-80 animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : featuredRewards.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredRewards.map((reward) => (
+        {/* Rewards Section */}
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+            <h2 className="text-xl sm:text-2xl font-ranade font-bold text-gray-900">
+              Recompensas em Destaque
+            </h2>
+            <Link
+              to="/recompensas"
+              className="text-lab-primary hover:text-lab-primary-dark font-dm-sans font-medium transition-colors inline-flex items-center gap-2 group"
+            >
+              Ver Todas
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+
+          {rewardsLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-lab h-80 animate-shimmer border border-gray-100"
+                />
+              ))}
+            </div>
+          ) : featuredRewards.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {featuredRewards.map((reward, index) => (
+                <div key={reward.id} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
                   <RewardCard
-                    key={reward.id}
                     reward={reward}
                     userPoints={user.lab_points}
                   />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-lab p-8 sm:p-12 text-center shadow-lab-sm border border-gray-100">
+              <Award size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-30" />
+              <p className="text-lab-gray-700 font-dm-sans text-sm sm:text-base">
+                Nenhuma recompensa disponível no momento
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Transactions Section */}
+        <div>
+          <h2 className="text-xl sm:text-2xl font-ranade font-bold text-gray-900 mb-4 sm:mb-6">
+            Transações Recentes
+          </h2>
+
+          {transactionsLoading ? (
+            <div className="bg-white rounded-lab p-6 sm:p-8 shadow-lab-sm border border-gray-100">
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="h-16 bg-gray-200 rounded-lg animate-shimmer" />
                 ))}
               </div>
-            ) : (
-              <div className="bg-white rounded-lab p-24 text-center">
-                <Award size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-50" />
-                <p className="text-lab-gray-700 font-dm-sans">
-                  Nenhuma recompensa disponível no momento
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-ranade font-bold text-gray-900 mb-2 mt-20">
-              Transações Recentes
-            </h2>
-
-            {transactionsLoading ? (
-              <div className="bg-white rounded-lab p-24">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="h-16 bg-gray-200 rounded animate-pulse" />
-                  ))}
-                </div>
-              </div>
-            ) : recentTransactions.length > 0 ? (
-              <div className="bg-white rounded-lab p-24 shadow-sm border border-gray-100">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {recentTransactions.map((transaction) => (
-                    <div
-                      key={transaction.id}
-                      className="flex items-start justify-between p-4 rounded-lab bg-lab-gray-100"
-                    >
-                      <div className="flex-1">
-                        <p className="font-dm-sans text-sm text-gray-900 font-medium">
-                          {transaction.descricao}
-                        </p>
-                        <p className="text-xs font-dm-sans text-lab-gray-700 mt-1">
-                          {new Date(transaction.created_at).toLocaleDateString('pt-BR', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
-                        </p>
-                      </div>
-                      <span
-                        className={`font-ranade font-bold text-sm ${
-                          transaction.tipo === 'credito'
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}
-                      >
-                        {transaction.tipo === 'credito' ? '+' : '-'}
-                        {transaction.valor}
-                      </span>
+            </div>
+          ) : recentTransactions.length > 0 ? (
+            <div className="bg-white rounded-lab p-4 sm:p-6 shadow-lab-sm border border-gray-100">
+              <div className="space-y-3">
+                {recentTransactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className="flex items-start justify-between p-4 rounded-lg bg-lab-gray-100 hover:bg-gray-200 transition-colors"
+                  >
+                    <div className="flex-1 min-w-0 pr-4">
+                      <p className="font-dm-sans text-sm sm:text-base text-gray-900 font-medium truncate">
+                        {transaction.descricao}
+                      </p>
+                      <p className="text-xs sm:text-sm font-dm-sans text-lab-gray-700 mt-1">
+                        {new Date(transaction.created_at).toLocaleDateString('pt-BR', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </p>
                     </div>
-                  ))}
-                </div>
-                <Link
-                  to="/perfil"
-                  className="block text-center mt-6 text-lab-primary hover:text-lab-primary-dark font-dm-sans font-medium transition-colors"
-                >
-                  Ver Histórico Completo
-                </Link>
+                    <span
+                      className={`font-ranade font-bold text-base sm:text-lg whitespace-nowrap ${
+                        transaction.tipo === 'credito'
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}
+                    >
+                      {transaction.tipo === 'credito' ? '+' : '-'}
+                      {transaction.valor}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ) : (
-              <div className="bg-white rounded-lab p-24 text-center">
-                <History size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-50" />
-                <p className="text-lab-gray-700 font-dm-sans">
-                  Nenhuma transação registrada
-                </p>
-              </div>
-            )}
-          </div>
+              <Link
+                to="/perfil"
+                className="block text-center mt-6 text-lab-primary hover:text-lab-primary-dark font-dm-sans font-medium transition-colors hover:underline"
+              >
+                Ver Histórico Completo
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lab p-8 sm:p-12 text-center shadow-lab-sm border border-gray-100">
+              <History size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-30" />
+              <p className="text-lab-gray-700 font-dm-sans text-sm sm:text-base">
+                Nenhuma transação registrada
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

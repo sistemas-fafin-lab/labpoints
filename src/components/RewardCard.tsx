@@ -14,30 +14,28 @@ export function RewardCard({ reward, userPoints, onRedeem, loading }: RewardCard
   const canRedeem = userPoints !== undefined && userPoints >= reward.custo_points;
 
   return (
-    <div className="bg-white rounded-lab overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100 flex flex-col">
-      <div className="aspect-video bg-gradient-to-br from-lab-primary to-lab-primary-dark flex items-center justify-center overflow-hidden">
+    <div className="bg-white rounded-lab overflow-hidden shadow-lab-sm hover-lift border border-gray-100 flex flex-col group">
+      <div className="aspect-video bg-gradient-to-br from-lab-primary to-lab-primary-dark flex items-center justify-center overflow-hidden relative">
         {reward.imagem_url ? (
           <img
             src={reward.imagem_url}
             alt={reward.titulo}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <Tag size={48} className="text-white opacity-50" />
+          <Tag size={48} className="text-white opacity-50 transition-transform duration-300 group-hover:scale-110" />
         )}
+        <span className="absolute top-3 right-3 inline-flex items-center px-3 py-1.5 rounded-full bg-white bg-opacity-90 backdrop-blur-sm text-lab-primary text-xs font-dm-sans font-medium shadow-sm">
+          {reward.categoria}
+        </span>
       </div>
 
-      <div className="p-16 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <h3 className="text-lg font-ranade font-bold text-white flex-1">
-            {reward.titulo}
-          </h3>
-          <span className="inline-flex items-center px-2 py-1 rounded-full bg-lab-accent bg-opacity-10 text-lab-accent text-xs font-dm-sans font-medium">
-            {reward.categoria}
-          </span>
-        </div>
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="text-lg font-ranade font-bold text-lab-black mb-2 line-clamp-2">
+          {reward.titulo}
+        </h3>
 
-        <p className="text-sm font-dm-sans text-white mb-4 flex-1">
+        <p className="text-sm font-dm-sans text-lab-gray mb-4 flex-1 line-clamp-3">
           {reward.descricao}
         </p>
 
@@ -47,13 +45,14 @@ export function RewardCard({ reward, userPoints, onRedeem, loading }: RewardCard
           {onRedeem && (
             <Button
               variant="primary"
+              size="sm"
               onClick={onRedeem}
               disabled={!canRedeem || loading}
               loading={loading}
               className="flex-1"
               aria-label={`Resgatar ${reward.titulo}`}
             >
-              {canRedeem ? 'Resgatar' : 'Pontos Insuficientes'}
+              {canRedeem ? 'Resgatar' : 'Insuficiente'}
             </Button>
           )}
         </div>

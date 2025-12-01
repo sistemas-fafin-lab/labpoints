@@ -76,19 +76,19 @@ export function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-lab-gray-100 flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-6">
-            <img src={logoIcon} alt="Lab Points" className="h-68 w-auto" />
+    <div className="min-h-screen bg-gradient-to-br from-lab-light via-white to-lab-primary-light flex items-center justify-center px-4 py-8">
+      <div className="max-w-md w-full animate-scale-in">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex justify-center mb-6 sm:mb-8">
+            <img src={logoIcon} alt="Lab Points" className="h-48 sm:h-64 w-auto drop-shadow-lg" />
           </div>
-          <p className="text-lab-gray mt-4">
+          <p className="text-lab-gray text-sm sm:text-base">
             Crie sua conta e comece a acumular recompensas
           </p>
         </div>
 
-        <div className="bg-white rounded-lab shadow-md p-24">
-          <form onSubmit={handleSubmit} className="space-y-16">
+        <div className="bg-white rounded-lab shadow-lab-md p-6 sm:p-8 border border-gray-100">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               type="text"
               label="Nome Completo"
@@ -136,7 +136,7 @@ export function Signup() {
               type="submit"
               variant="primary"
               loading={loading}
-              className="w-full"
+              className="w-full mt-6"
             >
               Criar Conta
             </Button>
@@ -147,7 +147,7 @@ export function Signup() {
               Já tem uma conta?{' '}
               <Link
                 to="/login"
-                className="text-lab-primary font-medium hover:text-lab-primary-dark transition-colors"
+                className="text-lab-primary font-semibold hover:text-lab-primary-dark transition-colors hover:underline"
               >
                 Entrar
               </Link>
