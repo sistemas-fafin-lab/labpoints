@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "../../.bolt"
+		},
+		{
+			"path": "../../dist"
+		},
+		{
+			"path": "../../node_modules"
+		},
+		{
+			"path": "../../public"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../supabase"
+		}
+	]
+}

@@ -1,0 +1,51 @@
+/* Lab Points - Design System Variables */
+
+:root {
+  /* Primary Colors */
+  --lab-primary: #3E6BF7;
+  --lab-primary-dark: #2E53C8;
+  --lab-primary-light: #E6EEFF;
+  
+  /* Accent Colors */
+  --lab-accent: #FF6C6C;
+  --lab-accent-hover: #FF5252;
+  
+  /* Neutral Colors */
+  --lab-light: #F5F8FF;
+  --lab-gray: #5E5E5E;
+  --lab-gray-light: #A8A8A8;
+  --lab-white: #FFFFFF;
+  --lab-black: #1A1A1A;
+  
+  /* Gradients */
+  --lab-gradient: linear-gradient(90deg, #3E6BF7 0%, #2E53C8 100%);
+  --lab-gradient-hover: linear-gradient(90deg, #2E53C8 0%, #1E43A8 100%);
+  
+  /* Shadows */
+  --lab-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --lab-shadow-md: 0 4px 16px rgba(62, 107, 247, 0.12);
+  --lab-shadow-lg: 0 8px 24px rgba(62, 107, 247, 0.16);
+  
+  /* Border Radius */
+  --lab-radius-sm: 8px;
+  --lab-radius-md: 12px;
+  --lab-radius-lg: 20px;
+  --lab-radius-full: 9999px;
+  
+  /* Spacing */
+  --lab-spacing-xs: 8px;
+  --lab-spacing-sm: 12px;
+  --lab-spacing-md: 16px;
+  --lab-spacing-lg: 24px;
+  --lab-spacing-xl: 32px;
+  
+  /* Transitions */
+  --lab-transition-fast: all 0.2s ease;
+  --lab-transition-normal: all 0.3s ease;
+  
+  /* Typography */
+  --lab-font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --lab-font-weight-regular: 400;
+  --lab-font-weight-medium: 500;
+  --lab-font-weight-semibold: 600;
+}
