@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Award, Search, Edit, Plus, Trash2 } from 'lucide-react';
+import { Users, Award, Search, Edit, Plus, Trash2, ChevronDown } from 'lucide-react';
 import { useUsers, updateUser } from '../hooks/useUsers';
 import { useRewards, createReward, updateReward, deleteReward } from '../hooks/useRewards';
 import { createTransaction } from '../hooks/useTransactions';
@@ -8,7 +8,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Avatar } from '../components/ui/Avatar';
 import { PointsBadge } from '../components/ui/PointsBadge';
-import { User, Reward } from '../lib/supabase';
+import { User, Reward, DEPARTMENT_LABELS, DEPARTMENTS_LIST, DepartmentEnum, UserRole, supabase } from '../lib/supabase';
 
 type Tab = 'users' | 'rewards';
 
@@ -21,9 +21,13 @@ export function Admin() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editUserRole, setEditUserRole] = useState<UserRole>('colaborador');
+  const [editUserDepartment, setEditUserDepartment] = useState<DepartmentEnum | ''>('');
+  const [editGestorDepartments, setEditGestorDepartments] = useState<DepartmentEnum[]>([]);
   const [pointsToAdd, setPointsToAdd] = useState('');
   const [pointsDescription, setPointsDescription] = useState('');
   const [updatingPoints, setUpdatingPoints] = useState(false);
+  const [savingUser, setSavingUser] = useState(false);
 
   const [editingReward, setEditingReward] = useState<Reward | null>(null);
   const [rewardForm, setRewardForm] = useState({
@@ -92,6 +96,82 @@ export function Admin() {
     } catch (error) {
       showToast('Erro ao alterar role', 'error');
     }
+  };
+
+  const handleOpenUserEdit = async (user: User) => {
+    setEditingUser(user);
+    setEditUserRole(user.role);
+    setEditUserDepartment(user.department || '');
+    
+    // Se for gestor, buscar departamentos que gerencia
+    if (user.role === 'gestor') {
+      try {
+        const { data } = await supabase
+          .from('gestor_departments')
+          .select('department')
+          .eq('gestor_id', user.id);
+        
+        setEditGestorDepartments(data?.map(d => d.department) || []);
+      } catch {
+        setEditGestorDepartments([]);
+      }
+    } else {
+      setEditGestorDepartments([]);
+    }
+  };
+
+  const handleSaveUserChanges = async () => {
+    if (!editingUser) return;
+    
+    setSavingUser(true);
+    try {
+      // Atualizar role e departamento do usuário
+      await updateUser(editingUser.id, { 
+        role: editUserRole,
+        department: editUserDepartment || null
+      });
+
+      // Se for gestor, atualizar departamentos gerenciados
+      if (editUserRole === 'gestor') {
+        // Remover departamentos antigos
+        await supabase
+          .from('gestor_departments')
+          .delete()
+          .eq('gestor_id', editingUser.id);
+        
+        // Adicionar novos departamentos
+        if (editGestorDepartments.length > 0) {
+          await supabase
+            .from('gestor_departments')
+            .insert(editGestorDepartments.map(dept => ({
+              gestor_id: editingUser.id,
+              department: dept
+            })));
+        }
+      } else {
+        // Se não for mais gestor, remover todos os departamentos gerenciados
+        await supabase
+          .from('gestor_departments')
+          .delete()
+          .eq('gestor_id', editingUser.id);
+      }
+
+      await refetchUsers();
+      showToast('Usuário atualizado com sucesso', 'success');
+      setEditingUser(null);
+    } catch (error) {
+      showToast('Erro ao atualizar usuário', 'error');
+    } finally {
+      setSavingUser(false);
+    }
+  };
+
+  const toggleGestorDepartment = (dept: DepartmentEnum) => {
+    setEditGestorDepartments(prev => 
+      prev.includes(dept)
+        ? prev.filter(d => d !== dept)
+        : [...prev, dept]
+    );
   };
 
   const handleSaveReward = async () => {
@@ -259,7 +339,7 @@ export function Admin() {
                             <h3 className="font-ranade font-bold text-gray-900">{user.nome}</h3>
                             <p className="text-sm font-dm-sans text-lab-gray-700">{user.email}</p>
                             <p className="text-xs font-dm-sans text-lab-gray-700 mt-1">
-                              {user.cargo}
+                              {user.department ? DEPARTMENT_LABELS[user.department] : 'Sem departamento'}
                             </p>
                           </div>
                           <PointsBadge points={user.lab_points} size="sm" />
@@ -267,26 +347,21 @@ export function Admin() {
                             className={`px-3 py-1 rounded-full text-xs font-dm-sans font-medium ${
                               user.role === 'adm'
                                 ? 'bg-lab-accent bg-opacity-20 text-lab-accent'
+                                : user.role === 'gestor'
+                                ? 'bg-indigo-100 text-indigo-700'
                                 : 'bg-gray-200 text-gray-700'
                             }`}
                           >
-                            {user.role === 'adm' ? 'Admin' : 'Colaborador'}
+                            {user.role === 'adm' ? 'Admin' : user.role === 'gestor' ? 'Gestor' : 'Colaborador'}
                           </span>
                         </div>
                         <div className="flex gap-2 ml-4">
                           <Button
                             variant="secondary"
-                            onClick={() => setEditingUser(user)}
+                            onClick={() => handleOpenUserEdit(user)}
                             className="!min-w-0 !px-3"
                           >
                             <Edit size={18} />
-                          </Button>
-                          <Button
-                            variant={user.role === 'adm' ? 'danger' : 'primary'}
-                            onClick={() => handleToggleRole(user)}
-                            className="!min-w-0 !px-3 text-sm"
-                          >
-                            {user.role === 'adm' ? 'Remover Admin' : 'Tornar Admin'}
                           </Button>
                         </div>
                       </div>
@@ -485,62 +560,155 @@ export function Admin() {
           onClick={() => setEditingUser(null)}
         >
           <div
-            className="bg-white rounded-lab-modal max-w-md w-full p-24 relative animate-scale-in"
+            className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative animate-scale-in"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-2xl font-ranade font-bold text-gray-900 mb-16">
-              Gerenciar Pontos
-            </h2>
+            {/* Header */}
+            <div className="sticky top-0 bg-gradient-to-br from-lab-primary to-indigo-500 p-6 text-white rounded-t-2xl">
+              <h2 className="text-xl font-ranade font-bold text-white">
+                Gerenciar Usuário
+              </h2>
+              <p className="text-white/80 text-sm mt-1">{editingUser.nome}</p>
+            </div>
 
-            <div className="mb-16">
-              <div className="flex items-center gap-4 mb-4">
+            <div className="p-6 space-y-6">
+              {/* User Info */}
+              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
                 <Avatar
                   src={editingUser.avatar_url}
                   alt={editingUser.nome}
                   size="md"
                   fallbackText={editingUser.nome}
                 />
-                <div>
+                <div className="flex-1">
                   <p className="font-ranade font-bold text-gray-900">{editingUser.nome}</p>
+                  <p className="text-sm font-dm-sans text-lab-gray-700">{editingUser.email}</p>
                   <p className="text-sm font-dm-sans text-lab-gray-700">
-                    Saldo atual: {editingUser.lab_points} pontos
+                    Saldo: {editingUser.lab_points} pontos
                   </p>
+                </div>
+              </div>
+
+              {/* Role Select */}
+              <div>
+                <label className="block text-sm font-dm-sans font-semibold text-slate-700 mb-2">
+                  Função do Usuário
+                </label>
+                <div className="relative">
+                  <select
+                    value={editUserRole}
+                    onChange={(e) => setEditUserRole(e.target.value as UserRole)}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 appearance-none bg-white focus:border-lab-primary focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all font-dm-sans text-slate-800 pr-10"
+                  >
+                    <option value="colaborador">Colaborador</option>
+                    <option value="gestor">Gestor</option>
+                    <option value="adm">Administrador</option>
+                  </select>
+                  <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Department Select */}
+              <div>
+                <label className="block text-sm font-dm-sans font-semibold text-slate-700 mb-2">
+                  Departamento do Usuário
+                </label>
+                <div className="relative">
+                  <select
+                    value={editUserDepartment}
+                    onChange={(e) => setEditUserDepartment(e.target.value as DepartmentEnum)}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 appearance-none bg-white focus:border-lab-primary focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all font-dm-sans text-slate-800 pr-10"
+                  >
+                    <option value="">Selecione o departamento</option>
+                    {DEPARTMENTS_LIST.map((dept) => (
+                      <option key={dept.value} value={dept.value}>
+                        {dept.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Gestor Departments (only if role is gestor) */}
+              {editUserRole === 'gestor' && (
+                <div>
+                  <label className="block text-sm font-dm-sans font-semibold text-slate-700 mb-2">
+                    Departamentos Gerenciados
+                  </label>
+                  <p className="text-xs text-slate-500 mb-3">
+                    Selecione os departamentos que este gestor pode gerenciar
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1">
+                    {DEPARTMENTS_LIST.map((dept) => (
+                      <button
+                        key={dept.value}
+                        type="button"
+                        onClick={() => toggleGestorDepartment(dept.value)}
+                        className={`px-3 py-2 rounded-lg text-sm font-dm-sans text-left transition-all ${
+                          editGestorDepartments.includes(dept.value)
+                            ? 'bg-lab-primary text-white'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        }`}
+                      >
+                        {dept.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Divider */}
+              <div className="border-t border-slate-200" />
+
+              {/* Points Section */}
+              <div>
+                <h3 className="text-sm font-dm-sans font-semibold text-slate-700 mb-4">
+                  Gerenciar Pontos
+                </h3>
+                <div className="space-y-4">
+                  <Input
+                    label="Pontos (use valores negativos para remover)"
+                    type="number"
+                    value={pointsToAdd}
+                    onChange={(e) => setPointsToAdd(e.target.value)}
+                    placeholder="Ex: 100 ou -50"
+                  />
+
+                  <Input
+                    label="Descrição da Transação"
+                    value={pointsDescription}
+                    onChange={(e) => setPointsDescription(e.target.value)}
+                    placeholder="Motivo da transação"
+                  />
+
+                  <Button
+                    variant="secondary"
+                    onClick={handleAddPoints}
+                    loading={updatingPoints}
+                    disabled={!pointsToAdd || !pointsDescription}
+                    className="w-full"
+                  >
+                    Adicionar/Remover Pontos
+                  </Button>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-16">
-              <Input
-                label="Pontos (use valores negativos para remover)"
-                type="number"
-                value={pointsToAdd}
-                onChange={(e) => setPointsToAdd(e.target.value)}
-                placeholder="Ex: 100 ou -50"
-                required
-              />
-
-              <Input
-                label="Descrição"
-                value={pointsDescription}
-                onChange={(e) => setPointsDescription(e.target.value)}
-                placeholder="Motivo da transação"
-                required
-              />
-            </div>
-
-            <div className="flex gap-3 mt-24">
+            {/* Footer Actions */}
+            <div className="sticky bottom-0 bg-white border-t border-slate-200 p-4 flex gap-3 rounded-b-2xl">
               <Button
                 variant="primary"
-                onClick={handleAddPoints}
-                loading={updatingPoints}
+                onClick={handleSaveUserChanges}
+                loading={savingUser}
                 className="flex-1"
               >
-                Confirmar
+                Salvar Alterações
               </Button>
               <Button
                 variant="secondary"
                 onClick={() => setEditingUser(null)}
-                disabled={updatingPoints}
+                disabled={savingUser || updatingPoints}
                 className="flex-1"
               >
                 Cancelar

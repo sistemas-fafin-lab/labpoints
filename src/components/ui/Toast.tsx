@@ -34,33 +34,63 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed top-24 right-4 z-50 flex flex-col gap-2 max-w-xs sm:max-w-md">
+      <div className="fixed top-24 right-4 z-50 flex flex-col gap-3 max-w-xs sm:max-w-md">
         {toasts.map((toast, index) => (
           <div
             key={toast.id}
             className={`
-              flex items-start gap-3 p-4 rounded-lab shadow-lab-lg backdrop-blur-sm animate-slide-in border
+              group relative flex items-center gap-4 p-4 pr-14 rounded-2xl shadow-2xl backdrop-blur-md animate-slide-in overflow-hidden
               ${toast.type === 'success' 
-                ? 'bg-green-600 text-white border-green-700' 
-                : 'bg-red-600 text-white border-red-700'}
+                ? 'bg-gradient-to-r from-emerald-500 to-green-600' 
+                : 'bg-gradient-to-r from-red-500 to-rose-600'}
             `}
             style={{ animationDelay: `${index * 0.1}s` }}
             role="alert"
             aria-live="polite"
           >
-            {toast.type === 'success' ? (
-              <CheckCircle size={20} className="flex-shrink-0 mt-0.5 drop-shadow" />
-            ) : (
-              <AlertCircle size={20} className="flex-shrink-0 mt-0.5 drop-shadow" />
-            )}
-            <p className="flex-1 font-dm-sans text-sm font-medium">{toast.message}</p>
+            {/* Decorative glow effect */}
+            <div className={`absolute inset-0 opacity-30 blur-xl ${
+              toast.type === 'success' ? 'bg-emerald-400' : 'bg-red-400'
+            }`} />
+            
+            {/* Icon container */}
+            <div className={`relative flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
+              toast.type === 'success' 
+                ? 'bg-white/20 ring-1 ring-white/30' 
+                : 'bg-white/20 ring-1 ring-white/30'
+            }`}>
+              {toast.type === 'success' ? (
+                <CheckCircle size={22} className="text-white drop-shadow-md" strokeWidth={2.5} />
+              ) : (
+                <AlertCircle size={22} className="text-white drop-shadow-md" strokeWidth={2.5} />
+              )}
+            </div>
+            
+            {/* Message */}
+            <div className="relative flex-1 min-w-0">
+              <p className="font-dm-sans text-sm font-semibold text-white leading-snug drop-shadow-sm">
+                {toast.message}
+              </p>
+              <p className="font-dm-sans text-xs text-white/70 mt-0.5">
+                {toast.type === 'success' ? 'Sucesso' : 'Erro'}
+              </p>
+            </div>
+            
+            {/* Close button */}
             <button
               onClick={() => removeToast(toast.id)}
-              className="flex-shrink-0 hover:bg-white hover:bg-opacity-20 rounded transition-all p-1"
+              className="absolute top-3 right-3 flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white/80 hover:text-white transition-all duration-200 hover:scale-110"
               aria-label="Fechar notificação"
             >
-              <X size={18} />
+              <X size={14} strokeWidth={2.5} />
             </button>
+            
+            {/* Progress bar */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+              <div 
+                className={`h-full ${toast.type === 'success' ? 'bg-white/60' : 'bg-white/60'} animate-toast-progress`}
+              />
+            </div>
           </div>
         ))}
       </div>

@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut, User, Home, Gift, Settings, ChevronDown } from 'lucide-react';
+import { Menu, X, LogOut, User, Home, Gift, Settings, ChevronDown, Award, Bell } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePoints } from '../hooks/usePoints';
+import { usePointAssignments } from '../hooks/usePointAssignments';
 import { Avatar } from './ui/Avatar';
 import { PointsBadge } from './ui/PointsBadge';
+import { AssignPointsModal } from './AssignPointsModal';
 // @ts-ignore - asset import (PNG) may lack type declaration in project
 import logoIcon from '../assets/logo/LAB POINT HEADER.png';
 
@@ -12,11 +14,21 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
   const { user, signOut } = useAuth();
   const points = usePoints();
   const location = useLocation();
+  
+  // Point assignments hook for managers and admins
+  const {
+    pendingCount,
+    departmentUsers,
+    loadingUsers,
+    createAssignment
+  } = usePointAssignments(user?.id);
 
   const isActive = (path: string) => location.pathname === path;
+  const canAssignPoints = user?.role === 'gestor' || user?.role === 'adm';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,7 +117,7 @@ export function Header() {
                 Lab Points
               </span>
               <span className="text-xs text-lab-gray tracking-wide">
-                {user.lab_points} pontos disponíveis
+                Nosso jeito de reconhecer
               </span>
             </div>
           </Link>
@@ -165,6 +177,31 @@ export function Header() {
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
+            {/* Assign Points Button - Managers and Admins only */}
+            {canAssignPoints && (
+              <button
+                onClick={() => setAssignModalOpen(true)}
+                className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-lab-gradient text-white rounded-xl font-medium text-sm hover:shadow-lab-md hover:scale-105 transition-all duration-300"
+              >
+                <Award size={18} className="text-white" />
+                <span className="text-white">Atribuir Pontos</span>
+              </button>
+            )}
+
+            {/* Pending Approvals Badge */}
+            {canAssignPoints && pendingCount > 0 && (
+              <Link
+                to="/dashboard"
+                className="relative p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 transition-all duration-300 group"
+                title={`${pendingCount} aprovação(ões) pendente(s)`}
+              >
+                <Bell size={20} className="text-amber-600" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {pendingCount > 9 ? '9+' : pendingCount}
+                </span>
+              </Link>
+            )}
+
             {/* Points Badge - Desktop */}
             <div className="hidden lg:block">
               <div className="px-4 py-2.5 bg-gradient-to-r from-lab-light to-white rounded-xl border border-lab-primary border-opacity-20">
@@ -329,9 +366,37 @@ export function Header() {
                 <span className="font-semibold">Admin</span>
               </Link>
             )}
+
+            {/* Mobile Assign Points Button */}
+            {canAssignPoints && (
+              <button
+                onClick={() => {
+                  setAssignModalOpen(true);
+                  closeMobileMenu();
+                }}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium bg-lab-gradient text-white shadow-lab-sm transition-all duration-300"
+              >
+                <Award size={20} className="text-white" />
+                <span className="font-semibold text-white">Atribuir Pontos</span>
+                {pendingCount > 0 && (
+                  <span className="ml-auto px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">
+                    {pendingCount}
+                  </span>
+                )}
+              </button>
+            )}
           </nav>
         )}
       </div>
+
+      {/* Assign Points Modal */}
+      <AssignPointsModal
+        isOpen={assignModalOpen}
+        onClose={() => setAssignModalOpen(false)}
+        users={departmentUsers}
+        loadingUsers={loadingUsers}
+        onSubmit={createAssignment}
+      />
     </header>
   );
 }

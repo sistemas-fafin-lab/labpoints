@@ -6,6 +6,9 @@ export interface TimelineReward {
   id: string;
   name: string;
   points: number;
+  descricao?: string;
+  imagem_url?: string;
+  categoria?: string;
 }
 
 interface RewardsTimelineProps {
@@ -92,6 +95,9 @@ export function RewardsTimeline({
                   isUnlocked={reward.isUnlocked}
                   onRedeem={onRedeem}
                   loading={loading}
+                  descricao={reward.descricao}
+                  imagem_url={reward.imagem_url}
+                  categoria={reward.categoria}
                 />
               </div>
             </div>
@@ -151,6 +157,9 @@ export function RewardsTimeline({
                 isUnlocked={reward.isUnlocked}
                 onRedeem={onRedeem}
                 loading={loading}
+                descricao={reward.descricao}
+                imagem_url={reward.imagem_url}
+                categoria={reward.categoria}
               />
             ))}
           </div>

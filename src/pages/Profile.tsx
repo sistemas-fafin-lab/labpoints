@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User as UserIcon, History, Award } from 'lucide-react';
+import { User as UserIcon, History, Award, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../hooks/useTransactions';
 import { useRedemptions } from '../hooks/useRedemptions';
@@ -9,6 +9,7 @@ import { PointsBadge } from '../components/ui/PointsBadge';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { updateUser } from '../hooks/useUsers';
+import { DEPARTMENTS_LIST, DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
 
 type Tab = 'info' | 'transactions' | 'redemptions';
 
@@ -21,20 +22,20 @@ export function Profile() {
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [editing, setEditing] = useState(false);
   const [nome, setNome] = useState(user?.nome || '');
-  const [cargo, setCargo] = useState(user?.cargo || '');
+  const [department, setDepartment] = useState<DepartmentEnum | ''>(user?.department || '');
   const [saving, setSaving] = useState(false);
 
   if (!user) return null;
 
   const handleSave = async () => {
-    if (!nome.trim() || !cargo.trim()) {
-      showToast('Nome e cargo são obrigatórios', 'error');
+    if (!nome.trim() || !department) {
+      showToast('Nome e departamento são obrigatórios', 'error');
       return;
     }
 
     setSaving(true);
     try {
-      await updateUser(user.id, { nome, cargo });
+      await updateUser(user.id, { nome, department: department as DepartmentEnum });
       await refreshUser();
       showToast('Perfil atualizado com sucesso', 'success');
       setEditing(false);
@@ -47,7 +48,7 @@ export function Profile() {
 
   const handleCancel = () => {
     setNome(user.nome);
-    setCargo(user.cargo);
+    setDepartment(user.department || '');
     setEditing(false);
   };
 
@@ -72,7 +73,9 @@ export function Profile() {
                 <h1 className="text-2xl font-ranade font-bold text-gray-900">
                   {user.nome}
                 </h1>
-                <p className="text-lab-gray-700 font-dm-sans">{user.cargo}</p>
+                <p className="text-lab-gray-700 font-dm-sans">
+                  {user.department ? DEPARTMENT_LABELS[user.department] : 'Sem departamento'}
+                </p>
                 <PointsBadge points={user.lab_points} size="lg" />
               </div>
 
@@ -144,12 +147,35 @@ export function Profile() {
                     disabled={!editing}
                   />
 
-                  <Input
-                    label="Cargo"
-                    value={cargo}
-                    onChange={(e) => setCargo(e.target.value)}
-                    disabled={!editing}
-                  />
+                  {/* Department Select */}
+                  <div>
+                    <label className="block text-sm font-dm-sans font-medium text-slate-700 mb-1.5">
+                      Departamento
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value as DepartmentEnum)}
+                        disabled={!editing}
+                        className={`w-full px-4 py-3 rounded-xl border-2 appearance-none transition-all duration-200 font-dm-sans text-slate-800 pr-10 ${
+                          editing
+                            ? 'bg-white border-slate-200 focus:border-lab-primary focus:ring-4 focus:ring-lab-primary/10'
+                            : 'bg-gray-100 border-gray-200 cursor-not-allowed'
+                        } outline-none`}
+                      >
+                        <option value="">Selecione seu departamento</option>
+                        {DEPARTMENTS_LIST.map((dept) => (
+                          <option key={dept.value} value={dept.value}>
+                            {dept.label}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown 
+                        size={20} 
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" 
+                      />
+                    </div>
+                  </div>
 
                   <Input label="Email" value={user.email} disabled />
 

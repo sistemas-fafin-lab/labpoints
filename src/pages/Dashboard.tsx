@@ -3,9 +3,11 @@ import { TrendingUp, Award, History } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRewards } from '../hooks/useRewards';
 import { useTransactions } from '../hooks/useTransactions';
+import { usePointAssignments } from '../hooks/usePointAssignments';
 import { RewardCard } from '../components/RewardCard';
 import { PointsBadge } from '../components/ui/PointsBadge';
 import { RewardsTimeline } from '../components/RewardsTimeline';
+import { ApprovalQueue } from '../components/ApprovalQueue';
 import { useState } from 'react';
 import { createRedemption } from '../hooks/useRedemptions';
 import { useToast } from '../components/ui/Toast';
@@ -14,8 +16,16 @@ export function Dashboard() {
   const { user, refreshUser } = useAuth();
   const { rewards, loading: rewardsLoading, refetch: refetchRewards } = useRewards(true);
   const { transactions, loading: transactionsLoading } = useTransactions(user?.id);
+  const { 
+    pendingApprovals, 
+    loadingApprovals, 
+    approveAssignment, 
+    rejectAssignment 
+  } = usePointAssignments(user?.id);
   const { showToast } = useToast();
   const [redeeming, setRedeeming] = useState(false);
+
+  const canManageApprovals = user?.role === 'gestor' || user?.role === 'adm';
 
   if (!user) return null;
 
@@ -29,7 +39,10 @@ export function Dashboard() {
     .map(r => ({
       id: r.id,
       name: r.titulo,
-      points: r.custo_points
+      points: r.custo_points,
+      descricao: r.descricao,
+      imagem_url: r.imagem_url || undefined,
+      categoria: r.categoria
     }));
 
   const totalEarned = transactions
@@ -144,6 +157,18 @@ export function Dashboard() {
             />
           )}
         </div>
+
+        {/* Approval Queue Section - Managers and Admins only */}
+        {canManageApprovals && pendingApprovals.length > 0 && (
+          <div className="mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.35s' }}>
+            <ApprovalQueue
+              approvals={pendingApprovals}
+              loading={loadingApprovals}
+              onApprove={approveAssignment}
+              onReject={rejectAssignment}
+            />
+          </div>
+        )}
 
         {/* Rewards Section */}
         <div className="mb-6 sm:mb-8">

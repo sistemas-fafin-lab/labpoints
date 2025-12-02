@@ -1,4 +1,4 @@
-import { User } from '../lib/supabase';
+import { User, DEPARTMENT_LABELS } from '../lib/supabase';
 import { Avatar } from './ui/Avatar';
 import { PointsBadge } from './ui/PointsBadge';
 import { Button } from './ui/Button';
@@ -24,7 +24,7 @@ export function ColabCard({ user, onViewProfile }: ColabCardProps) {
             {user.nome}
           </h3>
           <p className="text-sm font-dm-sans text-gray mb-3">
-            {user.cargo || 'Colaborador'}
+            {user.department ? DEPARTMENT_LABELS[user.department] : 'Colaborador'}
           </p>
 
           <PointsBadge points={user.lab_points} size="md" />
