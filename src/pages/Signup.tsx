@@ -122,7 +122,7 @@ export function Signup() {
             {/* Logo */}
             <div className="mb-8 flex justify-center">
               <div className="relative">
-                <img src={logoIcon} alt="Lab Points" className="h-36 w-auto drop-shadow-2xl" />
+                <img src={logoIcon} alt="Lab Points" className="h-56 w-auto drop-shadow-2xl" />
                 <div className="absolute -inset-4 bg-white/20 rounded-full blur-2xl -z-10" />
               </div>
             </div>
@@ -137,8 +137,8 @@ export function Signup() {
             {/* Benefits */}
             <div className="space-y-4">
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
-                  <CheckCircle2 size={24} />
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                  <CheckCircle2 size={28} className="text-white" />
                 </div>
                 <div className="text-left">
                   <p className="font-ranade font-semibold text-white">Cadastro Rápido</p>
@@ -147,8 +147,8 @@ export function Signup() {
               </div>
 
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg">
-                  <Shield size={24} />
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg">
+                  <Shield size={28} className="text-white" />
                 </div>
                 <div className="text-left">
                   <p className="font-ranade font-semibold text-white">100% Seguro</p>
@@ -157,8 +157,8 @@ export function Signup() {
               </div>
 
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-lg">
-                  <Zap size={24} />
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-lg">
+                  <Zap size={28} className="text-white" />
                 </div>
                 <div className="text-left">
                   <p className="font-ranade font-semibold text-white">Comece a Ganhar</p>
@@ -182,7 +182,7 @@ export function Signup() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-6">
-            <img src={logoIcon} alt="Lab Points" className="h-28 w-auto" />
+            <img src={logoIcon} alt="Lab Points" className="h-44 w-auto" />
           </div>
 
           {/* Header */}

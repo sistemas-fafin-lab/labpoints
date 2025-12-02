@@ -76,7 +76,7 @@ export function Login() {
             {/* Logo */}
             <div className="mb-8 flex justify-center">
               <div className="relative">
-                <img src={logoIcon} alt="Lab Points" className="h-40 w-auto drop-shadow-2xl" />
+                <img src={logoIcon} alt="Lab Points" className="h-56 w-auto drop-shadow-2xl" />
                 <div className="absolute -inset-4 bg-white/20 rounded-full blur-2xl -z-10" />
               </div>
             </div>
@@ -91,8 +91,8 @@ export function Login() {
             {/* Feature Cards */}
             <div className="space-y-4">
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                  <Gift size={24} />
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Gift size={28} className="text-white" />
                 </div>
                 <div className="text-left">
                   <p className="font-ranade font-semibold text-white">Recompensas Exclusivas</p>
@@ -101,8 +101,8 @@ export function Login() {
               </div>
 
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                  <Star size={24} />
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Star size={28} className="text-white" />
                 </div>
                 <div className="text-left">
                   <p className="font-ranade font-semibold text-white">Reconhecimento</p>
@@ -111,8 +111,8 @@ export function Login() {
               </div>
 
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                  <Trophy size={24} />
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Trophy size={28} className="text-white" />
                 </div>
                 <div className="text-left">
                   <p className="font-ranade font-semibold text-white">Conquistas</p>
@@ -136,7 +136,7 @@ export function Login() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <img src={logoIcon} alt="Lab Points" className="h-32 w-auto" />
+            <img src={logoIcon} alt="Lab Points" className="h-44 w-auto" />
           </div>
 
           {/* Header */}
