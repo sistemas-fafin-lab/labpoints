@@ -11,10 +11,17 @@ export function Avatar({ src, alt, size = 'md', fallbackText }: AvatarProps) {
   const [hasError, setHasError] = useState(false);
 
   const sizeClasses = {
-    sm: 'w-8 h-8 text-sm',
-    md: 'w-12 h-12 text-base',
-    lg: 'w-16 h-16 text-lg',
-    xl: 'w-48 h-48 text-5xl',
+    sm: 'w-10 h-10',
+    md: 'w-14 h-14',
+    lg: 'w-20 h-20',
+    xl: 'w-48 h-48',
+  };
+
+  const textSizeClasses = {
+    sm: 'text-sm',
+    md: 'text-lg',
+    lg: 'text-2xl',
+    xl: 'text-5xl',
   };
 
   const getInitials = (text?: string) => {
@@ -30,7 +37,7 @@ export function Avatar({ src, alt, size = 'md', fallbackText }: AvatarProps) {
     <div
       role="img"
       aria-label={alt}
-      className={`${sizeClasses[size]} rounded-full overflow-hidden bg-lab-gradient flex items-center justify-center font-ranade font-bold shadow-lab-md ring-4 ring-white transition-transform hover:scale-105`}
+      className={`${sizeClasses[size]} rounded-full overflow-hidden bg-lab-gradient flex items-center justify-center font-ranade font-bold shadow-lab-md ring-4 ring-white transition-transform hover:scale-105 flex-shrink-0`}
     >
       {showImage ? (
         <img
@@ -40,7 +47,9 @@ export function Avatar({ src, alt, size = 'md', fallbackText }: AvatarProps) {
           onError={() => setHasError(true)}
         />
       ) : (
-        <span className="text-white" aria-hidden="false">{getInitials(fallbackText || alt)}</span>
+        <span className={`text-white ${textSizeClasses[size]} leading-none`} aria-hidden="false">
+          {getInitials(fallbackText || alt)}
+        </span>
       )}
     </div>
   );
