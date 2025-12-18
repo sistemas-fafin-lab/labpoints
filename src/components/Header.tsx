@@ -220,7 +220,7 @@ export function Header() {
                 <Avatar 
                   src={user.avatar_url} 
                   alt={user.nome} 
-                  size="lg" 
+                  size="sm" 
                   fallbackText={user.nome} 
                 />
                 <div className="hidden lg:flex flex-col items-start">
@@ -252,7 +252,7 @@ export function Header() {
                         <Avatar 
                           src={user.avatar_url} 
                           alt={user.nome} 
-                          size="lg" 
+                          size="md" 
                           fallbackText={user.nome} 
                         />
                         <div className="flex-1 min-w-0">

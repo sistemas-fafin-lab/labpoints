@@ -65,7 +65,7 @@ export function Profile() {
               <Avatar
                 src={user.avatar_url}
                 alt={user.nome}
-                size="xl"
+                size="md"
                 fallbackText={user.nome}
               />
 

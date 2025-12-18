@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from './ui/Button';
+import { Avatar } from './ui/Avatar';
 import { PendingPointAssignment, DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
 
 interface ApprovalQueueProps {
@@ -124,9 +125,12 @@ export function ApprovalQueue({
           >
             {/* Request Info */}
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 rounded-full bg-lab-gradient flex items-center justify-center text-white font-bold flex-shrink-0">
-                {(approval.target_user as any)?.nome?.charAt(0).toUpperCase() || 'U'}
-              </div>
+              <Avatar
+                src={(approval.target_user as any)?.avatar_url}
+                alt={(approval.target_user as any)?.nome || 'Usuário'}
+                size="sm"
+                fallbackText={(approval.target_user as any)?.nome}
+              />
               <div className="flex-1 min-w-0">
                 <p className="font-ranade font-semibold text-gray-900">
                   {(approval.target_user as any)?.nome || 'Usuário'}

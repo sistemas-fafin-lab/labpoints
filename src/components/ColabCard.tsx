@@ -15,7 +15,7 @@ export function ColabCard({ user, onViewProfile }: ColabCardProps) {
         <Avatar
           src={user.avatar_url}
           alt={user.nome}
-          size="xl"
+          size="lg"
           fallbackText={user.nome}
         />
 

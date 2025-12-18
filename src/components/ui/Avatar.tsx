@@ -3,7 +3,7 @@ import { useState } from 'react';
 interface AvatarProps {
   src?: string | null;
   alt: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   fallbackText?: string;
 }
 
@@ -11,17 +11,27 @@ export function Avatar({ src, alt, size = 'md', fallbackText }: AvatarProps) {
   const [hasError, setHasError] = useState(false);
 
   const sizeClasses = {
-    sm: 'w-10 h-10',
+    xs: 'w-9 h-9',
+    sm: 'w-11 h-11',
     md: 'w-14 h-14',
-    lg: 'w-20 h-20',
-    xl: 'w-48 h-48',
+    lg: 'w-16 h-16',
+    xl: 'w-32 h-32',
   };
 
   const textSizeClasses = {
-    sm: 'text-sm',
+    xs: 'text-sm',
+    sm: 'text-base',
     md: 'text-lg',
-    lg: 'text-2xl',
-    xl: 'text-5xl',
+    lg: 'text-xl',
+    xl: 'text-4xl',
+  };
+
+  const ringClasses = {
+    xs: 'ring-2',
+    sm: 'ring-2',
+    md: 'ring-3',
+    lg: 'ring-3',
+    xl: 'ring-4',
   };
 
   const getInitials = (text?: string) => {
@@ -37,7 +47,7 @@ export function Avatar({ src, alt, size = 'md', fallbackText }: AvatarProps) {
     <div
       role="img"
       aria-label={alt}
-      className={`${sizeClasses[size]} rounded-full overflow-hidden bg-lab-gradient flex items-center justify-center font-ranade font-bold shadow-lab-md ring-4 ring-white transition-transform hover:scale-105 flex-shrink-0`}
+      className={`${sizeClasses[size]} ${ringClasses[size]} rounded-full overflow-hidden bg-lab-gradient flex items-center justify-center font-ranade font-bold shadow-md ring-white transition-transform hover:scale-105 flex-shrink-0`}
     >
       {showImage ? (
         <img

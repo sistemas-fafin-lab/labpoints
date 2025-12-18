@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle } from 'lucide-react';
 import { Button } from './ui/Button';
+import { Avatar } from './ui/Avatar';
 import { User, DEPARTMENT_LABELS } from '../lib/supabase';
 
 interface AssignPointsModalProps {
@@ -208,9 +209,12 @@ export function AssignPointsModal({
                       onClick={() => handleSelectUser(user)}
                       className="w-full flex items-center gap-4 p-4 rounded-2xl bg-white border-2 border-slate-100 hover:border-lab-primary hover:shadow-lg hover:shadow-lab-primary/10 transition-all duration-300 group hover:-translate-y-0.5"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-lab-primary to-indigo-500 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300">
-                        {user.nome.charAt(0).toUpperCase()}
-                      </div>
+                      <Avatar
+                        src={user.avatar_url}
+                        alt={user.nome}
+                        size="sm"
+                        fallbackText={user.nome}
+                      />
                       <div className="flex-1 text-left min-w-0">
                         <p className="font-ranade font-semibold text-slate-800 group-hover:text-lab-primary transition-colors truncate">
                           {user.nome}
@@ -233,9 +237,12 @@ export function AssignPointsModal({
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Selected User Display */}
               <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-lab-light/50 to-indigo-50/50 border-2 border-lab-primary/20">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-lab-primary to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  {selectedUser?.nome.charAt(0).toUpperCase()}
-                </div>
+                <Avatar
+                  src={selectedUser?.avatar_url}
+                  alt={selectedUser?.nome || 'Usuário'}
+                  size="md"
+                  fallbackText={selectedUser?.nome}
+                />
                 <div className="flex-1 min-w-0">
                   <p className="font-ranade font-semibold text-slate-800 truncate">
                     {selectedUser?.nome}
@@ -310,7 +317,7 @@ export function AssignPointsModal({
                 <div>
                   <p className="text-sm text-amber-900 font-dm-sans font-semibold">Aprovação Necessária</p>
                   <p className="text-sm text-amber-700 font-dm-sans mt-0.5">
-                    A atribuição será enviada para aprovação de outro gestor do departamento.
+                    A atribuição será enviada para aprovação de outro gestor.
                   </p>
                 </div>
               </div>
