@@ -10,6 +10,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Rewards } from './pages/Rewards';
 import { Profile } from './pages/Profile';
 import { Admin } from './pages/Admin';
+import { Approvals } from './pages/Approvals';
 
 function AppContent() {
   const location = useLocation();
@@ -45,6 +46,14 @@ function AppContent() {
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/aprovacoes"
+                element={
+                  <ProtectedRoute requireManager>
+                    <Approvals />
                   </ProtectedRoute>
                 }
               />

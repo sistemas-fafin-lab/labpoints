@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { X, Gift, Star, Award, Clock, CheckCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { PointsBadge } from './ui/PointsBadge';
@@ -26,6 +27,22 @@ export function RewardDetailModal({
   onRedeem,
   loading
 }: RewardDetailModalProps) {
+  // Block body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = '0px';
+    } else {
+      document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const isUnlocked = userPoints >= reward.points;
@@ -34,17 +51,20 @@ export function RewardDetailModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-fade-in overflow-y-auto"
       onClick={onClose}
+      style={{ margin: 0 }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-md transition-all duration-500" />
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-md transition-all duration-500" />
       
-      {/* Modal */}
-      <div 
-        className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transition-all duration-500 ease-out animate-scale-in hover:shadow-blue-500/20"
-        onClick={(e) => e.stopPropagation()}
-      >
+      {/* Modal Container - centered */}
+      <div className="relative z-10 flex items-center justify-center min-h-full w-full py-8">
+        {/* Modal */}
+        <div 
+          className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transition-all duration-500 ease-out animate-scale-in hover:shadow-blue-500/20"
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -185,6 +205,7 @@ export function RewardDetailModal({
               </Button>
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>

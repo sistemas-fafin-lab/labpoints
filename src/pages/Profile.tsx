@@ -57,7 +57,7 @@ export function Profile() {
       <div className="max-w-5xl mx-auto px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lab shadow-md hover:shadow-lg transition-shadow border border-gray-100 overflow-hidden">
           {/* Banner superior */}
-          <div className="bg-lab-gradient h-32 mb-20" />
+          <div className="bg-lab-gradient h-32 mb-32" />
 
           <div className="px-8 md:px-24 pb-16">
             {/* Header de perfil */}

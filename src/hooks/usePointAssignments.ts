@@ -4,6 +4,7 @@ import { supabase, PendingPointAssignment, User } from '../lib/supabase';
 interface UsePointAssignmentsReturn {
   // Data
   pendingApprovals: PendingPointAssignment[];
+  allPendingApprovals: PendingPointAssignment[]; // All pending approvals (for admins)
   myAssignments: PendingPointAssignment[];
   departmentUsers: User[];
   pendingCount: number;
@@ -23,6 +24,7 @@ interface UsePointAssignmentsReturn {
 
 export function usePointAssignments(userId: string | undefined): UsePointAssignmentsReturn {
   const [pendingApprovals, setPendingApprovals] = useState<PendingPointAssignment[]>([]);
+  const [allPendingApprovals, setAllPendingApprovals] = useState<PendingPointAssignment[]>([]);
   const [myAssignments, setMyAssignments] = useState<PendingPointAssignment[]>([]);
   const [departmentUsers, setDepartmentUsers] = useState<User[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
@@ -36,6 +38,7 @@ export function usePointAssignments(userId: string | undefined): UsePointAssignm
     
     setLoadingApprovals(true);
     try {
+      // Fetch approvals assigned to this user
       const { data, error } = await supabase
         .from('pending_point_assignments')
         .select(`
@@ -50,6 +53,22 @@ export function usePointAssignments(userId: string | undefined): UsePointAssignm
       if (error) throw error;
       setPendingApprovals(data || []);
       setPendingCount(data?.length || 0);
+
+      // Also fetch ALL pending approvals (for admin view)
+      const { data: allData, error: allError } = await supabase
+        .from('pending_point_assignments')
+        .select(`
+          *,
+          requester:requester_id(id, nome, email, department),
+          target_user:target_user_id(id, nome, email, department),
+          approver:selected_approver_id(id, nome, email)
+        `)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (!allError) {
+        setAllPendingApprovals(allData || []);
+      }
     } catch (error) {
       console.error('Error fetching pending approvals:', error);
     } finally {
@@ -298,6 +317,7 @@ export function usePointAssignments(userId: string | undefined): UsePointAssignm
 
   return {
     pendingApprovals,
+    allPendingApprovals,
     myAssignments,
     departmentUsers,
     pendingCount,

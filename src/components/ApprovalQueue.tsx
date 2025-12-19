@@ -117,14 +117,14 @@ export function ApprovalQueue({
       )}
 
       {/* Approvals List */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {approvals.map((approval) => (
           <div
             key={approval.id}
-            className="border border-gray-100 rounded-xl p-5 hover:border-gray-200 transition-all duration-200"
+            className="border border-gray-100 rounded-2xl p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-200 bg-white"
           >
             {/* Request Info */}
-            <div className="flex items-start gap-4 mb-4">
+            <div className="flex items-start gap-4 mb-6">
               <Avatar
                 src={(approval.target_user as any)?.avatar_url}
                 alt={(approval.target_user as any)?.nome || 'Usuário'}
@@ -132,10 +132,10 @@ export function ApprovalQueue({
                 fallbackText={(approval.target_user as any)?.nome}
               />
               <div className="flex-1 min-w-0">
-                <p className="font-ranade font-semibold text-gray-900">
+                <p className="font-ranade font-semibold text-gray-900 text-lg">
                   {(approval.target_user as any)?.nome || 'Usuário'}
                 </p>
-                <p className="text-sm text-gray-500 font-dm-sans">
+                <p className="text-sm text-gray-500 font-dm-sans mt-0.5">
                   {(() => {
                     const dept = (approval.target_user as any)?.department;
                     if (dept && DEPARTMENT_LABELS[dept as DepartmentEnum]) {
@@ -146,36 +146,59 @@ export function ApprovalQueue({
                 </p>
               </div>
               <div className="text-right">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-lab-gradient text-white">
-                  <Award size={16} />
-                  <span className="font-ranade font-bold">{approval.points}</span>
-                  <span className="text-white/80 text-sm">pts</span>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-lab-gradient shadow-sm">
+                  <Award size={18} className="text-white" />
+                  <span className="font-ranade font-bold text-white text-lg">{approval.points}</span>
+                  <span className="text-white/90 text-sm font-dm-sans">pts</span>
                 </div>
               </div>
             </div>
 
             {/* Justification */}
-            <div className="mb-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
+            <div className="mb-5 p-4 rounded-xl bg-gray-50 border border-gray-100">
               <div className="flex items-start gap-3">
-                <FileText size={18} className="text-gray-400 flex-shrink-0 mt-0.5" />
+                <FileText size={18} className="text-gray-400 flex-shrink-0 mt-1" />
                 <div className="flex-1">
-                  <p className="text-sm font-dm-sans font-medium text-gray-700 mb-1">
+                  <p className="text-xs font-dm-sans font-semibold text-gray-500 uppercase tracking-wide mb-2">
                     Justificativa
                   </p>
-                  <p className="text-gray-600 font-dm-sans">
+                  <p className="text-gray-700 font-dm-sans leading-relaxed">
                     {approval.justification}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Requester Info */}
-            <div className="flex items-center gap-2 text-sm text-gray-500 font-dm-sans mb-4">
-              <UserIcon size={14} />
-              <span>
-                Solicitado por <strong className="text-gray-700">{(approval.requester as any)?.nome || 'Gestor'}</strong>
-              </span>
-              <span className="text-gray-300">•</span>
+            {/* Requester and Approver Info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+              <div className="flex items-center gap-3 text-sm font-dm-sans p-3 rounded-lg bg-blue-50/50 border border-blue-100/50">
+                <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <UserIcon size={16} className="text-blue-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-blue-600 font-medium uppercase tracking-wide mb-0.5">Solicitado por</p>
+                  <p className="font-semibold text-gray-900 truncate">
+                    {(approval.requester as any)?.nome || 'Gestor'}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 text-sm font-dm-sans p-3 rounded-lg bg-amber-50/50 border border-amber-100/50">
+                <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle size={16} className="text-amber-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-amber-600 font-medium uppercase tracking-wide mb-0.5">Atribuído para</p>
+                  <p className="font-semibold text-gray-900 truncate">
+                    {(approval.approver as any)?.nome || 'Aprovador'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Date Info */}
+            <div className="flex items-center gap-2 text-xs text-gray-400 font-dm-sans mb-5">
+              <Clock size={12} />
               <span>{formatDate(approval.created_at)}</span>
             </div>
 
@@ -216,13 +239,13 @@ export function ApprovalQueue({
               </div>
             ) : (
               /* Action Buttons */
-              <div className="flex gap-3 pt-4 border-t border-gray-100">
+              <div className="flex gap-3 pt-5 border-t border-gray-200">
                 <Button
                   variant="secondary"
                   size="md"
                   onClick={() => setRejectingId(approval.id)}
                   disabled={processingId === approval.id}
-                  className="flex-1 !border-red-200 !text-red-600 hover:!bg-red-50"
+                  className="flex-1 !border-red-200 !text-red-600 hover:!bg-red-50 !py-3"
                 >
                   <XCircle size={18} className="mr-2" />
                   Rejeitar
@@ -233,7 +256,7 @@ export function ApprovalQueue({
                   onClick={() => handleApprove(approval.id)}
                   disabled={processingId === approval.id}
                   loading={processingId === approval.id}
-                  className="flex-1 !bg-green-500 hover:!bg-green-600"
+                  className="flex-1 !bg-green-500 hover:!bg-green-600 !py-3"
                 >
                   <CheckCircle size={18} className="mr-2" />
                   Aprovar
