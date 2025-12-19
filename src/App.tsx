@@ -6,6 +6,8 @@ import { Header } from './components/Header';
 // import { DebugPanel } from './components/DebugPanel';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
 import { Dashboard } from './pages/Dashboard';
 import { Rewards } from './pages/Rewards';
 import { Profile } from './pages/Profile';
@@ -14,7 +16,10 @@ import { Approvals } from './pages/Approvals';
 
 function AppContent() {
   const location = useLocation();
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/cadastro';
+  const isAuthPage = location.pathname === '/login' || 
+                     location.pathname === '/cadastro' || 
+                     location.pathname === '/esqueci-senha' || 
+                     location.pathname === '/redefinir-senha';
 
   return (
     <>
@@ -25,6 +30,8 @@ function AppContent() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Signup />} />
+          <Route path="/esqueci-senha" element={<ForgotPassword />} />
+          <Route path="/redefinir-senha" element={<ResetPassword />} />
               <Route
                 path="/dashboard"
                 element={

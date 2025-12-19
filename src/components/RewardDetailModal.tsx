@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Gift, Star, Award, Clock, CheckCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { PointsBadge } from './ui/PointsBadge';
@@ -49,20 +50,20 @@ export function RewardDetailModal({
   const pointsNeeded = reward.points - userPoints;
   const progressPercentage = Math.min((userPoints / reward.points) * 100, 100);
 
-  return (
+  const modalContent = (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-fade-in overflow-y-auto"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-fade-in"
       onClick={onClose}
-      style={{ margin: 0 }}
+      style={{ margin: 0, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-md transition-all duration-500" />
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-md" />
       
       {/* Modal Container - centered */}
-      <div className="relative z-10 flex items-center justify-center min-h-full w-full py-8">
+      <div className="relative z-10 flex items-center justify-center w-full max-h-screen overflow-y-auto py-8">
         {/* Modal */}
         <div 
-          className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transition-all duration-500 ease-out animate-scale-in hover:shadow-blue-500/20"
+          className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transition-all duration-500 ease-out animate-scale-in hover:shadow-blue-500/20 my-auto"
           onClick={(e) => e.stopPropagation()}
         >
         {/* Close Button */}
@@ -210,4 +211,6 @@ export function RewardDetailModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

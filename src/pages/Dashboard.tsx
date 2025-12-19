@@ -92,7 +92,7 @@ export function Dashboard() {
             Olá, {user.nome.split(' ')[0]}! 👋
           </h1>
           <p className="text-sm sm:text-base text-lab-gray-700 font-dm-sans">
-            Bem-vindo ao seu painel de recompensas
+            Bem-vindo ao seu painel de recompensas Lab Points!
           </p>
         </div>
 

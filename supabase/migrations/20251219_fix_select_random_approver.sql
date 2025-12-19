@@ -24,6 +24,9 @@ RETURNS uuid AS $$
 DECLARE
   v_approver_id uuid;
 BEGIN
+  -- Forçar nova seed aleatória usando timestamp + random para garantir aleatoriedade
+  PERFORM setseed(extract(epoch from clock_timestamp()) - floor(extract(epoch from clock_timestamp())));
+  
   -- Buscar gestor aleatório do mesmo departamento
   -- Excluindo o requester E o target_user (usuário que receberá os pontos)
   SELECT id INTO v_approver_id

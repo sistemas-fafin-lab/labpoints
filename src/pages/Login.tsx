@@ -90,32 +90,32 @@ export function Login() {
 
             {/* Feature Cards */}
             <div className="space-y-4">
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
                   <Gift size={28} className="text-white" />
                 </div>
                 <div className="text-left">
-                  <p className="font-ranade font-semibold text-white">Recompensas Exclusivas</p>
+                  <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Recompensas Exclusivas</p>
                   <p className="text-sm text-white/70 font-dm-sans">Troque seus pontos por prêmios incríveis</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
                   <Star size={28} className="text-white" />
                 </div>
                 <div className="text-left">
-                  <p className="font-ranade font-semibold text-white">Reconhecimento</p>
+                  <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Reconhecimento</p>
                   <p className="text-sm text-white/70 font-dm-sans">Seja valorizado pelo seu desempenho</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
                   <Trophy size={28} className="text-white" />
                 </div>
                 <div className="text-left">
-                  <p className="font-ranade font-semibold text-white">Conquistas</p>
+                  <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Conquistas</p>
                   <p className="text-sm text-white/70 font-dm-sans">Acompanhe seu progresso e metas</p>
                 </div>
               </div>
@@ -228,6 +228,17 @@ export function Login() {
                   {errors.password}
                 </p>
               )}
+            </div>
+
+            {/* Forgot Password Link */}
+            <div className="text-right">
+              <Link
+                to="/esqueci-senha"
+                className="text-sm font-dm-sans font-medium text-lab-primary hover:text-indigo-600 transition-colors inline-flex items-center gap-1 group"
+              >
+                Esqueci minha senha
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
 
             {/* Submit Button */}

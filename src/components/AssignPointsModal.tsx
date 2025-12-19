@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
@@ -110,24 +111,21 @@ export function AssignPointsModal({
 
   if (!isOpen) return null;
 
-  return (
+  const modalContent = (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
-      style={{ margin: 0 }}
+      style={{ margin: 0, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300" style={{ opacity: 1 }} />
+      <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md animate-fade-in" />
       
       {/* Modal Container - centered */}
-      <div className="relative z-10 flex items-center justify-center min-h-full w-full py-8">
+      <div className="relative z-10 flex items-center justify-center w-full max-h-screen overflow-y-auto py-8">
         {/* Modal */}
         <div 
-          className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-white/50"
+          className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-white/50 animate-scale-in my-auto"
           onClick={(e) => e.stopPropagation()}
-          style={{
-            animation: 'scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
-          }}
         >
         {/* Header */}
         <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-7 text-white overflow-hidden">
@@ -375,4 +373,6 @@ export function AssignPointsModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
