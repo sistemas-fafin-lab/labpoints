@@ -125,27 +125,31 @@ export function RewardsTimeline({
       </div>
 
       {/* Progress Bar Container */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-dm-sans font-medium text-lab-gray-700">
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm font-dm-sans font-medium text-gray-700">
             Progresso Total
           </span>
-          <span className="text-sm font-dm-sans font-bold text-lab-primary">
-            {progressPercentage.toFixed(0)}%
+          <span className="text-sm font-dm-sans font-bold text-blue-700">
+            {userPoints} / {maxPoints} pts ({progressPercentage.toFixed(0)}%)
           </span>
         </div>
-        <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+        <div className="relative h-5 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200">
           <div
-            className="absolute top-0 left-0 h-full shadow-lab-sm transition-all duration-1000 ease-out rounded-full animate-progress-flow"
-            style={{ width: `${progressPercentage}%` }}
+            className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+            style={{ 
+              width: `${progressPercentage}%`,
+              background: 'linear-gradient(90deg, #60a5fa 0%, #3b82f6 40%, #2563eb 70%, #1e40af 100%)',
+              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)'
+            }}
           />
         </div>
       </div>
 
       {/* Horizontal Scrollable Timeline */}
-      <div className="relative">
-        <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-lab-primary scrollbar-track-gray-200">
-          <div className="flex items-center gap-4 sm:gap-6 min-w-max px-4">
+      <div className="relative min-h-[320px]">
+        <div className="overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 hover:scrollbar-thumb-blue-600 transition-colors duration-300">
+          <div className="flex items-start gap-4 sm:gap-6 min-w-max px-4 pt-2">
             {rewardsWithStatus.map((reward, index) => (
               <RewardMilestone
                 key={reward.id}
@@ -177,14 +181,14 @@ export function RewardsTimeline({
 
       {/* Legend */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <div className="flex flex-wrap gap-4 justify-center text-xs sm:text-sm font-dm-sans">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-lab-gradient" />
-            <span className="text-lab-gray-700">Desbloqueado</span>
+        <div className="flex flex-wrap gap-6 justify-center text-xs sm:text-sm font-dm-sans">
+          <div className="flex items-center gap-2 transition-transform duration-300 hover:scale-110">
+            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 shadow-md" />
+            <span className="text-gray-700 font-medium">Desbloqueado</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-gray-300" />
-            <span className="text-lab-gray-700">Bloqueado</span>
+          <div className="flex items-center gap-2 transition-transform duration-300 hover:scale-110">
+            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 shadow-md" />
+            <span className="text-gray-700 font-medium">Bloqueado</span>
           </div>
         </div>
       </div>

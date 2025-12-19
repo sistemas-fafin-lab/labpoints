@@ -100,12 +100,15 @@ export function AssignPointsModal({
       onClick={onClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md animate-fade-in" />
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300" style={{ opacity: 1 }} />
       
       {/* Modal */}
       <div 
-        className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-scale-in border border-white/50"
+        className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-white/50"
         onClick={(e) => e.stopPropagation()}
+        style={{
+          animation: 'scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+        }}
       >
         {/* Header */}
         <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-7 text-white overflow-hidden">
@@ -204,31 +207,32 @@ export function AssignPointsModal({
                   </div>
                 ) : (
                   filteredUsers.map((user) => (
-                    <button
-                      key={user.id}
-                      onClick={() => handleSelectUser(user)}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl bg-white border-2 border-slate-100 hover:border-lab-primary hover:shadow-lg hover:shadow-lab-primary/10 transition-all duration-300 group hover:-translate-y-0.5"
-                    >
-                      <Avatar
-                        src={user.avatar_url}
-                        alt={user.nome}
-                        size="sm"
-                        fallbackText={user.nome}
-                      />
-                      <div className="flex-1 text-left min-w-0">
-                        <p className="font-ranade font-semibold text-slate-800 group-hover:text-lab-primary transition-colors truncate">
-                          {user.nome}
-                        </p>
-                        <p className="text-sm text-slate-500 font-dm-sans truncate">
-                          {user.department ? DEPARTMENT_LABELS[user.department] : user.email}
-                        </p>
-                      </div>
-                      <div className="flex-shrink-0 bg-slate-100 group-hover:bg-lab-light px-3 py-1.5 rounded-lg transition-colors">
-                        <span className="text-sm font-dm-sans font-semibold text-slate-600 group-hover:text-lab-primary transition-colors">
-                          {user.lab_points} pts
-                        </span>
-                      </div>
-                    </button>
+                    <div key={user.id} className="neon-card-wrapper">
+                      <button
+                        onClick={() => handleSelectUser(user)}
+                        className="neon-card-content w-full flex items-center gap-4 p-4 bg-white transition-all duration-300 group hover:-translate-y-0.5 hover:shadow-lg"
+                      >
+                        <Avatar
+                          src={user.avatar_url}
+                          alt={user.nome}
+                          size="sm"
+                          fallbackText={user.nome}
+                        />
+                        <div className="flex-1 text-left min-w-0">
+                          <p className="font-ranade font-semibold text-slate-800 group-hover:text-blue-600 transition-colors truncate">
+                            {user.nome}
+                          </p>
+                          <p className="text-sm text-slate-500 font-dm-sans truncate">
+                            {user.department ? DEPARTMENT_LABELS[user.department] : user.email}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0 bg-slate-100 group-hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
+                          <span className="text-sm font-dm-sans font-semibold text-slate-600 group-hover:text-blue-600 transition-colors">
+                            {user.lab_points} pts
+                          </span>
+                        </div>
+                      </button>
+                    </div>
                   ))
                 )}
               </div>

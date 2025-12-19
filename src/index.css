@@ -103,18 +103,18 @@ body {
 }
 
 @keyframes scale-in {
-  from {
-    transform: scale(0.95);
+  0% {
+    transform: scale(0.95) translateY(-10px);
     opacity: 0;
   }
-  to {
-    transform: scale(1);
+  100% {
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
 
 .animate-scale-in {
-  animation: scale-in 0.2s ease-out;
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fade-in {
@@ -127,7 +127,7 @@ body {
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.25s ease-out forwards;
 }
 
 /* Utility Classes */
@@ -430,4 +430,112 @@ body {
 .scrollbar-track-gray-200::-webkit-scrollbar-track {
   background: #e5e7eb;
   border-radius: 9999px;
+}
+
+/* Neon Border Shimmer Effect */
+@keyframes shimmer-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Neon Card Border Effect */
+.neon-card-wrapper {
+  position: relative;
+  border-radius: 1rem;
+  padding: 2px;
+  background: transparent;
+  isolation: isolate;
+}
+
+.neon-card-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(
+    90deg,
+    #93c5fd 0%,
+    #60a5fa 15%,
+    #3b82f6 35%,
+    #60a5fa 50%,
+    #38bdf8 55%,
+    #60a5fa 60%,
+    #3b82f6 75%,
+    #60a5fa 90%,
+    #93c5fd 100%
+  );
+  background-size: 200% 100%;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  will-change: background-position;
+  animation: shimmer-border 4s linear infinite;
+}
+
+.neon-card-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(1rem + 2px);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(59, 130, 246, 0.4) 50%,
+    rgba(56, 189, 248, 0.3) 55%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  will-change: background-position;
+  animation: shimmer-border 4s linear infinite;
+}
+
+.neon-card-wrapper:hover::before {
+  opacity: 1;
+}
+
+.neon-card-wrapper:hover::after {
+  opacity: 1;
+}
+
+/* Inner card content */
+.neon-card-content {
+  position: relative;
+  background: white;
+  border-radius: calc(1rem - 2px);
+  z-index: 1;
+}
+
+/* Neon glow utility */
+.neon-glow-blue {
+  box-shadow: 
+    0 0 5px rgba(59, 130, 246, 0.5),
+    0 0 10px rgba(59, 130, 246, 0.3),
+    0 0 15px rgba(59, 130, 246, 0.2);
 }
