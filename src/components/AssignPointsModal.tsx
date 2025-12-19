@@ -49,6 +49,22 @@ export function AssignPointsModal({
     }
   }, [isOpen]);
 
+  // Block body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = '0px';
+    } else {
+      document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
+    };
+  }, [isOpen]);
+
   const handleSelectUser = (user: User) => {
     setSelectedUser(user);
     setStep('form');
@@ -96,20 +112,23 @@ export function AssignPointsModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto"
       onClick={onClose}
+      style={{ margin: 0 }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300" style={{ opacity: 1 }} />
+      <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-300" style={{ opacity: 1 }} />
       
-      {/* Modal */}
-      <div 
-        className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-white/50"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          animation: 'scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
-        }}
-      >
+      {/* Modal Container - centered */}
+      <div className="relative z-10 flex items-center justify-center min-h-full w-full py-8">
+        {/* Modal */}
+        <div 
+          className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-white/50"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            animation: 'scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+          }}
+        >
         {/* Header */}
         <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-7 text-white overflow-hidden">
           {/* Background decorations */}
@@ -351,6 +370,7 @@ export function AssignPointsModal({
               </div>
             </form>
           )}
+        </div>
         </div>
       </div>
     </div>
