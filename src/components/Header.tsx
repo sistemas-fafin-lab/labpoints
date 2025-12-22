@@ -70,7 +70,7 @@ export function Header() {
                   Lab Points
                 </span>
                 <span className="text-xs sm:text-sm text-lab-gray tracking-wide">
-                  Sistema de Recompensas
+                  Sistema de Reconhecimento
                 </span>
               </div>
             </Link>
