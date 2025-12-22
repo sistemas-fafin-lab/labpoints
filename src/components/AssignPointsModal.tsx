@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle } from 'lucide-react';
+import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle, Tag } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
-import { User, DEPARTMENT_LABELS } from '../lib/supabase';
+import { User, DEPARTMENT_LABELS, TransactionReasonEnum, TRANSACTION_REASONS_LIST } from '../lib/supabase';
 
 interface AssignPointsModalProps {
   isOpen: boolean;
   onClose: () => void;
   users: User[];
   loadingUsers: boolean;
-  onSubmit: (targetUserId: string, points: number, justification: string) => Promise<{ success: boolean; error?: string }>;
+  onSubmit: (targetUserId: string, points: number, justification: string, reason: TransactionReasonEnum) => Promise<{ success: boolean; error?: string }>;
 }
 
 export function AssignPointsModal({
@@ -23,6 +23,7 @@ export function AssignPointsModal({
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [points, setPoints] = useState('');
   const [justification, setJustification] = useState('');
+  const [reason, setReason] = useState<TransactionReasonEnum | ''>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +45,7 @@ export function AssignPointsModal({
       setSelectedUser(null);
       setPoints('');
       setJustification('');
+      setReason('');
       setSearchTerm('');
       setError(null);
       setStep('select');
@@ -90,6 +92,11 @@ export function AssignPointsModal({
       return;
     }
 
+    if (!reason) {
+      setError('Selecione um motivo');
+      return;
+    }
+
     if (!justification.trim()) {
       setError('Insira uma justificativa');
       return;
@@ -98,7 +105,7 @@ export function AssignPointsModal({
     setLoading(true);
     setError(null);
 
-    const result = await onSubmit(selectedUser.id, pointsNum, justification.trim());
+    const result = await onSubmit(selectedUser.id, pointsNum, justification.trim(), reason as TransactionReasonEnum);
 
     setLoading(false);
 
@@ -302,6 +309,85 @@ export function AssignPointsModal({
                     PONTOS
                   </div>
                 </div>
+              </div>
+
+              {/* Reason Select */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-dm-sans font-semibold text-slate-700 mb-2.5">
+                  <Tag size={16} className="text-lab-primary" />
+                  Motivo
+                </label>
+                <div className="relative">
+                  <select
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value as TransactionReasonEnum)}
+                    className="w-full px-4 py-4 rounded-2xl bg-gradient-to-r from-slate-50 to-slate-100 border-2 border-slate-200 focus:border-lab-primary focus:bg-white focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all duration-300 font-dm-sans text-slate-800 appearance-none cursor-pointer hover:border-slate-300 hover:shadow-sm"
+                    required
+                  >
+                    <option value="" disabled className="text-slate-400">
+                      Selecione o motivo da atribuição...
+                    </option>
+                    
+                    <optgroup label="COLABORAÇÃO" className="font-semibold text-slate-700">
+                      <option value="colaboracao_intersetorial" className="py-2 pl-4">
+                        Colaboração intersetorial
+                      </option>
+                      <option value="colaboracao_intrasetorial" className="py-2 pl-4">
+                        Colaboração intrasetorial
+                      </option>
+                    </optgroup>
+                    
+                    <optgroup label="PROCESSOS" className="font-semibold text-slate-700">
+                      <option value="auditoria_processos_internos" className="py-2 pl-4">
+                        Auditoria de processos internos
+                      </option>
+                      <option value="otimizacao_processos" className="py-2 pl-4">
+                        Otimização de processos
+                      </option>
+                    </optgroup>
+                    
+                    <optgroup label="COMPORTAMENTO PROFISSIONAL" className="font-semibold text-slate-700">
+                      <option value="postura_empatica" className="py-2 pl-4">
+                        Postura empática
+                      </option>
+                      <option value="postura_disciplina_autocontrole" className="py-2 pl-4">
+                        Postura, disciplina e autocontrole
+                      </option>
+                      <option value="responsabilidade_compromisso" className="py-2 pl-4">
+                        Responsabilidade e compromisso
+                      </option>
+                    </optgroup>
+                    
+                    <optgroup label="INOVAÇÃO & INICIATIVA" className="font-semibold text-slate-700">
+                      <option value="proatividade_inovacao" className="py-2 pl-4">
+                        Proatividade e inovação
+                      </option>
+                      <option value="protagonismo_desafios" className="py-2 pl-4">
+                        Protagonismo em Desafios
+                      </option>
+                    </optgroup>
+                    
+                    <optgroup label="ESTRATÉGIA & GESTÃO" className="font-semibold text-slate-700">
+                      <option value="estrategia_organizacao_planejamento" className="py-2 pl-4">
+                        Estratégia, organização e planejamento
+                      </option>
+                      <option value="promover_sustentabilidade_financeira" className="py-2 pl-4">
+                        Promover a sustentabilidade financeira
+                      </option>
+                      <option value="realizar_networking_parceiros" className="py-2 pl-4">
+                        Realizar networking com parceiros
+                      </option>
+                    </optgroup>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-lab-primary transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-slate-500 font-dm-sans">
+                  Selecione a categoria que melhor representa o reconhecimento
+                </p>
               </div>
 
               {/* Justification Input */}

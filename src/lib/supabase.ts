@@ -57,6 +57,52 @@ export const DEPARTMENTS_LIST: { value: DepartmentEnum; label: string }[] = [
   { value: 'copa_limpeza', label: 'Copa e Limpeza' },
 ];
 
+export type TransactionReasonEnum =
+  | 'auditoria_processos_internos'
+  | 'colaboracao_intersetorial'
+  | 'colaboracao_intrasetorial'
+  | 'estrategia_organizacao_planejamento'
+  | 'otimizacao_processos'
+  | 'postura_empatica'
+  | 'postura_disciplina_autocontrole'
+  | 'proatividade_inovacao'
+  | 'promover_sustentabilidade_financeira'
+  | 'protagonismo_desafios'
+  | 'realizar_networking_parceiros'
+  | 'responsabilidade_compromisso';
+
+// Labels legíveis para os motivos de transação
+export const TRANSACTION_REASON_LABELS: Record<TransactionReasonEnum, string> = {
+  auditoria_processos_internos: 'Auditoria de processos internos',
+  colaboracao_intersetorial: 'Colaboração intersetorial',
+  colaboracao_intrasetorial: 'Colaboração intrasetorial',
+  estrategia_organizacao_planejamento: 'Estratégia, organização e planejamento',
+  otimizacao_processos: 'Otimização de processos',
+  postura_empatica: 'Postura empática',
+  postura_disciplina_autocontrole: 'Postura, disciplina e autocontrole',
+  proatividade_inovacao: 'Proatividade e inovação',
+  promover_sustentabilidade_financeira: 'Promover a sustentabilidade financeira',
+  protagonismo_desafios: 'Protagonismo em Desafios',
+  realizar_networking_parceiros: 'Realizar networking com parceiros',
+  responsabilidade_compromisso: 'Responsabilidade e compromisso',
+};
+
+// Lista de motivos para selects
+export const TRANSACTION_REASONS_LIST: { value: TransactionReasonEnum; label: string }[] = [
+  { value: 'auditoria_processos_internos', label: 'Auditoria de processos internos' },
+  { value: 'colaboracao_intersetorial', label: 'Colaboração intersetorial' },
+  { value: 'colaboracao_intrasetorial', label: 'Colaboração intrasetorial' },
+  { value: 'estrategia_organizacao_planejamento', label: 'Estratégia, organização e planejamento' },
+  { value: 'otimizacao_processos', label: 'Otimização de processos' },
+  { value: 'postura_empatica', label: 'Postura empática' },
+  { value: 'postura_disciplina_autocontrole', label: 'Postura, disciplina e autocontrole' },
+  { value: 'proatividade_inovacao', label: 'Proatividade e inovação' },
+  { value: 'promover_sustentabilidade_financeira', label: 'Promover a sustentabilidade financeira' },
+  { value: 'protagonismo_desafios', label: 'Protagonismo em Desafios' },
+  { value: 'realizar_networking_parceiros', label: 'Realizar networking com parceiros' },
+  { value: 'responsabilidade_compromisso', label: 'Responsabilidade e compromisso' },
+];
+
 export type User = {
   id: string;
   email: string;
@@ -94,6 +140,7 @@ export type Transaction = {
   tipo: 'credito' | 'debito';
   valor: number;
   descricao: string;
+  reason?: TransactionReasonEnum | null;
   created_at: string;
 };
 
