@@ -76,15 +76,15 @@ export function Login() {
             {/* Logo */}
             <div className="mb-8 flex justify-center">
               <div className="relative">
-                <img src={logoIcon} alt="Lab Points" className="h-56 w-auto drop-shadow-2xl" />
+                <img src={logoIcon} alt="Lab Points" className="h-72 w-auto drop-shadow-2xl" />
                 <div className="absolute -inset-4 bg-white/20 rounded-full blur-2xl -z-10" />
               </div>
             </div>
 
             <h1 className="text-4xl font-ranade font-bold mb-4 text-white drop-shadow-lg">
-              Bem-vindo de volta!
+              Bem-vindo(a) de volta!
             </h1>
-            <p className="text-xl text-white/80 font-dm-sans mb-12">
+            <p className="text-xl text-white/80 font-dm-sans mb-12 mt-12">
               Acumule pontos, conquiste recompensas e celebre suas conquistas.
             </p>
 
@@ -136,7 +136,7 @@ export function Login() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <img src={logoIcon} alt="Lab Points" className="h-44 w-auto" />
+            <img src={logoIcon} alt="Lab Points" className="h-56 w-auto" />
           </div>
 
           {/* Header */}

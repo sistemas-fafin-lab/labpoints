@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle, Tag } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
+import { useToast } from './ui/Toast';
 import { User, DEPARTMENT_LABELS, TransactionReasonEnum, TRANSACTION_REASONS_LIST } from '../lib/supabase';
 
 interface AssignPointsModalProps {
@@ -28,6 +29,7 @@ export function AssignPointsModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<'select' | 'form'>('select');
+  const { showToast } = useToast();
 
   // Filter users based on search
   const filteredUsers = users.filter(user => {
@@ -110,9 +112,11 @@ export function AssignPointsModal({
     setLoading(false);
 
     if (result.success) {
+      showToast('Atribuição criada com sucesso! Aguardando aprovação.', 'success');
       onClose();
     } else {
       setError(result.error || 'Erro ao criar atribuição');
+      showToast(result.error || 'Erro ao criar atribuição', 'error');
     }
   };
 

@@ -1,23 +1,53 @@
 -- Migration: Fix approval logic - Allow approvers from any department
 -- Created: 2025-12-22
 
-/*
-  ## Correção no Fluxo de Aprovação
+-- Ensure transaction_reason_enum exists (may have been created in a previous migration)
+DO $$ BEGIN
+  CREATE TYPE transaction_reason_enum AS ENUM (
+    'auditoria_processos_internos',
+    'colaboracao_intersetorial',
+    'colaboracao_intrasetorial',
+    'estrategia_organizacao_planejamento',
+    'otimizacao_processos',
+    'postura_empatica',
+    'postura_disciplina_autocontrole',
+    'proatividade_inovacao',
+    'promover_sustentabilidade_financeira',
+    'protagonismo_desafios',
+    'realizar_networking_parceiros',
+    'responsabilidade_compromisso'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-  ### Fluxo Correto:
-  1. Gestor do MESMO departamento do usuário target (ou admin de qualquer departamento) inicia atribuição
-  2. Sistema seleciona ALEATORIAMENTE um SEGUNDO gestor de QUALQUER departamento para aprovar
-  3. Segundo gestor aprova e pontuação é atribuída
+-- Add missing columns to pending_point_assignments if they don't exist
+DO $$ 
+BEGIN
+  -- Add approved_at column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'pending_point_assignments' AND column_name = 'approved_at'
+  ) THEN
+    ALTER TABLE pending_point_assignments ADD COLUMN approved_at timestamptz;
+  END IF;
 
-  ### Problema Anterior:
-  - Função select_random_approver buscava apenas gestores do MESMO departamento
-  - Limitava desnecessariamente o pool de aprovadores
+  -- Add approved_by column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'pending_point_assignments' AND column_name = 'approved_by'
+  ) THEN
+    ALTER TABLE pending_point_assignments ADD COLUMN approved_by uuid REFERENCES users(id) ON DELETE SET NULL;
+  END IF;
 
-  ### Solução:
-  - Atualizar select_random_approver para buscar gestores de QUALQUER departamento
-  - Manter exclusão de requester e target_user
-  - Priorizar gestores, usar admins como fallback
-*/
+  -- Add transaction_id column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'pending_point_assignments' AND column_name = 'transaction_id'
+  ) THEN
+    ALTER TABLE pending_point_assignments ADD COLUMN transaction_id uuid REFERENCES transactions(id) ON DELETE SET NULL;
+  END IF;
+END $$;
 
 -- Drop existing function
 DROP FUNCTION IF EXISTS select_random_approver(uuid, text, uuid);
@@ -181,7 +211,9 @@ BEGIN
   END IF;
   
   -- Verificar se é o aprovador selecionado
-  IF v_assignment.selected_approver_id != p_approver_id THEN
+  -- Administradores podem aprovar qualquer solicitação
+  -- Gestores devem ser o aprovador selecionado
+  IF v_approver_role = 'gestor' AND v_assignment.selected_approver_id != p_approver_id THEN
     RETURN jsonb_build_object('success', false, 'error', 'Você não é o aprovador selecionado para esta atribuição');
   END IF;
   

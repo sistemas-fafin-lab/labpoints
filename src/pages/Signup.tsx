@@ -215,7 +215,7 @@ export function Signup() {
                     Nome Completo
                   </label>
                   <div className={`relative transition-all duration-300 ${focusedField === 'nome' ? 'scale-[1.02]' : ''}`}>
-                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
+                    <div className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
                       focusedField === 'nome' ? 'text-lab-primary' : 'text-slate-400'
                     }`}>
                       <User size={20} />
@@ -249,7 +249,7 @@ export function Signup() {
                     Departamento
                   </label>
                   <div className={`relative transition-all duration-300 ${focusedField === 'department' ? 'scale-[1.02]' : ''}`}>
-                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 pointer-events-none ${
+                    <div className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors duration-200 pointer-events-none ${
                       focusedField === 'department' ? 'text-lab-primary' : 'text-slate-400'
                     }`}>
                       <Building2 size={20} />

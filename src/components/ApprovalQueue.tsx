@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
+import { useToast } from './ui/Toast';
 import { PendingPointAssignment, DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
 
 interface ApprovalQueueProps {
@@ -19,19 +20,27 @@ export function ApprovalQueue({
 }: ApprovalQueueProps) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
-  const handleApprove = async (assignmentId: string) => {
-    setProcessingId(assignmentId);
+  const handleApproveConfirm = async () => {
+    if (!approvingId) return;
+    
+    setProcessingId(approvingId);
     setError(null);
     
-    const result = await onApprove(assignmentId);
+    const result = await onApprove(approvingId);
     
     setProcessingId(null);
+    setApprovingId(null);
     
     if (!result.success) {
       setError(result.error || 'Erro ao aprovar');
+      showToast(result.error || 'Erro ao aprovar atribuição', 'error');
+    } else {
+      showToast('Atribuição aprovada com sucesso!', 'success');
     }
   };
 
@@ -47,6 +56,9 @@ export function ApprovalQueue({
     
     if (!result.success) {
       setError(result.error || 'Erro ao rejeitar');
+      showToast(result.error || 'Erro ao rejeitar atribuição', 'error');
+    } else {
+      showToast('Atribuição rejeitada com sucesso', 'success');
     }
   };
 
@@ -237,6 +249,47 @@ export function ApprovalQueue({
                   </Button>
                 </div>
               </div>
+            ) : approvingId === approval.id ? (
+              /* Approval Confirmation */
+              <div className="space-y-3 pt-4 border-t border-gray-100">
+                <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="font-ranade font-bold text-gray-900 mb-1">
+                        Confirmar aprovação
+                      </p>
+                      <p className="text-sm text-gray-600 font-dm-sans">
+                        Você está prestes a aprovar <strong>{approval.points} pontos</strong> para{' '}
+                        <strong>{(approval.target_user as any)?.nome}</strong>. Esta ação não pode ser desfeita.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setApprovingId(null)}
+                    disabled={processingId === approval.id}
+                    className="flex-1"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleApproveConfirm}
+                    disabled={processingId === approval.id}
+                    loading={processingId === approval.id}
+                    className="flex-1 !bg-green-500 hover:!bg-green-600"
+                  >
+                    Confirmar Aprovação
+                  </Button>
+                </div>
+              </div>
             ) : (
               /* Action Buttons */
               <div className="flex gap-3 pt-5 border-t border-gray-200">
@@ -253,9 +306,8 @@ export function ApprovalQueue({
                 <Button
                   variant="primary"
                   size="md"
-                  onClick={() => handleApprove(approval.id)}
+                  onClick={() => setApprovingId(approval.id)}
                   disabled={processingId === approval.id}
-                  loading={processingId === approval.id}
                   className="flex-1 !bg-green-500 hover:!bg-green-600 !py-3"
                 >
                   <CheckCircle size={18} className="mr-2" />
