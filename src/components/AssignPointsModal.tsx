@@ -161,8 +161,8 @@ export function AssignPointsModal({
           </button>
           
           <div className="relative flex items-center gap-5 pr-12">
-            <div className="w-16 h-16 rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg">
-              <Sparkles size={30} className="drop-shadow-lg" />
+            <div className="w-26 h-26 rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg">
+              <Sparkles size={48} strokeWidth={2} className="drop-shadow-lg text-white" />
             </div>
             <div>
               <h2 className="text-2xl font-ranade font-bold tracking-tight drop-shadow-sm text-white">Atribuir Pontos</h2>

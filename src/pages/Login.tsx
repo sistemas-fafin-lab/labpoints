@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { Mail, Lock, ArrowRight, Sparkles, Eye, EyeOff, Gift, Star, Trophy } from 'lucide-react';
 import logoIcon from '../assets/logo/LAB POINTS LOGIN.png';
+import logoMobile from '../assets/logo/LAB POINTS LOGIN MOBILE.png';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -76,7 +77,7 @@ export function Login() {
             {/* Logo */}
             <div className="mb-8 flex justify-center">
               <div className="relative">
-                <img src={logoIcon} alt="Lab Points" className="h-72 w-auto drop-shadow-2xl" />
+                <img src={logoIcon} alt="Lab Points" className="h-52 w-auto drop-shadow-2xl" />
                 <div className="absolute -inset-4 bg-white/20 rounded-full blur-2xl -z-10" />
               </div>
             </div>
@@ -136,7 +137,7 @@ export function Login() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <img src={logoIcon} alt="Lab Points" className="h-56 w-auto" />
+            <img src={logoMobile} alt="Lab Points" className="h-44 w-auto" />
           </div>
 
           {/* Header */}
