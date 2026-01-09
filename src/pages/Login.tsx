@@ -75,7 +75,7 @@ export function Login() {
         <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
           <div className="max-w-md text-center">
             {/* Logo */}
-            <div className="mb-8 flex justify-center">
+            <div className="mb-32 flex justify-center">
               <div className="relative">
                 <img src={logoIcon} alt="Lab Points" className="h-52 w-auto drop-shadow-2xl" />
                 <div className="absolute -inset-4 bg-white/20 rounded-full blur-2xl -z-10" />

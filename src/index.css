@@ -10,7 +10,14 @@
 
 /* Global Typography and Base Styles */
 html {
-  font-size: 120%; /* 25% larger base font size for better readability */
+  font-size: 100%; /* Default base font size */
+}
+
+/* Increase font size for large screens (>1700px) */
+@media (min-width: 1500px) {
+  html {
+    font-size: 120%; /* 20% larger base font size for better readability on large screens */
+  }
 }
 
 body, p, span, input, button, textarea, select, label, div {
