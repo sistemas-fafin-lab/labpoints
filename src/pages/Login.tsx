@@ -137,12 +137,12 @@ export function Login() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <img src={logoMobile} alt="Lab Points" className="h-44 w-auto" />
+            <img src={logoMobile} alt="Lab Points" className="h-36 w-auto mb-16 mt-8" />
           </div>
 
           {/* Header */}
           <div className="text-center lg:text-left mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lab-primary/10 text-lab-primary text-sm font-dm-sans font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lab-primary/10 text-lab-primary text-sm font-dm-sans font-medium mb-8">
               <Sparkles size={16} />
               <span>Sistema de Reconhecimento</span>
             </div>
