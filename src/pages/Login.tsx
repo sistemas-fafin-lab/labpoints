@@ -82,10 +82,10 @@ export function Login() {
               </div>
             </div>
 
-            <h1 className="text-4xl font-ranade font-bold mb-4 text-white drop-shadow-lg">
+            <h1 className="text-3xl font-ranade font-bold mb-4 text-white drop-shadow-lg">
               Bem-vindo(a) de volta!
             </h1>
-            <p className="text-xl text-white/80 font-dm-sans mb-12 mt-12">
+            <p className="text-lg text-white/80 font-dm-sans mb-12 mt-12">
               Acumule pontos, conquiste recompensas e celebre suas conquistas.
             </p>
 
