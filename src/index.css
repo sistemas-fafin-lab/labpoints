@@ -13,12 +13,15 @@ html {
   font-size: 100%; /* Default base font size */
 }
 
-/* Increase font size for large screens (>1700px) */
-@media (min-width: 1500px) {
+/* Increase font size for large screens (>1600px) */
+@media (min-width: 1600px) {
   html {
     font-size: 120%; /* 20% larger base font size for better readability on large screens */
-  }
-}
+  }  
+  /* Keep login page at 100% font size even on large screens */
+  html:has(.login-page-container) {
+    font-size: 100%;
+  }}
 
 body, p, span, input, button, textarea, select, label, div {
   font-family: var(--lab-font-family);

@@ -56,7 +56,7 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="login-page-container min-h-screen flex">
       {/* Left Side - Decorative */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700">
         {/* Animated Background Elements */}
