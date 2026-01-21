@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { DEPARTMENTS_LIST, DepartmentEnum } from '../lib/supabase';
-import { Mail, Lock, User, Building2, ArrowRight, ArrowLeft, Sparkles, Eye, EyeOff, CheckCircle2, Shield, Zap } from 'lucide-react';
+import { Mail, Lock, User, Building2, ArrowRight, ArrowLeft, Sparkles, Eye, EyeOff, CheckCircle2, Shield, Zap, X, AlertTriangle, Inbox } from 'lucide-react';
 import logoIcon from '../assets/logo/LAB POINTS LOGIN.png';
 
 export function Signup() {
@@ -15,6 +16,7 @@ export function Signup() {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [showEmailConfirmModal, setShowEmailConfirmModal] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -81,8 +83,8 @@ export function Signup() {
       showToast(error.message || 'Erro ao criar conta', 'error');
       setLoading(false);
     } else {
-      showToast('Conta criada com sucesso', 'success');
-      navigate('/dashboard');
+      setLoading(false);
+      setShowEmailConfirmModal(true);
     }
   };
 
@@ -137,7 +139,7 @@ export function Signup() {
             {/* Benefits */}
             <div className="space-y-4">
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/20">
                   <CheckCircle2 size={28} className="text-white" />
                 </div>
                 <div className="text-left">
@@ -147,7 +149,7 @@ export function Signup() {
               </div>
 
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/20">
                   <Shield size={28} className="text-white" />
                 </div>
                 <div className="text-left">
@@ -157,7 +159,7 @@ export function Signup() {
               </div>
 
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/20">
                   <Zap size={28} className="text-white" />
                 </div>
                 <div className="text-left">
@@ -490,6 +492,129 @@ export function Signup() {
           </div>
         </div>
       </div>
+
+      {/* Email Confirmation Modal */}
+      {showEmailConfirmModal && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          onClick={() => {}}
+          style={{ margin: 0, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+        >
+          {/* Backdrop */}
+          <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md animate-fade-in" />
+          
+          {/* Modal Container */}
+          <div className="relative z-10 flex items-center justify-center w-full max-h-screen overflow-y-auto py-8">
+            {/* Modal */}
+            <div 
+              className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-white/50 animate-scale-in my-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-7 text-white overflow-hidden">
+                {/* Background decorations */}
+                <div className="absolute inset-0 opacity-30 pointer-events-none">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2" />
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-xl -translate-x-1/2 translate-y-1/2" />
+                </div>
+                
+                {/* Close button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEmailConfirmModal(false);
+                    navigate('/login');
+                  }}
+                  className="absolute top-5 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-xl bg-white/15 hover:bg-white/30 transition-all duration-300 hover:scale-110 hover:rotate-90 backdrop-blur-sm cursor-pointer"
+                  aria-label="Fechar modal"
+                >
+                  <X size={18} strokeWidth={2.5} className="text-white" />
+                </button>
+                
+                <div className="relative flex items-center gap-5 pr-12">
+                  <div className="w-16 h-16 rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg">
+                    <Mail size={32} strokeWidth={2} className="drop-shadow-lg text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-ranade font-bold tracking-tight drop-shadow-sm text-white">Quase lá!</h2>
+                    <p className="text-white/90 text-sm font-dm-sans mt-0.5">
+                      Confirme seu cadastro
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 space-y-5">
+                {/* Success Icon */}
+                <div className="flex justify-center">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+                    <CheckCircle2 size={40} className="text-green-500" />
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div className="text-center space-y-3">
+                  <h3 className="text-xl font-ranade font-bold text-slate-800">
+                    Conta criada com sucesso!
+                  </h3>
+                  <p className="text-slate-600 font-dm-sans text-sm leading-relaxed">
+                    Enviamos um e-mail de confirmação para <span className="font-semibold text-lab-primary">{email}</span>. 
+                    Por favor, verifique sua caixa de entrada e clique no link para ativar sua conta.
+                  </p>
+                </div>
+
+                {/* Spam Warning */}
+                <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                    <AlertTriangle size={20} className="text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-ranade font-semibold text-amber-800 text-sm">
+                      Não encontrou o e-mail?
+                    </p>
+                    <p className="text-amber-700 font-dm-sans text-xs mt-1">
+                      Verifique também sua <span className="font-semibold">caixa de spam</span> ou lixo eletrônico. Às vezes, o e-mail pode demorar alguns minutos para chegar.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Info Box */}
+                <div className="flex items-start gap-3 bg-sky-50 border border-sky-200 rounded-2xl p-4">
+                  <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+                    <Inbox size={20} className="text-sky-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-ranade font-semibold text-sky-800 text-sm">
+                      Próximos passos
+                    </p>
+                    <p className="text-sky-700 font-dm-sans text-xs mt-1">
+                      Após confirmar seu e-mail, você poderá fazer login e começar a acumular pontos.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEmailConfirmModal(false);
+                    navigate('/login');
+                  }}
+                  className="w-full relative group overflow-hidden rounded-2xl py-4 px-6 font-ranade font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02]"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2 text-white">
+                    <span className="text-white">Ir para o Login</span>
+                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform text-white" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
