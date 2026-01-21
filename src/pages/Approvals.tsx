@@ -140,8 +140,8 @@ export function Approvals() {
       {isAdmin && (
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
-              <ClipboardCheck size={20} className="text-white" />
+            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0 gap-6">
+              <ClipboardCheck size={20} className="text-white gap-4" />
             </div>
             <div className="flex-1">
               <h3 className="font-ranade font-bold text-gray-900 mb-1">

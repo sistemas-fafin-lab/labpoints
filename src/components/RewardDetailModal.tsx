@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Gift, Star, Award, Clock, CheckCircle } from 'lucide-react';
+import { X, Gift, Star, Award, Clock, CheckCircle, Sparkles } from 'lucide-react';
 import { Button } from './ui/Button';
 import { PointsBadge } from './ui/PointsBadge';
 
@@ -52,135 +52,151 @@ export function RewardDetailModal({
 
   const modalContent = (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
       style={{ margin: 0, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-md" />
+      {/* Backdrop with blur */}
+      <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md animate-fade-in" />
       
       {/* Modal Container - centered */}
       <div className="relative z-10 flex items-center justify-center w-full max-h-screen overflow-y-auto py-8">
         {/* Modal */}
         <div 
-          className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transition-all duration-500 ease-out animate-scale-in hover:shadow-blue-500/20 my-auto"
+          className="relative bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-white/50 transition-all duration-500 ease-out animate-scale-in hover:shadow-indigo-500/20 my-auto"
           onClick={(e) => e.stopPropagation()}
         >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/95 hover:bg-white shadow-xl transition-all duration-500 ease-out hover:scale-110 hover:rotate-90 group backdrop-blur-sm"
+          className="absolute top-5 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-xl bg-white/15 hover:bg-white/30 transition-all duration-300 hover:scale-110 hover:rotate-90 backdrop-blur-sm cursor-pointer"
         >
-          <X size={20} className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300" />
+          <X size={18} strokeWidth={2.5} className="text-white" />
         </button>
 
-        {/* Image Section */}
-        <div className="relative h-48 sm:h-56 bg-gradient-to-br from-blue-50 via-blue-100 to-slate-100 overflow-hidden">
+        {/* Image Section with gradient header */}
+        <div className="relative h-52 sm:h-60 bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 overflow-hidden">
+          {/* Background decorations */}
+          <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/30 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
+            <div className="absolute top-1/2 right-1/4 w-20 h-20 bg-white/15 rounded-full blur-xl" />
+          </div>
+
           {reward.imagem_url ? (
-            <img 
-              src={reward.imagem_url} 
-              alt={reward.name}
-              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-            />
+            <>
+              <img 
+                src={reward.imagem_url} 
+                alt={reward.name}
+                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+              {/* Gradient overlay on image */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
+            </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-blue-900 flex items-center justify-center shadow-2xl transition-all duration-700 hover:scale-110">
-                <Gift size={48} className="text-white drop-shadow-lg" />
+            <div className="relative w-full h-full flex items-center justify-center">
+              <div className="w-24 h-24 rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center shadow-2xl transition-all duration-700 hover:scale-110 hover:rotate-3 backdrop-blur-sm">
+                <Gift size={48} strokeWidth={2} className="text-white drop-shadow-lg" />
               </div>
             </div>
           )}
           
-          {/* Overlay gradient */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white via-white/80 to-transparent" />
+          {/* Overlay gradient at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white via-white/90 to-transparent" />
 
-          {/* Tags Container - Left side */}
-          <div className="absolute top-4 left-4 flex items-center gap-2">
-            {/* Category Badge */}
+          {/* Tags Container - with margin from edge */}
+          <div className="absolute top-5 left-5 flex flex-wrap items-center gap-2 max-w-[calc(100%-80px)]">
+            {/* Category Badge - smaller */}
             {reward.categoria && (
-              <div className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 shadow-xl backdrop-blur-md flex items-center gap-2 overflow-hidden transition-all duration-500 hover:scale-105">
-                <div className="absolute inset-0 opacity-30 blur-xl bg-blue-400" />
-                <div className="relative flex-shrink-0 w-6 h-6 rounded-lg bg-white/25 ring-1 ring-white/40 flex items-center justify-center transition-transform duration-300 hover:rotate-12">
+              <div className="px-2.5 py-1 rounded-lg bg-white/95 backdrop-blur-md flex items-center gap-1.5 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="flex-shrink-0 w-5 h-5 rounded-md bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
                   {reward.categoria?.toLowerCase().includes('experiência') || reward.categoria?.toLowerCase().includes('experiencia') ? (
-                    <Star size={12} className="text-white drop-shadow-md" strokeWidth={2.5} />
+                    <Star size={10} className="text-white" strokeWidth={2.5} />
                   ) : reward.categoria?.toLowerCase().includes('prêmio') || reward.categoria?.toLowerCase().includes('premio') ? (
-                    <Award size={12} className="text-white drop-shadow-md" strokeWidth={2.5} />
+                    <Award size={10} className="text-white" strokeWidth={2.5} />
                   ) : (
-                    <Gift size={12} className="text-white drop-shadow-md" strokeWidth={2.5} />
+                    <Gift size={10} className="text-white" strokeWidth={2.5} />
                   )}
                 </div>
-                <span className="relative text-xs font-dm-sans font-semibold text-white drop-shadow-sm">
+                <span className="text-xs font-dm-sans font-semibold text-slate-700">
                   {reward.categoria}
                 </span>
               </div>
             )}
 
-            {/* Status Badge */}
-            <div className={`px-3 py-1.5 rounded-xl shadow-xl backdrop-blur-md flex items-center gap-2 overflow-hidden transition-all duration-500 hover:scale-105 ${
+            {/* Status Badge - smaller */}
+            <div className={`px-2.5 py-1 rounded-lg backdrop-blur-md flex items-center gap-1.5 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl ${
               isUnlocked 
-                ? 'bg-gradient-to-r from-emerald-400 to-green-500' 
-                : 'bg-gradient-to-r from-gray-400 to-slate-500'
+                ? 'bg-emerald-500/95' 
+                : 'bg-slate-400/95'
             }`}>
-              <div className={`absolute inset-0 opacity-30 blur-xl ${isUnlocked ? 'bg-emerald-300' : 'bg-gray-300'}`} />
-              <div className="relative flex-shrink-0 w-6 h-6 rounded-lg bg-white/25 ring-1 ring-white/40 flex items-center justify-center transition-transform duration-300 hover:rotate-12">
+              <div className="flex-shrink-0 w-5 h-5 rounded-md bg-white/30 flex items-center justify-center">
                 {isUnlocked ? (
-                  <CheckCircle size={12} className="text-white drop-shadow-md" strokeWidth={2.5} />
+                  <CheckCircle size={10} className="text-white" strokeWidth={2.5} />
                 ) : (
-                  <Clock size={12} className="text-white drop-shadow-md" strokeWidth={2.5} />
+                  <Clock size={10} className="text-white" strokeWidth={2.5} />
                 )}
               </div>
-              <span className="relative text-xs font-dm-sans font-semibold text-white drop-shadow-sm">
+              <span className="text-xs font-dm-sans font-semibold text-white">
                 {isUnlocked ? 'Desbloqueado' : 'Em progresso'}
               </span>
             </div>
           </div>
+
+          {/* Sparkle decoration */}
+          <div className="absolute bottom-5 right-5">
+            <Sparkles size={18} className="text-white/40 animate-pulse" />
+          </div>
         </div>
 
         {/* Content Section */}
-        <div className="p-6">
+        <div className="p-6 space-y-5">
           {/* Title */}
-          <h2 className="text-2xl font-ranade font-bold text-gray-900 mb-2">
-            {reward.name}
-          </h2>
-
-          {/* Points Badge */}
-          <div className="mb-4">
+          <div>
+            <h2 className="text-2xl font-ranade font-bold text-slate-900 mb-2">
+              {reward.name}
+            </h2>
+            {/* Points Badge */}
             <PointsBadge points={reward.points} size="lg" animated={isUnlocked} />
           </div>
 
           {/* Description */}
-          <div className="mb-6">
-            <p className="text-gray-600 font-dm-sans leading-relaxed">
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200">
+            <p className="text-slate-700 font-dm-sans leading-relaxed text-sm">
               {reward.descricao || 'Uma recompensa exclusiva aguarda por você! Continue acumulando pontos para desbloquear.'}
             </p>
           </div>
 
           {/* Progress Section (if not unlocked) */}
           {!isUnlocked && (
-            <div className="mb-6 p-5 bg-gradient-to-br from-blue-50 to-slate-100 rounded-2xl border border-blue-100 shadow-inner transition-all duration-500">
+            <div className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 shadow-inner">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-dm-sans text-gray-700 font-medium">Seu progresso</span>
-                <span className="text-sm font-dm-sans font-bold text-blue-700">
+                <span className="text-sm font-dm-sans text-slate-700 font-semibold">Seu progresso</span>
+                <span className="text-sm font-dm-sans font-bold text-blue-700 bg-white px-2.5 py-1 rounded-lg shadow-sm">
                   {Math.round(progressPercentage)}%
                 </span>
               </div>
-              <div className="h-4 bg-white rounded-full overflow-hidden shadow-inner border border-gray-200">
+              <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner border border-blue-200">
                 <div 
-                  className="h-full rounded-full transition-all duration-1000 ease-out"
+                  className="h-full rounded-full transition-all duration-1000 ease-out relative"
                   style={{ 
                     width: `${progressPercentage}%`,
                     background: 'linear-gradient(90deg, #60a5fa 0%, #3b82f6 40%, #2563eb 70%, #1e40af 100%)',
                     boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)'
                   }}
-                />
+                >
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+                </div>
               </div>
-              <p className="text-sm text-gray-600 mt-3 font-dm-sans">
-                Faltam <span className="font-bold text-blue-700">{pointsNeeded}</span> pontos para desbloquear
+              <p className="text-sm text-slate-600 mt-3 font-dm-sans">
+                Faltam <span className="font-bold text-blue-700 bg-white px-2 py-0.5 rounded">{pointsNeeded}</span> pontos para desbloquear
               </p>
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <Button
               variant="secondary"
               size="lg"
@@ -190,20 +206,22 @@ export function RewardDetailModal({
               Fechar
             </Button>
             {isUnlocked && (
-              <Button
-                variant="primary"
-                size="lg"
+              <button
                 onClick={() => {
                   onRedeem(reward.id);
                   onClose();
                 }}
                 disabled={loading}
-                loading={loading}
-                className="flex-1 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/30"
+                className="relative flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-lab-primary via-indigo-500 to-purple-600 text-white font-ranade font-semibold shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden group"
               >
-                <Gift size={20} className="mr-2" />
-                Resgatar Agora
-              </Button>
+                {/* Button shine effect */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                
+                <span className="relative flex items-center justify-center gap-2 text-white">
+                  <Gift size={20} />
+                  Resgatar Agora
+                </span>
+              </button>
             )}
           </div>
         </div>

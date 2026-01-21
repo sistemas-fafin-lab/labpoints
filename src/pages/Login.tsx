@@ -13,6 +13,7 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [colabHovered, setColabHovered] = useState(false);
 
   const { signIn } = useAuth();
   const { showToast } = useToast();
@@ -72,52 +73,120 @@ export function Login() {
         }} />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
-          <div className="max-w-md text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white min-h-screen">
+          <div className="max-w-md text-center flex flex-col justify-center flex-1 py-8">
             {/* Logo */}
-            <div className="mb-32 flex justify-center">
+            <div className="mb-16 mt-16 flex justify-center">
               <div className="relative">
-                <img src={logoIcon} alt="Lab Points" className="h-52 w-auto drop-shadow-2xl" />
-                <div className="absolute -inset-4 bg-white/20 rounded-full blur-2xl -z-10" />
+                <img src={logoIcon} alt="Lab Points" className="h-60 w-auto drop-shadow-2xl" />
+                <div className="absolute -inset-4 rounded-full blur-2xl -z-10" />
               </div>
             </div>
 
-            <h1 className="text-3xl font-ranade font-bold mb-4 text-white drop-shadow-lg">
-              Bem-vindo(a) de volta!
+            <h1 className="text-3xl font-ranade font-bold mb-6 text-white drop-shadow-lg">
+              Bem-vindo(a), <span 
+                className="relative inline-block group cursor-pointer"
+                onMouseEnter={() => setColabHovered(true)}
+                onMouseLeave={() => setColabHovered(false)}
+              >
+                <span className="relative z-10 bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent bg-[length:200%_100%] group-hover:animate-shimmer transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]">
+                  Colab!
+                </span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white/60 group-hover:w-full transition-all duration-500 rounded-full" />
+              </span>
             </h1>
-            <p className="text-lg text-white/80 font-dm-sans mb-12 mt-12">
+            <p className="text-lg text-white/80 font-dm-sans mb-12 leading-relaxed">
               Acumule pontos, conquiste recompensas e celebre suas conquistas.
             </p>
 
-            {/* Feature Cards */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
-                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                  <Gift size={28} className="text-white" />
+            {/* Container for Feature Cards and Tooltip - same space */}
+            <div className="relative min-h-[320px]">
+              {/* Feature Cards */}
+              <div className={`absolute inset-0 space-y-5 transition-all duration-500 ease-out ${colabHovered ? 'opacity-0 scale-95 blur-sm pointer-events-none' : 'opacity-100 scale-100 blur-0'}`}>
+                <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
+                  <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
+                    <Gift size={28} className="text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Recompensas Exclusivas</p>
+                    <p className="text-sm text-white/70 font-dm-sans">Troque seus pontos por prêmios incríveis</p>
+                  </div>
                 </div>
-                <div className="text-left">
-                  <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Recompensas Exclusivas</p>
-                  <p className="text-sm text-white/70 font-dm-sans">Troque seus pontos por prêmios incríveis</p>
+
+                <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
+                  <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
+                    <Star size={28} className="text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Reconhecimento</p>
+                    <p className="text-sm text-white/70 font-dm-sans">Seja valorizado pelo seu desempenho</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
+                  <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
+                    <Trophy size={28} className="text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Conquistas</p>
+                    <p className="text-sm text-white/70 font-dm-sans">Acompanhe seu progresso e metas</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
-                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                  <Star size={28} className="text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Reconhecimento</p>
-                  <p className="text-sm text-white/70 font-dm-sans">Seja valorizado pelo seu desempenho</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
-                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                  <Trophy size={28} className="text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Conquistas</p>
-                  <p className="text-sm text-white/70 font-dm-sans">Acompanhe seu progresso e metas</p>
+              {/* Colab Tooltip - appears in same space */}
+              <div className={`absolute inset-0 transition-all duration-500 ease-out ${colabHovered ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-95 blur-sm pointer-events-none'}`}>
+                <div className="relative bg-white/15 backdrop-blur-xl rounded-2xl border border-white/30 shadow-2xl shadow-black/20 overflow-hidden h-full">
+                  {/* Gradient Decorations */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                  <div className="absolute bottom-0 left-0 w-28 h-28 bg-blue-400/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-indigo-400/10 rounded-full blur-3xl" />
+                  
+                  <div className="relative p-5 h-full flex flex-col justify-center">
+                    {/* Header */}
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
+                        <Sparkles size={18} className="text-white" />
+                      </div>
+                      <h3 className="text-lg font-ranade font-bold text-white leading-tight">
+                        O que é ser um Colab?
+                      </h3>
+                    </div>
+                    
+                    {/* Body */}
+                    <div className="space-y-2.5 text-left">
+                      <p className="text-sm text-white font-dm-sans font-semibold leading-snug">
+                        Ser Colab é ser protagonista no Lab.
+                      </p>
+                      
+                      <div className="space-y-1.5">
+                        <p className="text-xs text-white/85 font-dm-sans leading-relaxed">
+                          É trabalhar em time, colocando o cliente sempre no centro.
+                        </p>
+                        <p className="text-xs text-white/85 font-dm-sans leading-relaxed">
+                          É assumir responsabilidade, agir com espírito empreendedor e praticar a empatia no dia a dia.
+                        </p>
+                        <p className="text-xs text-white/85 font-dm-sans leading-relaxed">
+                          É buscar constante evolução, aprendendo e melhorando a cada entrega.
+                        </p>
+                      </div>
+                      
+                      <div className="pt-2 border-t border-white/20">
+                        <p className="text-sm text-white/75 font-dm-sans italic leading-relaxed mt-2">
+                          No labpoints, cada atitude conta. Aqui, reconhecemos quem vive nossos valores.
+                        </p>
+                      </div>
+                      
+                      {/* Footer Quote */}
+                      <div className="pt-2.5 flex items-center justify-center gap-2.5">
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+                        <p className="text-sm font-ranade font-bold text-white whitespace-nowrap drop-shadow-lg">
+                          Ser colab é ser lab.
+                        </p>
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -288,7 +357,7 @@ export function Login() {
                 to="/cadastro"
                 className="font-semibold text-lab-primary hover:text-indigo-600 transition-colors inline-flex items-center gap-1 group"
               >
-                Cadastre-se gratuitamente
+                Cadastre-se agora!
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </p>

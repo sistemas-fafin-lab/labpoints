@@ -8,6 +8,8 @@ import { RewardCard } from '../components/RewardCard';
 import { PointsBadge } from '../components/ui/PointsBadge';
 import { RewardsTimeline } from '../components/RewardsTimeline';
 import { ApprovalQueue } from '../components/ApprovalQueue';
+import { RewardDetailModal } from '../components/RewardDetailModal';
+import { ValuesWheel } from '../components/ValuesWheel';
 import { useState } from 'react';
 import { createRedemption } from '../hooks/useRedemptions';
 import { useToast } from '../components/ui/Toast';
@@ -24,6 +26,7 @@ export function Dashboard() {
   } = usePointAssignments(user?.id);
   const { showToast } = useToast();
   const [redeeming, setRedeeming] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<typeof rewards[0] | null>(null);
 
   const canManageApprovals = user?.role === 'gestor' || user?.role === 'adm';
 
@@ -171,7 +174,7 @@ export function Dashboard() {
         )}
 
         {/* Rewards Section */}
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-6 sm:mb-24 mt-24 animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
             <h2 className="text-xl sm:text-2xl font-ranade font-bold text-gray-900">
               Recompensas em Destaque
@@ -203,6 +206,7 @@ export function Dashboard() {
                   <RewardCard
                     reward={reward}
                     userPoints={user.lab_points}
+                    onCardClick={() => setSelectedReward(reward)}
                   />
                 </div>
               ))}
@@ -280,7 +284,29 @@ export function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Reward Detail Modal */}
+        {selectedReward && (
+          <RewardDetailModal
+            isOpen={!!selectedReward}
+            onClose={() => setSelectedReward(null)}
+            reward={{
+              id: selectedReward.id,
+              name: selectedReward.titulo,
+              points: selectedReward.custo_points,
+              descricao: selectedReward.descricao,
+              imagem_url: selectedReward.imagem_url || undefined,
+              categoria: selectedReward.categoria
+            }}
+            userPoints={user.lab_points}
+            onRedeem={handleRewardRedeem}
+            loading={redeeming}
+          />
+        )}
       </div>
+
+      {/* Values Wheel FAB */}
+      <ValuesWheel />
     </div>
   );
 }

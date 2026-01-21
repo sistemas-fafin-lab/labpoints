@@ -7,14 +7,31 @@ interface RewardCardProps {
   reward: Reward;
   userPoints?: number;
   onRedeem?: () => void;
+  onCardClick?: () => void;
   loading?: boolean;
 }
 
-export function RewardCard({ reward, userPoints, onRedeem, loading }: RewardCardProps) {
+export function RewardCard({ reward, userPoints, onRedeem, onCardClick, loading }: RewardCardProps) {
   const canRedeem = userPoints !== undefined && userPoints >= reward.custo_points;
 
+  const handleCardClick = () => {
+    if (onCardClick) {
+      onCardClick();
+    }
+  };
+
+  const handleRedeemClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRedeem) {
+      onRedeem();
+    }
+  };
+
   return (
-    <div className="bg-white rounded-lab overflow-hidden shadow-lab-sm hover-lift border border-gray-100 flex flex-col group">
+    <div 
+      className={`bg-white rounded-lab overflow-hidden shadow-lab-sm hover-lift border border-gray-100 flex flex-col group ${onCardClick ? 'cursor-pointer' : ''}`}
+      onClick={handleCardClick}
+    >
       <div className="aspect-video bg-gradient-to-br from-lab-primary to-lab-primary-dark flex items-center justify-center overflow-hidden relative">
         {reward.imagem_url ? (
           <img
@@ -46,7 +63,7 @@ export function RewardCard({ reward, userPoints, onRedeem, loading }: RewardCard
             <Button
               variant="primary"
               size="sm"
-              onClick={onRedeem}
+              onClick={handleRedeemClick}
               disabled={!canRedeem || loading}
               loading={loading}
               className="flex-1"

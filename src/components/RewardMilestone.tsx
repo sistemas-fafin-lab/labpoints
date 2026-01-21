@@ -130,7 +130,7 @@ export function RewardMilestone({
             ) : (
               <div className="text-center">
                 <p className="text-xs sm:text-sm text-gray-500 font-dm-sans">
-                  Faltam <span className="font-bold text-blue-700">{points - userPoints}</span> pontos
+                  Faltam <span className="font-bold text-blue-700">{points - userPoints}</span> pontos para resgatar
                 </p>
               </div>
             )}

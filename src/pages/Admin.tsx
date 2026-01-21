@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Users, Award, Search, Edit, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Users, Award, Search, Edit, Plus, Trash2, ChevronDown, Upload, Image, X } from 'lucide-react';
 import { useUsers, updateUser } from '../hooks/useUsers';
-import { useRewards, createReward, updateReward, deleteReward } from '../hooks/useRewards';
+import { useRewards, createReward, updateReward, deleteReward, uploadRewardImage, deleteRewardImage } from '../hooks/useRewards';
 import { createTransaction } from '../hooks/useTransactions';
 import { useToast } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
@@ -41,6 +41,12 @@ export function Admin() {
   const [showRewardForm, setShowRewardForm] = useState(false);
   const [savingReward, setSavingReward] = useState(false);
   const [deletingReward, setDeletingReward] = useState<string | null>(null);
+  
+  // Image upload state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const filteredUsers = users.filter(
     (user) =>
@@ -174,6 +180,63 @@ export function Admin() {
     );
   };
 
+  // Image upload handlers
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      showToast('Tipo de arquivo não permitido. Use apenas JPEG ou PNG.', 'error');
+      return;
+    }
+
+    // Validate file size (5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showToast('Arquivo muito grande. O tamanho máximo é 5MB.', 'error');
+      return;
+    }
+
+    setImageFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    // Also clear the URL if editing
+    setRewardForm(prev => ({ ...prev, imagem_url: '' }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const resetRewardForm = () => {
+    setEditingReward(null);
+    setRewardForm({
+      titulo: '',
+      descricao: '',
+      custo_points: '',
+      categoria: '',
+      imagem_url: '',
+      ativo: true,
+    });
+    setImageFile(null);
+    setImagePreview(null);
+    setShowRewardForm(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleSaveReward = async () => {
     if (
       !rewardForm.titulo ||
@@ -194,9 +257,37 @@ export function Admin() {
     setSavingReward(true);
 
     try {
+      let imageUrl = rewardForm.imagem_url;
+
+      // Upload new image if selected
+      if (imageFile) {
+        setUploadingImage(true);
+        try {
+          // Delete old image if editing and there was a previous image
+          if (editingReward?.imagem_url) {
+            await deleteRewardImage(editingReward.imagem_url);
+          }
+          imageUrl = await uploadRewardImage(imageFile, editingReward?.id);
+        } catch (uploadError) {
+          showToast((uploadError as Error).message || 'Erro ao fazer upload da imagem', 'error');
+          setSavingReward(false);
+          setUploadingImage(false);
+          return;
+        }
+        setUploadingImage(false);
+      } else if (!imagePreview && editingReward?.imagem_url) {
+        // Image was removed during editing
+        await deleteRewardImage(editingReward.imagem_url);
+        imageUrl = '';
+      }
+
       const rewardData = {
-        ...rewardForm,
+        titulo: rewardForm.titulo,
+        descricao: rewardForm.descricao,
         custo_points: custo,
+        categoria: rewardForm.categoria,
+        imagem_url: imageUrl || null,
+        ativo: rewardForm.ativo,
       };
 
       if (editingReward) {
@@ -208,16 +299,7 @@ export function Admin() {
       }
 
       await refetchRewards();
-      setEditingReward(null);
-      setRewardForm({
-        titulo: '',
-        descricao: '',
-        custo_points: '',
-        categoria: '',
-        imagem_url: '',
-        ativo: true,
-      });
-      setShowRewardForm(false);
+      resetRewardForm();
     } catch (error) {
       showToast('Erro ao salvar recompensa', 'error');
     } finally {
@@ -251,6 +333,13 @@ export function Admin() {
       imagem_url: reward.imagem_url || '',
       ativo: reward.ativo,
     });
+    // Set image preview if reward has an image
+    if (reward.imagem_url) {
+      setImagePreview(reward.imagem_url);
+    } else {
+      setImagePreview(null);
+    }
+    setImageFile(null);
     setShowRewardForm(true);
   };
 
@@ -377,15 +466,7 @@ export function Admin() {
                   <Button
                     variant="primary"
                     onClick={() => {
-                      setEditingReward(null);
-                      setRewardForm({
-                        titulo: '',
-                        descricao: '',
-                        custo_points: '',
-                        categoria: '',
-                        imagem_url: '',
-                        ativo: true,
-                      });
+                      resetRewardForm();
                       setShowRewardForm(true);
                     }}
                   >
@@ -425,13 +506,60 @@ export function Admin() {
                         }
                         required
                       />
-                      <Input
-                        label="URL da Imagem"
-                        value={rewardForm.imagem_url}
-                        onChange={(e) =>
-                          setRewardForm({ ...rewardForm, imagem_url: e.target.value })
-                        }
-                      />
+                      
+                      {/* Image Upload */}
+                      <div>
+                        <label className="block text-sm font-dm-sans font-medium text-lab-gray-700 mb-2">
+                          Imagem da Recompensa
+                        </label>
+                        
+                        {imagePreview ? (
+                          <div className="relative rounded-xl overflow-hidden border-2 border-gray-200">
+                            <img 
+                              src={imagePreview} 
+                              alt="Preview" 
+                              className="w-full h-36 object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleRemoveImage}
+                              disabled={savingReward}
+                              className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors shadow-lg disabled:opacity-50"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ) : (
+                          <div 
+                            onClick={() => !savingReward && fileInputRef.current?.click()}
+                            className={`border-2 border-dashed border-gray-300 rounded-xl p-6 text-center transition-colors ${
+                              savingReward ? 'opacity-50 cursor-not-allowed' : 'hover:border-lab-primary cursor-pointer'
+                            }`}
+                          >
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="p-2 rounded-full bg-gray-100">
+                                <Image size={24} className="text-gray-400" />
+                              </div>
+                              <p className="text-sm font-dm-sans text-gray-600">
+                                Clique para upload
+                              </p>
+                              <p className="text-xs text-gray-400">
+                                JPEG ou PNG (máx. 5MB)
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          onChange={handleFileSelect}
+                          className="hidden"
+                          disabled={savingReward}
+                        />
+                      </div>
+
                       <div className="md:col-span-2">
                         <label className="block text-sm font-dm-sans font-medium text-lab-gray-700 mb-2">
                           Descrição
@@ -467,22 +595,16 @@ export function Admin() {
                         onClick={handleSaveReward}
                         loading={savingReward}
                       >
-                        {editingReward ? 'Salvar Alterações' : 'Criar Recompensa'}
+                        {uploadingImage 
+                          ? 'Enviando imagem...' 
+                          : editingReward 
+                            ? 'Salvar Alterações' 
+                            : 'Criar Recompensa'
+                        }
                       </Button>
                       <Button
                         variant="secondary"
-                        onClick={() => {
-                          setEditingReward(null);
-                          setRewardForm({
-                            titulo: '',
-                            descricao: '',
-                            custo_points: '',
-                            categoria: '',
-                            imagem_url: '',
-                            ativo: true,
-                          });
-                          setShowRewardForm(false);
-                        }}
+                        onClick={resetRewardForm}
                         disabled={savingReward}
                       >
                         Cancelar

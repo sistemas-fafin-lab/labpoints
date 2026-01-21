@@ -1,23 +1,30 @@
 import { useState } from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Plus } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRewards } from '../hooks/useRewards';
 import { useToast } from '../components/ui/Toast';
 import { RewardCard } from '../components/RewardCard';
 import { RedeemModal } from '../components/RedeemModal';
+import { RewardDetailModal } from '../components/RewardDetailModal';
+import { AddRewardModal } from '../components/AddRewardModal';
+import { Button } from '../components/ui/Button';
 import { createRedemption } from '../hooks/useRedemptions';
 import { Reward } from '../lib/supabase';
 
 export function Rewards() {
   const { user, refreshUser } = useAuth();
-  const { rewards, loading } = useRewards(true);
+  const { rewards, loading, refetch: refetchRewards } = useRewards(true);
   const { showToast } = useToast();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [sortBy, setSortBy] = useState<'preco-asc' | 'preco-desc' | 'recente'>('recente');
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
+  const [detailReward, setDetailReward] = useState<Reward | null>(null);
   const [redeeming, setRedeeming] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const isAdmin = user?.role === 'adm';
 
   if (!user) return null;
 
@@ -61,17 +68,63 @@ export function Rewards() {
     }
   };
 
+  const handleRedeemFromDetail = async (rewardId: string) => {
+    const reward = rewards.find(r => r.id === rewardId);
+    if (!reward || !user) return;
+
+    if (user.lab_points < reward.custo_points) {
+      showToast('Pontos insuficientes para resgatar esta recompensa', 'error');
+      return;
+    }
+
+    setRedeeming(true);
+
+    try {
+      await createRedemption({
+        user_id: user.id,
+        reward_id: rewardId,
+        custo_points: reward.custo_points,
+      });
+
+      await refreshUser();
+      showToast('Recompensa resgatada com sucesso!', 'success');
+      setDetailReward(null);
+    } catch (error) {
+      showToast('Erro ao resgatar recompensa', 'error');
+    } finally {
+      setRedeeming(false);
+    }
+  };
+
+  const handleAddRewardSuccess = async () => {
+    await refetchRewards();
+    setShowAddModal(false);
+    showToast('Recompensa cadastrada com sucesso!', 'success');
+  };
+
   return (
     <div className="min-h-screen bg-lab-gray-100 pt-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 animate-fade-in">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-gray-900 mb-2">
-            Catálogo de Recompensas 🎁
-          </h1>
-          <p className="text-sm sm:text-base text-lab-gray-700 font-dm-sans">
-            Escolha suas recompensas e resgate com seus Lab Points
-          </p>
+        <div className="mb-6 sm:mb-8 animate-fade-in flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-gray-900 mb-2">
+              Catálogo de Recompensas 🎁
+            </h1>
+            <p className="text-sm sm:text-base text-lab-gray-700 font-dm-sans">
+              Escolha suas recompensas e resgate com seus Lab Points
+            </p>
+          </div>
+          {isAdmin && (
+            <Button
+              variant="primary"
+              onClick={() => setShowAddModal(true)}
+              className="self-start sm:self-auto"
+            >
+              <Plus size={20} className="mr-2" />
+              Cadastrar Recompensa
+            </Button>
+          )}
         </div>
 
         {/* Filters */}
@@ -151,6 +204,7 @@ export function Rewards() {
                   reward={reward}
                   userPoints={user.lab_points}
                   onRedeem={() => setSelectedReward(reward)}
+                  onCardClick={() => setDetailReward(reward)}
                 />
               </div>
             ))}
@@ -165,6 +219,7 @@ export function Rewards() {
         )}
       </div>
 
+      {/* Redeem Confirmation Modal */}
       {selectedReward && (
         <RedeemModal
           reward={selectedReward}
@@ -173,6 +228,34 @@ export function Rewards() {
           onClose={() => setSelectedReward(null)}
           onConfirm={handleRedeem}
           loading={redeeming}
+        />
+      )}
+
+      {/* Reward Detail Modal */}
+      {detailReward && (
+        <RewardDetailModal
+          isOpen={!!detailReward}
+          onClose={() => setDetailReward(null)}
+          reward={{
+            id: detailReward.id,
+            name: detailReward.titulo,
+            points: detailReward.custo_points,
+            descricao: detailReward.descricao,
+            imagem_url: detailReward.imagem_url || undefined,
+            categoria: detailReward.categoria
+          }}
+          userPoints={user.lab_points}
+          onRedeem={handleRedeemFromDetail}
+          loading={redeeming}
+        />
+      )}
+
+      {/* Add Reward Modal (Admin only) */}
+      {isAdmin && (
+        <AddRewardModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSuccess={handleAddRewardSuccess}
         />
       )}
     </div>

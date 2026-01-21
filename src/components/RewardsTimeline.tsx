@@ -51,7 +51,7 @@ export function RewardsTimeline({
               Próximas Recompensas
             </h2>
             <p className="text-sm text-lab-gray-700 font-dm-sans mt-1">
-              Continue acumulando pontos para desbloquear recompensas
+              Você pode utilizar seu saldo para resgatar recompensas ou acumular pontos para desbloquear recompensas ainda melhores
             </p>
           </div>
           <PointsBadge points={userPoints} size="lg" animated />
@@ -117,8 +117,8 @@ export function RewardsTimeline({
             <TrendingUp className="text-lab-primary" size={28} />
             Próximas Recompensas
           </h2>
-          <p className="text-sm text-lab-gray-700 font-dm-sans mt-1">
-            Continue acumulando pontos para desbloquear recompensas
+          <p className="text-md text-lab-gray-700 font-dm-sans mt-1">
+            Você pode utilizar seu saldo para resgatar recompensas ou acumular pontos para desbloquear recompensas ainda melhores
           </p>
         </div>
         <PointsBadge points={userPoints} size="lg" animated />
@@ -127,10 +127,10 @@ export function RewardsTimeline({
       {/* Progress Bar Container */}
       <div className="mb-10">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-dm-sans font-medium text-gray-700">
+          <span className="text-md font-dm-sans font-medium text-gray-700 mt-4">
             Progresso Total
           </span>
-          <span className="text-sm font-dm-sans font-bold text-blue-700">
+          <span className="text-md font-dm-sans font-bold text-blue-700 mt-4">
             {userPoints} / {maxPoints} pts ({progressPercentage.toFixed(0)}%)
           </span>
         </div>
@@ -183,11 +183,11 @@ export function RewardsTimeline({
       <div className="mt-6 pt-6 border-t border-gray-200">
         <div className="flex flex-wrap gap-6 justify-center text-xs sm:text-sm font-dm-sans">
           <div className="flex items-center gap-2 transition-transform duration-300 hover:scale-110">
-            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 shadow-md" />
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 shadow-md" />
             <span className="text-gray-700 font-medium">Desbloqueado</span>
           </div>
           <div className="flex items-center gap-2 transition-transform duration-300 hover:scale-110">
-            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 shadow-md" />
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 shadow-md" />
             <span className="text-gray-700 font-medium">Bloqueado</span>
           </div>
         </div>
