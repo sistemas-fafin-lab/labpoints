@@ -21,7 +21,12 @@ html {
   /* Keep login page at 100% font size even on large screens */
   html:has(.login-page-container) {
     font-size: 100%;
-  }}
+  }
+  /* Keep signup page at 100% font size even on large screens */
+  html:has(.signup-page-container) {
+    font-size: 100%;
+  }
+}
 
 body, p, span, input, button, textarea, select, label, div {
   font-family: var(--lab-font-family);

@@ -102,7 +102,7 @@ export function Signup() {
   const passwordStrength = getPasswordStrength();
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex signup-page-container">
       {/* Left Side - Decorative */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700">
         {/* Animated Background Elements */}
@@ -125,7 +125,7 @@ export function Signup() {
             <div className="mb-8 flex justify-center">
               <div className="relative">
                 <img src={logoIcon} alt="Lab Points" className="h-56 w-auto drop-shadow-2xl" />
-                <div className="absolute -inset-4 bg-white/20 rounded-full blur-2xl -z-10" />
+                <div className="absolute -inset-4  rounded-full blur-2xl -z-10" />
               </div>
             </div>
 
@@ -137,7 +137,7 @@ export function Signup() {
             </p>
 
             {/* Benefits */}
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15">
                 <div className="w-14 h-14 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/20">
                   <CheckCircle2 size={28} className="text-white" />
