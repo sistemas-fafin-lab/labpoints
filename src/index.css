@@ -14,7 +14,7 @@ html {
 }
 
 /* Increase font size for large screens (>1600px) */
-@media (min-width: 1500px) {
+@media (min-width: 1600px) {
   html {
     font-size: 120%; /* 20% larger base font size for better readability on large screens */
   }  
