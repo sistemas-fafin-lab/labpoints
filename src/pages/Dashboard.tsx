@@ -101,16 +101,26 @@ export function Dashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-white rounded-lab p-5 sm:p-6 shadow-lab-sm hover-lift border border-gray-100 animate-scale-in">
+          {/* Hero Balance Card - Primary focal point */}
+          <div className="hero-balance-card rounded-lab p-5 sm:p-6 hover-lift">
             <div className="flex items-center gap-5 sm:gap-6">
-              <div className="p-3 bg-lab-gradient rounded-lg shadow-lab-sm mr-2">
-                <Award className="text-white" size={24} />
+              {/* Larger icon with matching blue palette */}
+              <div className="p-4 bg-white/15 backdrop-blur-sm rounded-xl shadow-lg mr-2">
+                <Award className="text-white drop-shadow-md" size={48} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm sm:text-base font-dm-sans text-lab-gray-700 mb-1">
-                  Saldo Atual
+                {/* Upper label - small, subtle */}
+                <p className="text-[10px] sm:text-sm font-dm-sans font-bold text-white uppercase tracking-wider mb-1">
+                  Seu Saldo
                 </p>
-                <PointsBadge points={user.lab_points} size="md" />
+                {/* Prominent balance value */}
+                <p className="text-3xl sm:text-4xl font-ranade font-bold text-white drop-shadow-sm">
+                  {user.lab_points.toLocaleString('pt-BR')}
+                </p>
+                {/* Subtle supporting text */}
+                <p className="text-xs sm:text-sm font-dm-sans text-white/70 mt-1">
+                  Lab Points disponíveis
+                </p>
               </div>
             </div>
           </div>

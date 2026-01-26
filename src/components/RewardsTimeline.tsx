@@ -33,10 +33,20 @@ export function RewardsTimeline({
   const maxPoints = sortedRewards[sortedRewards.length - 1]?.points || 1000;
   const progressPercentage = Math.min((userPoints / maxPoints) * 100, 100);
 
-  // Determine which rewards are unlocked
-  const rewardsWithStatus = sortedRewards.map((reward) => ({
+  // Find the next target reward (first reward the user hasn't unlocked yet)
+  const nextTargetIndex = sortedRewards.findIndex(reward => userPoints < reward.points);
+  const nextTargetReward = nextTargetIndex !== -1 ? sortedRewards[nextTargetIndex] : null;
+  const pointsToNextTarget = nextTargetReward ? nextTargetReward.points - userPoints : 0;
+
+  // Find first unlocked reward for CTA hierarchy (primary vs secondary buttons)
+  const firstUnlockedIndex = sortedRewards.findIndex(reward => userPoints >= reward.points);
+
+  // Determine which rewards are unlocked and which is the next target
+  const rewardsWithStatus = sortedRewards.map((reward, index) => ({
     ...reward,
     isUnlocked: userPoints >= reward.points,
+    isNextTarget: index === nextTargetIndex,
+    isFirstUnlocked: index === firstUnlockedIndex,
     position: (reward.points / maxPoints) * 100
   }));
 
@@ -93,6 +103,8 @@ export function RewardsTimeline({
                   userPoints={userPoints}
                   position={index}
                   isUnlocked={reward.isUnlocked}
+                  isNextTarget={reward.isNextTarget}
+                  isFirstUnlocked={reward.isFirstUnlocked}
                   onRedeem={onRedeem}
                   loading={loading}
                   descricao={reward.descricao}
@@ -109,7 +121,7 @@ export function RewardsTimeline({
 
   // Horizontal Timeline
   return (
-    <div className="bg-white rounded-lab p-6 sm:p-8 shadow-lab-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-lab p-6 sm:p-8 mt-32 shadow-lab-sm border border-gray-100 overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
         <div>
@@ -134,6 +146,18 @@ export function RewardsTimeline({
             {userPoints} / {maxPoints} pts ({progressPercentage.toFixed(0)}%)
           </span>
         </div>
+        
+        {/* Motivational message for next target - simplified */}
+        {nextTargetReward && (
+          <div className="mb-4 p-2.5 bg-gradient-to-r from-slate-50 to-blue-50/80 rounded-lg border border-blue-100/60 animate-fade-in">
+            <p className="text-sm font-dm-sans text-gray-600 text-center">
+              <span className="text-lab-primary font-semibold">+{pointsToNextTarget} pts</span>
+              {' '}para{' '}
+              <span className="font-medium text-gray-800">{nextTargetReward.name}</span>
+            </p>
+          </div>
+        )}
+        
         <div className="relative h-5 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200">
           <div
             className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
@@ -147,9 +171,9 @@ export function RewardsTimeline({
       </div>
 
       {/* Horizontal Scrollable Timeline */}
-      <div className="relative min-h-[320px]">
+      <div className="relative min-h-[380px]">
         <div className="overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 hover:scrollbar-thumb-blue-600 transition-colors duration-300">
-          <div className="flex items-start gap-4 sm:gap-6 min-w-max px-4 pt-2">
+          <div className="flex items-start gap-4 sm:gap-6 min-w-max px-4 pt-8">
             {rewardsWithStatus.map((reward, index) => (
               <RewardMilestone
                 key={reward.id}
@@ -159,6 +183,8 @@ export function RewardsTimeline({
                 userPoints={userPoints}
                 position={index}
                 isUnlocked={reward.isUnlocked}
+                isNextTarget={reward.isNextTarget}
+                isFirstUnlocked={reward.isFirstUnlocked}
                 onRedeem={onRedeem}
                 loading={loading}
                 descricao={reward.descricao}
@@ -179,16 +205,20 @@ export function RewardsTimeline({
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <div className="flex flex-wrap gap-6 justify-center text-xs sm:text-sm font-dm-sans">
-          <div className="flex items-center gap-2 transition-transform duration-300 hover:scale-110">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 shadow-md" />
-            <span className="text-gray-700 font-medium">Desbloqueado</span>
+      {/* Legend - refined: smaller, subtler */}
+      <div className="mt-5 pt-4 border-t border-gray-100">
+        <div className="flex flex-wrap gap-5 justify-center text-[11px] font-dm-sans opacity-60">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-400 to-blue-700" />
+            <span className="text-gray-500">Disponível</span>
           </div>
-          <div className="flex items-center gap-2 transition-transform duration-300 hover:scale-110">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 shadow-md" />
-            <span className="text-gray-700 font-medium">Bloqueado</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-300 to-indigo-400 ring-1 ring-blue-200" />
+            <span className="text-gray-500">Próxima</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-300 to-gray-400" />
+            <span className="text-gray-500">Bloqueado</span>
           </div>
         </div>
       </div>

@@ -3,6 +3,8 @@ import { Lock, Award } from 'lucide-react';
 import { Button } from './ui/Button';
 import { PointsBadge } from './ui/PointsBadge';
 import { RewardDetailModal } from './RewardDetailModal';
+import { RedeemModal } from './RedeemModal';
+import type { Reward } from '../lib/supabase';
 
 interface RewardMilestoneProps {
   id: string;
@@ -11,6 +13,8 @@ interface RewardMilestoneProps {
   userPoints: number;
   position: number;
   isUnlocked: boolean;
+  isNextTarget?: boolean;
+  isFirstUnlocked?: boolean;
   onRedeem: (rewardId: string) => void;
   loading?: boolean;
   descricao?: string;
@@ -25,6 +29,7 @@ export function RewardMilestone({
   userPoints,
   position,
   isUnlocked,
+  isNextTarget = false,
   onRedeem,
   loading,
   descricao,
@@ -32,6 +37,11 @@ export function RewardMilestone({
   categoria
 }: RewardMilestoneProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  // Calculate progress percentage for next target
+  const progressToUnlock = Math.min((userPoints / points) * 100, 100);
+  const pointsRemaining = Math.max(points - userPoints, 0);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -43,15 +53,31 @@ export function RewardMilestone({
   return (
     <>
       <div
-        className={`relative flex flex-col items-center transition-all duration-500 ease-out animate-fade-in pb-2 ${
-          isUnlocked ? 'opacity-100' : 'opacity-50'
+        className={`relative flex flex-col items-center transition-all duration-500 ease-out pb-2 pt-4 ${
+          isUnlocked 
+            ? 'opacity-100' 
+            : isNextTarget 
+              ? 'opacity-100 next-target-card' 
+              : 'opacity-50'
         }`}
-        style={{ animationDelay: `${position * 0.1}s` }}
+        style={{ 
+          animationDelay: `${position * 0.1}s`,
+          // Slight scale emphasis for next target
+          transform: isNextTarget ? 'scale(1.03)' : 'scale(1)'
+        }}
       >
+        {/* "PRÓXIMA META" Badge - posicionado acima do círculo */}
+        {isNextTarget && (
+          <div className="mb-2 z-20 animate-fade-in">
+            <span className="px-2.5 py-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-[9px] font-semibold uppercase tracking-wide rounded-full shadow-md whitespace-nowrap">
+              Próxima
+            </span>
+          </div>
+        )}
         {/* Connector Line (appears before milestone) */}
         {position > 0 && (
           <div 
-            className={`absolute top-12 sm:top-14 left-0 w-4 sm:w-6 h-1 -translate-x-full transition-all duration-700 ease-in-out ${
+            className={`absolute top-[50px] sm:top-[60px] left-0 w-4 sm:w-6 h-1 -translate-x-full -translate-y-1/2 transition-all duration-700 ease-in-out ${
               isUnlocked 
                 ? 'bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800' 
                 : 'bg-gray-300'
@@ -65,26 +91,37 @@ export function RewardMilestone({
         {/* Milestone Circle */}
         <div
           className={`relative z-10 mb-4 sm:mb-5 transition-transform duration-300 ease-out ${
-            isUnlocked ? 'drop-shadow-xl' : ''
+            isUnlocked || isNextTarget ? 'drop-shadow-xl' : ''
           }`}
         >
           <div
             className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 ${
               isUnlocked
                 ? 'bg-gradient-to-br from-blue-400 via-blue-600 to-blue-900 ring-4 ring-blue-300/40'
-                : 'bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-gray-400'
+                : isNextTarget
+                  ? 'bg-gradient-to-br from-blue-300 via-indigo-500 to-blue-600 ring-4 ring-blue-200/60 animate-pulse-glow-target-refined'
+                  : 'bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-gray-400'
             }`}
           >
             {isUnlocked ? (
-              <Award size={40} className="text-white drop-shadow-lg" strokeWidth={2.5} />
+              <Award size={64} className="text-white drop-shadow-lg" strokeWidth={2.5} />
+            ) : isNextTarget ? (
+              <Award size={64} className="text-white drop-shadow-lg" strokeWidth={2.5} />
             ) : (
-              <Lock size={32} className="text-gray-500" />
+              <Lock size={36} className="text-gray-500" />
             )}
           </div>
 
-          {/* Progress Percentage Badge */}
-          {!isUnlocked && userPoints < points && (
-            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-blue-500 to-blue-700 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-md">
+          {/* Progress Percentage Badge - refined blue tones */}
+          {isNextTarget && (
+            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-[10px] font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-md ring-2 ring-white">
+              {Math.round(progressToUnlock)}%
+            </div>
+          )}
+          
+          {/* Progress badge for other locked rewards */}
+          {!isUnlocked && !isNextTarget && userPoints < points && (
+            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-gray-400 to-gray-500 text-white text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
               {Math.round((userPoints / points) * 100)}%
             </div>
           )}
@@ -92,7 +129,9 @@ export function RewardMilestone({
 
         {/* Milestone Card with Neon Border Effect */}
         <div 
-          className="neon-card-wrapper cursor-pointer"
+          className={`neon-card-wrapper cursor-pointer ${
+            isNextTarget ? 'next-target-wrapper-refined' : ''
+          }`}
           onClick={handleCardClick}
         >
           {/* Card Content */}
@@ -100,11 +139,18 @@ export function RewardMilestone({
             className={`neon-card-content p-4 shadow-md min-w-[200px] sm:min-w-[240px] transition-all duration-300 ease-out ${
               isUnlocked
                 ? 'hover:shadow-lg hover:-translate-y-1'
-                : ''
+                : isNextTarget
+                  ? 'ring-1 ring-blue-300/40 hover:shadow-lg hover:-translate-y-1'
+                  : ''
             }`}
           >
+            {/* Card title with appropriate styling */}
             <h3 className={`font-ranade font-bold text-base sm:text-lg mb-2 text-center transition-colors duration-300 ${
-              isUnlocked ? 'text-gray-900 group-hover:text-blue-700' : 'text-gray-500'
+              isUnlocked 
+                ? 'text-gray-900 group-hover:text-blue-700' 
+                : isNextTarget
+                  ? 'text-gray-900'
+                  : 'text-gray-500'
             }`}>
               {name}
             </h3>
@@ -113,24 +159,41 @@ export function RewardMilestone({
               <PointsBadge points={points} size="md" />
             </div>
 
+            {/* CTA based on reward state - todos com variant secondary */}
             {isUnlocked ? (
+              /* Unlocked: Abre modal de confirmação */
               <Button
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onRedeem(id);
+                  setIsConfirmModalOpen(true);
                 }}
                 disabled={loading}
                 loading={loading}
-                className="w-full transition-all duration-300 hover:scale-105"
+                className="w-full transition-all duration-300 hover:scale-102"
               >
-                Resgatar Recompensa
+                Resgatar
               </Button>
+            ) : isNextTarget ? (
+              /* Next Target: Simplified progress feedback */
+              <div className="text-center space-y-2">
+                <p className="text-xs text-blue-600 font-dm-sans font-medium">
+                  +{pointsRemaining} pts
+                </p>
+                {/* Animated progress bar - refined blue tones */}
+                <div className="relative h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${progressToUnlock}%` }}
+                  />
+                </div>
+              </div>
             ) : (
+              /* Locked: Minimal info */
               <div className="text-center">
-                <p className="text-xs sm:text-sm text-gray-500 font-dm-sans">
-                  Faltam <span className="font-bold text-blue-700">{points - userPoints}</span> pontos para resgatar
+                <p className="text-[11px] text-gray-400 font-dm-sans">
+                  +{pointsRemaining} pts
                 </p>
               </div>
             )}
@@ -152,6 +215,29 @@ export function RewardMilestone({
         }}
         userPoints={userPoints}
         onRedeem={onRedeem}
+        loading={loading}
+      />
+
+      {/* Modal de Confirmação de Resgate */}
+      <RedeemModal
+        reward={{
+          id,
+          titulo: name,
+          descricao: descricao || '',
+          custo_points: points,
+          categoria: categoria || '',
+          ativo: true,
+          created_at: '',
+          updated_at: '',
+          imagem_url: imagem_url || null
+        } as Reward}
+        userPoints={userPoints}
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          onRedeem(id);
+          setIsConfirmModalOpen(false);
+        }}
         loading={loading}
       />
     </>

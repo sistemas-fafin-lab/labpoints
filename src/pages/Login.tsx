@@ -14,6 +14,7 @@ export function Login() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [colabHovered, setColabHovered] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const { signIn } = useAuth();
   const { showToast } = useToast();
@@ -103,33 +104,72 @@ export function Login() {
             <div className="relative min-h-[320px]">
               {/* Feature Cards */}
               <div className={`absolute inset-0 space-y-5 transition-all duration-500 ease-out ${colabHovered ? 'opacity-0 scale-95 blur-sm pointer-events-none' : 'opacity-100 scale-100 blur-0'}`}>
-                <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
-                  <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                    <Gift size={28} className="text-white" />
+                {/* Gift Card */}
+                <div 
+                  onClick={() => setExpandedCard(expandedCard === 'gift' ? null : 'gift')}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 transition-all duration-300 hover:bg-white/15 hover:shadow-xl hover:shadow-white/10 cursor-pointer group overflow-hidden"
+                >
+                  <div className="flex items-center gap-4 p-4">
+                    <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110 flex-shrink-0">
+                      <Gift size={28} className="text-white" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Recompensas Exclusivas</p>
+                      <p className="text-sm text-white/70 font-dm-sans">Troque seus pontos por prêmios incríveis</p>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Recompensas Exclusivas</p>
-                    <p className="text-sm text-white/70 font-dm-sans">Troque seus pontos por prêmios incríveis</p>
+                  <div className={`transition-all duration-300 ease-in-out ${expandedCard === 'gift' ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-4 pb-4 pt-2 border-t border-white/10">
+                      <p className="text-xs text-white/80 font-dm-sans leading-relaxed">
+                        Acesse um catálogo variado de recompensas físicas e experiências. Desde gadgets tecnológicos até vouchers de lazer, cada ponto acumulado te aproxima do que você deseja.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
-                  <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                    <Star size={28} className="text-white" />
+                {/* Star Card */}
+                <div 
+                  onClick={() => setExpandedCard(expandedCard === 'star' ? null : 'star')}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 transition-all duration-300 hover:bg-white/15 hover:shadow-xl hover:shadow-white/10 cursor-pointer group overflow-hidden"
+                >
+                  <div className="flex items-center gap-4 p-4">
+                    <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110 flex-shrink-0">
+                      <Star size={28} className="text-white" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Reconhecimento</p>
+                      <p className="text-sm text-white/70 font-dm-sans">Seja valorizado pelo seu desempenho</p>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Reconhecimento</p>
-                    <p className="text-sm text-white/70 font-dm-sans">Seja valorizado pelo seu desempenho</p>
+                  <div className={`transition-all duration-300 ease-in-out ${expandedCard === 'star' ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-4 pb-4 pt-2 border-t border-white/10">
+                      <p className="text-xs text-white/80 font-dm-sans leading-relaxed">
+                        Receba pontos ao demonstrar nossos valores no dia a dia. Cada atitude positiva é reconhecida pela liderança e colegas, fortalecendo a cultura colaborativa do Lab.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10 cursor-pointer group">
-                  <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                    <Trophy size={28} className="text-white" />
+                {/* Trophy Card */}
+                <div 
+                  onClick={() => setExpandedCard(expandedCard === 'trophy' ? null : 'trophy')}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 transition-all duration-300 hover:bg-white/15 hover:shadow-xl hover:shadow-white/10 cursor-pointer group overflow-hidden"
+                >
+                  <div className="flex items-center gap-4 p-4">
+                    <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110 flex-shrink-0">
+                      <Trophy size={28} className="text-white" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Conquistas</p>
+                      <p className="text-sm text-white/70 font-dm-sans">Acompanhe seu progresso e metas</p>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <p className="font-ranade font-semibold text-white transition-all duration-300 group-hover:scale-105">Conquistas</p>
-                    <p className="text-sm text-white/70 font-dm-sans">Acompanhe seu progresso e metas</p>
+                  <div className={`transition-all duration-300 ease-in-out ${expandedCard === 'trophy' ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-4 pb-4 pt-2 border-t border-white/10">
+                      <p className="text-xs text-white/80 font-dm-sans leading-relaxed">
+                        Visualize seu saldo em tempo real e acompanhe suas transações. Defina metas pessoais e veja quanto falta para alcançar a próxima recompensa desejada.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
