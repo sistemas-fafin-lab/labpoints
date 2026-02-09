@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../hooks/useTransactions';
 import { useRedemptions } from '../hooks/useRedemptions';
 import { useToast } from '../components/ui/Toast';
-import { Avatar } from '../components/ui/Avatar';
+import { ProfilePhotoUpload } from '../components/ProfilePhotoUpload';
 import { PointsBadge } from '../components/ui/PointsBadge';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
@@ -62,11 +62,16 @@ export function Profile() {
           <div className="px-8 md:px-24 pb-16">
             {/* Header de perfil */}
             <div className="flex flex-col md:flex-row items-start md:items-end gap-8 lg:gap-12 -mt-12 md:-mt-16 mb-16 md:mb-24">
-              <Avatar
-                src={user.avatar_url}
-                alt={user.nome}
-                size="md"
-                fallbackText={user.nome}
+              <ProfilePhotoUpload
+                userId={user.id}
+                currentAvatarUrl={user.avatar_url}
+                userName={user.nome}
+                size="xl"
+                editable={true}
+                onUploadComplete={() => {
+                  refreshUser();
+                  showToast('Foto atualizada com sucesso!', 'success');
+                }}
               />
 
               <div className="flex-1 space-y-2">

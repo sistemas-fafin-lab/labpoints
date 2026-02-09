@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle, Tag } from 'lucide-react';
+import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle, Tag, ChevronDown } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
 import { useToast } from './ui/Toast';
@@ -29,6 +29,8 @@ export function AssignPointsModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<'select' | 'form'>('select');
+  const [reasonDropdownOpen, setReasonDropdownOpen] = useState(false);
+  const reasonDropdownRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
 
   // Filter users based on search
@@ -51,8 +53,23 @@ export function AssignPointsModal({
       setSearchTerm('');
       setError(null);
       setStep('select');
+      setReasonDropdownOpen(false);
     }
   }, [isOpen]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (reasonDropdownRef.current && !reasonDropdownRef.current.contains(event.target as Node)) {
+        setReasonDropdownOpen(false);
+      }
+    };
+
+    if (reasonDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [reasonDropdownOpen]);
 
   // Block body scroll when modal is open
   useEffect(() => {
@@ -78,7 +95,52 @@ export function AssignPointsModal({
   const handleBack = () => {
     setStep('select');
     setError(null);
+    setReasonDropdownOpen(false);
   };
+
+  const reasonGroups = [
+    {
+      label: 'COLABORAÇÃO',
+      options: [
+        { value: 'colaboracao_intersetorial', label: 'Colaboração intersetorial' },
+        { value: 'colaboracao_intrasetorial', label: 'Colaboração intrasetorial' },
+      ]
+    },
+    {
+      label: 'PROCESSOS',
+      options: [
+        { value: 'auditoria_processos_internos', label: 'Auditoria de processos internos' },
+        { value: 'otimizacao_processos', label: 'Otimização de processos' },
+      ]
+    },
+    {
+      label: 'COMPORTAMENTO PROFISSIONAL',
+      options: [
+        { value: 'postura_empatica', label: 'Postura empática' },
+        { value: 'postura_disciplina_autocontrole', label: 'Postura, disciplina e autocontrole' },
+        { value: 'responsabilidade_compromisso', label: 'Responsabilidade e compromisso' },
+      ]
+    },
+    {
+      label: 'INOVAÇÃO & INICIATIVA',
+      options: [
+        { value: 'proatividade_inovacao', label: 'Proatividade e inovação' },
+        { value: 'protagonismo_desafios', label: 'Protagonismo em Desafios' },
+      ]
+    },
+    {
+      label: 'ESTRATÉGIA & GESTÃO',
+      options: [
+        { value: 'estrategia_organizacao_planejamento', label: 'Estratégia, organização e planejamento' },
+        { value: 'promover_sustentabilidade_financeira', label: 'Promover a sustentabilidade financeira' },
+        { value: 'realizar_networking_parceiros', label: 'Realizar networking com parceiros' },
+      ]
+    }
+  ];
+
+  const selectedReasonLabel = reasonGroups
+    .flatMap(g => g.options)
+    .find(opt => opt.value === reason)?.label || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -321,73 +383,64 @@ export function AssignPointsModal({
                   <Tag size={16} className="text-lab-primary" />
                   Motivo
                 </label>
-                <div className="relative">
-                  <select
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value as TransactionReasonEnum)}
-                    className="w-full px-4 py-4 rounded-2xl bg-gradient-to-r from-slate-50 to-slate-100 border-2 border-slate-200 focus:border-lab-primary focus:bg-white focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all duration-300 font-dm-sans text-slate-800 appearance-none cursor-pointer hover:border-slate-300 hover:shadow-sm"
-                    required
+                <div className="relative" ref={reasonDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setReasonDropdownOpen(!reasonDropdownOpen)}
+                    className={`w-full px-4 py-4 rounded-2xl bg-gradient-to-r from-slate-50 to-slate-100 border-2 transition-all duration-300 font-dm-sans text-left flex items-center justify-between ${
+                      reasonDropdownOpen 
+                        ? 'border-lab-primary bg-white ring-4 ring-lab-primary/10' 
+                        : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                    }`}
                   >
-                    <option value="" disabled className="text-slate-400">
-                      Selecione o motivo da atribuição...
-                    </option>
-                    
-                    <optgroup label="COLABORAÇÃO" className="font-semibold text-slate-700">
-                      <option value="colaboracao_intersetorial" className="py-2 pl-4">
-                        Colaboração intersetorial
-                      </option>
-                      <option value="colaboracao_intrasetorial" className="py-2 pl-4">
-                        Colaboração intrasetorial
-                      </option>
-                    </optgroup>
-                    
-                    <optgroup label="PROCESSOS" className="font-semibold text-slate-700">
-                      <option value="auditoria_processos_internos" className="py-2 pl-4">
-                        Auditoria de processos internos
-                      </option>
-                      <option value="otimizacao_processos" className="py-2 pl-4">
-                        Otimização de processos
-                      </option>
-                    </optgroup>
-                    
-                    <optgroup label="COMPORTAMENTO PROFISSIONAL" className="font-semibold text-slate-700">
-                      <option value="postura_empatica" className="py-2 pl-4">
-                        Postura empática
-                      </option>
-                      <option value="postura_disciplina_autocontrole" className="py-2 pl-4">
-                        Postura, disciplina e autocontrole
-                      </option>
-                      <option value="responsabilidade_compromisso" className="py-2 pl-4">
-                        Responsabilidade e compromisso
-                      </option>
-                    </optgroup>
-                    
-                    <optgroup label="INOVAÇÃO & INICIATIVA" className="font-semibold text-slate-700">
-                      <option value="proatividade_inovacao" className="py-2 pl-4">
-                        Proatividade e inovação
-                      </option>
-                      <option value="protagonismo_desafios" className="py-2 pl-4">
-                        Protagonismo em Desafios
-                      </option>
-                    </optgroup>
-                    
-                    <optgroup label="ESTRATÉGIA & GESTÃO" className="font-semibold text-slate-700">
-                      <option value="estrategia_organizacao_planejamento" className="py-2 pl-4">
-                        Estratégia, organização e planejamento
-                      </option>
-                      <option value="promover_sustentabilidade_financeira" className="py-2 pl-4">
-                        Promover a sustentabilidade financeira
-                      </option>
-                      <option value="realizar_networking_parceiros" className="py-2 pl-4">
-                        Realizar networking com parceiros
-                      </option>
-                    </optgroup>
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <svg className="w-5 h-5 text-lab-primary transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
+                    <span className={reason ? 'text-slate-800' : 'text-slate-400'}>
+                      {reason ? selectedReasonLabel : 'Selecione o motivo da atribuição...'}
+                    </span>
+                    <ChevronDown 
+                      size={20} 
+                      className={`text-lab-primary transition-transform duration-300 ${reasonDropdownOpen ? 'rotate-180' : ''}`} 
+                    />
+                  </button>
+
+                  {/* Custom Dropdown */}
+                  {reasonDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border-2 border-slate-200 max-h-96 overflow-y-auto animate-scale-in origin-top">
+                      {reasonGroups.map((group, groupIdx) => (
+                        <div key={group.label} className={groupIdx > 0 ? 'border-t border-slate-100' : ''}>
+                          {/* Group Header */}
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
+                            <p className="text-xs font-dm-sans font-bold text-slate-600 tracking-wide">
+                              {group.label}
+                            </p>
+                          </div>
+                          
+                          {/* Options */}
+                          <div className="py-1">
+                            {group.options.map((option) => (
+                              <button
+                                key={option.value}
+                                type="button"
+                                onClick={() => {
+                                  setReason(option.value as TransactionReasonEnum);
+                                  setReasonDropdownOpen(false);
+                                }}
+                                className={`w-full px-4 py-3 text-left font-dm-sans text-sm transition-all duration-200 flex items-center justify-between group ${
+                                  reason === option.value
+                                    ? 'bg-gradient-to-r from-lab-primary/10 to-indigo-50 text-lab-primary font-semibold'
+                                    : 'text-slate-700 hover:bg-slate-50'
+                                }`}
+                              >
+                                <span className="flex-1">{option.label}</span>
+                                {reason === option.value && (
+                                  <Check size={16} className="text-lab-primary flex-shrink-0 ml-2" strokeWidth={3} />
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <p className="mt-2 text-xs text-slate-500 font-dm-sans">
                   Selecione a categoria que melhor representa o reconhecimento

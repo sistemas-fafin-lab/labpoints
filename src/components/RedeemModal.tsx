@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { X, Gift } from 'lucide-react';
 import { Reward } from '../lib/supabase';
 import { Button } from './ui/Button';
@@ -41,7 +42,7 @@ export function RedeemModal({
 
   const remainingPoints = userPoints - reward.custo_points;
 
-  return (
+  const modalContent = (
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
@@ -166,4 +167,6 @@ export function RedeemModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

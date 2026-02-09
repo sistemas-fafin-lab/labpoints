@@ -92,7 +92,7 @@ export function Approvals() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 mt-6">
         <div className="bg-white rounded-xl p-5 shadow-lab-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
