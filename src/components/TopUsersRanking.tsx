@@ -136,7 +136,7 @@ export const TopUsersRanking = memo(function TopUsersRanking({
             <h2 className="text-lg sm:text-xl font-ranade font-bold text-gray-900">
               Top Colaboradores
             </h2>
-            <p className="text-xs text-gray-500 font-dm-sans">
+            <p className="text-sm text-gray-500 font-dm-sans">
               Os mais pontuados do Lab
             </p>
           </div>
