@@ -162,7 +162,7 @@ export function Dashboard() {
         </div>
 
         {/* Top Users Ranking */}
-        <div className="mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.25s' }}>
+        <div className="mb-6 mt-24 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.25s' }}>
           <TopUsersRanking
             users={topUsers}
             loading={topUsersLoading}

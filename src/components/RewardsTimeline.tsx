@@ -1,4 +1,4 @@
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Gift, Target, Lock } from 'lucide-react';
 import { RewardMilestone } from './RewardMilestone';
 import { PointsBadge } from './ui/PointsBadge';
 
@@ -52,45 +52,71 @@ export function RewardsTimeline({
 
   if (orientation === 'vertical') {
     return (
-      <div className="bg-white rounded-lab p-6 shadow-lab-sm border border-gray-100">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-ranade font-bold text-gray-900 flex items-center gap-2">
-              <TrendingUp className="text-lab-primary" size={28} />
-              Próximas Recompensas
-            </h2>
-            <p className="text-sm text-lab-gray-700 font-dm-sans mt-1">
-              Você pode utilizar seu saldo para resgatar recompensas ou acumular pontos para desbloquear recompensas ainda melhores
-            </p>
+      <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+        {/* Header - redesigned with AssignPointsModal visual approach */}
+        <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-6 sm:p-7 overflow-hidden">
+          {/* Background decorations */}
+          <div className="absolute inset-0 opacity-30 pointer-events-none">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-xl -translate-x-1/2 translate-y-1/2" />
           </div>
-          <PointsBadge points={userPoints} size="lg" animated />
+
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div 
+                className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
+                style={{ width: '56px', height: '56px' }}
+              >
+                <TrendingUp style={{ width: '28px', height: '28px' }} className="text-white drop-shadow-lg" />
+              </div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-ranade font-bold text-white drop-shadow-sm">
+                  Próximas Recompensas
+                </h2>
+                <p className="text-sm text-white/80 font-dm-sans mt-0.5">
+                  Resgate com seu saldo ou acumule para desbloquear
+                </p>
+              </div>
+            </div>
+            <PointsBadge points={userPoints} size="lg" animated />
+          </div>
         </div>
 
-        {/* Vertical Timeline */}
-        <div className="space-y-8">
-          {rewardsWithStatus.map((reward, index) => (
-            <div key={reward.id} className="flex items-start gap-4 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-              {/* Left side: Progress line and circle */}
-              <div className="flex flex-col items-center">
+        {/* Content */}
+        <div className="p-6">
+          {/* Vertical Timeline */}
+          <div className="space-y-8">
+            {rewardsWithStatus.map((reward, index) => (
+              <div key={reward.id} className="flex items-start gap-4 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                {/* Left side: Progress line and circle */}
+                <div className="flex flex-col items-center">
                 {index > 0 && (
                   <div
                     className={`w-1 h-16 transition-all duration-700 ${
-                      reward.isUnlocked ? 'bg-lab-gradient shadow-lab-sm' : 'bg-gray-300'
+                      reward.isUnlocked 
+                        ? 'bg-gradient-to-b from-indigo-400 via-purple-500 to-indigo-600' 
+                        : 'bg-slate-200'
                     }`}
                     style={{ transitionDelay: `${index * 0.05}s` }}
                   />
                 )}
                 <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lab-md transition-all duration-500 flex-shrink-0 ${
+                  className={`rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500 flex-shrink-0 ${
                     reward.isUnlocked
-                      ? 'bg-lab-gradient ring-4 ring-lab-blue-light animate-pulse-glow'
-                      : 'bg-gray-200 border-2 border-gray-300 opacity-40'
+                      ? 'bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 ring-2 ring-white/40'
+                      : reward.isNextTarget
+                        ? 'bg-gradient-to-br from-indigo-400 to-purple-500 ring-2 ring-indigo-200/60'
+                        : 'bg-slate-100 border-2 border-slate-200 opacity-50'
                   }`}
+                  style={{ width: '56px', height: '56px' }}
                 >
-                  <span className="text-white font-ranade font-bold text-xs">
-                    {reward.points}
-                  </span>
+                  {reward.isUnlocked ? (
+                    <Gift style={{ width: '24px', height: '24px' }} className="text-white drop-shadow-lg" />
+                  ) : reward.isNextTarget ? (
+                    <Target style={{ width: '24px', height: '24px' }} className="text-white drop-shadow-lg" />
+                  ) : (
+                    <Lock style={{ width: '20px', height: '20px' }} className="text-slate-400" />
+                  )}
                 </div>
               </div>
 
@@ -114,6 +140,7 @@ export function RewardsTimeline({
               </div>
             </div>
           ))}
+          </div>
         </div>
       </div>
     );
@@ -121,104 +148,137 @@ export function RewardsTimeline({
 
   // Horizontal Timeline
   return (
-    <div className="bg-white rounded-lab p-6 sm:p-8 mt-32 shadow-lab-sm border border-gray-100 overflow-hidden">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-ranade font-bold text-gray-900 flex items-center gap-2">
-            <TrendingUp className="text-lab-primary" size={28} />
-            Próximas Recompensas
-          </h2>
-          <p className="text-md text-lab-gray-700 font-dm-sans mt-1">
-            Você pode utilizar seu saldo para resgatar recompensas ou acumular pontos para desbloquear recompensas ainda melhores
-          </p>
+    <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl mt-32 shadow-2xl border border-white/50 overflow-hidden">
+      {/* Header - redesigned with AssignPointsModal visual approach */}
+      <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-6 sm:p-7 overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute inset-0 opacity-30 pointer-events-none">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-xl -translate-x-1/2 translate-y-1/2" />
         </div>
-        <PointsBadge points={userPoints} size="lg" animated />
+
+        <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div 
+              className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
+              style={{ width: '56px', height: '56px' }}
+            >
+              <TrendingUp style={{ width: '28px', height: '28px' }} className="text-white drop-shadow-lg" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-ranade font-bold text-white drop-shadow-sm">
+                Próximas Recompensas
+              </h2>
+              <p className="text-sm text-white/80 font-dm-sans mt-0.5">
+                Resgate com seu saldo ou acumule para desbloquear
+              </p>
+            </div>
+          </div>
+          <PointsBadge points={userPoints} size="lg" animated />
+        </div>
       </div>
 
-      {/* Progress Bar Container */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-md font-dm-sans font-medium text-gray-700 mt-4">
-            Progresso Total
-          </span>
-          <span className="text-md font-dm-sans font-bold text-blue-700 mt-4">
-            {userPoints} / {maxPoints} pts ({progressPercentage.toFixed(0)}%)
-          </span>
+      {/* Content */}
+      <div className="p-6 sm:p-8">
+        {/* Progress Bar Container */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-md font-dm-sans font-medium text-slate-700 mt-4">
+              Progresso Total
+            </span>
+            <span className="text-md font-dm-sans font-bold text-indigo-600 mt-4">
+              {userPoints} / {maxPoints} pts ({progressPercentage.toFixed(0)}%)
+            </span>
+          </div>
+          
+          {/* Motivational message for next target - refined */}
+          {nextTargetReward && (
+            <div className="mb-4 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100/60 animate-fade-in">
+              <p className="text-sm font-dm-sans text-slate-600 text-center">
+                <span className="text-indigo-600 font-semibold">+{pointsToNextTarget} pts</span>
+                {' '}para{' '}
+                <span className="font-medium text-slate-800">{nextTargetReward.name}</span>
+              </p>
+            </div>
+          )}
+          
+          <div className="relative h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner border border-slate-200/50">
+            <div
+              className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+              style={{ 
+                width: `${progressPercentage}%`,
+                background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
+                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)'
+              }}
+            />
+          </div>
         </div>
-        
-        {/* Motivational message for next target - simplified */}
-        {nextTargetReward && (
-          <div className="mb-4 p-2.5 bg-gradient-to-r from-slate-50 to-blue-50/80 rounded-lg border border-blue-100/60 animate-fade-in">
-            <p className="text-sm font-dm-sans text-gray-600 text-center">
-              <span className="text-lab-primary font-semibold">+{pointsToNextTarget} pts</span>
-              {' '}para{' '}
-              <span className="font-medium text-gray-800">{nextTargetReward.name}</span>
+
+        {/* Horizontal Scrollable Timeline */}
+        <div className="relative min-h-[380px]">
+          <div className="overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-indigo-400 scrollbar-track-slate-100 hover:scrollbar-thumb-indigo-500 transition-colors duration-300">
+            <div className="flex items-start gap-4 sm:gap-6 min-w-max px-4 pt-8">
+              {rewardsWithStatus.map((reward, index) => (
+                <RewardMilestone
+                  key={reward.id}
+                  id={reward.id}
+                  name={reward.name}
+                  points={reward.points}
+                  userPoints={userPoints}
+                  position={index}
+                  isUnlocked={reward.isUnlocked}
+                  isNextTarget={reward.isNextTarget}
+                  isFirstUnlocked={reward.isFirstUnlocked}
+                  onRedeem={onRedeem}
+                  loading={loading}
+                  descricao={reward.descricao}
+                  imagem_url={reward.imagem_url}
+                  categoria={reward.categoria}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Scroll Hint (mobile) */}
+          <div className="md:hidden text-center mt-4">
+            <p className="text-xs text-slate-500 font-dm-sans flex items-center justify-center gap-1">
+              <span className="animate-bounce">👈</span>
+              Deslize para ver todas as recompensas
+              <span className="animate-bounce">👉</span>
             </p>
           </div>
-        )}
-        
-        <div className="relative h-5 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200">
-          <div
-            className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
-            style={{ 
-              width: `${progressPercentage}%`,
-              background: 'linear-gradient(90deg, #60a5fa 0%, #3b82f6 40%, #2563eb 70%, #1e40af 100%)',
-              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)'
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Horizontal Scrollable Timeline */}
-      <div className="relative min-h-[380px]">
-        <div className="overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 hover:scrollbar-thumb-blue-600 transition-colors duration-300">
-          <div className="flex items-start gap-4 sm:gap-6 min-w-max px-4 pt-8">
-            {rewardsWithStatus.map((reward, index) => (
-              <RewardMilestone
-                key={reward.id}
-                id={reward.id}
-                name={reward.name}
-                points={reward.points}
-                userPoints={userPoints}
-                position={index}
-                isUnlocked={reward.isUnlocked}
-                isNextTarget={reward.isNextTarget}
-                isFirstUnlocked={reward.isFirstUnlocked}
-                onRedeem={onRedeem}
-                loading={loading}
-                descricao={reward.descricao}
-                imagem_url={reward.imagem_url}
-                categoria={reward.categoria}
-              />
-            ))}
-          </div>
         </div>
 
-        {/* Scroll Hint (mobile) */}
-        <div className="md:hidden text-center mt-4">
-          <p className="text-xs text-lab-gray font-dm-sans flex items-center justify-center gap-1">
-            <span className="animate-bounce">👈</span>
-            Deslize para ver todas as recompensas
-            <span className="animate-bounce">👉</span>
-          </p>
-        </div>
-      </div>
-
-      {/* Legend - refined: smaller, subtler */}
-      <div className="mt-5 pt-4 border-t border-gray-100">
-        <div className="flex flex-wrap gap-5 justify-center text-[11px] font-dm-sans opacity-60">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-400 to-blue-700" />
-            <span className="text-gray-500">Disponível</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-300 to-indigo-400 ring-1 ring-blue-200" />
-            <span className="text-gray-500">Próxima</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-300 to-gray-400" />
-            <span className="text-gray-500">Bloqueado</span>
+        {/* Legend - redesigned with modern styling */}
+        <div className="mt-6 pt-5 border-t border-slate-100">
+          <div className="flex flex-wrap gap-6 justify-center text-xs font-dm-sans">
+            <div className="flex items-center gap-2">
+              <div 
+                className="rounded-lg bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 ring-1 ring-white/40 flex items-center justify-center"
+                style={{ width: '20px', height: '20px' }}
+              >
+                <Gift style={{ width: '10px', height: '10px' }} className="text-white" />
+              </div>
+              <span className="text-slate-600">Disponível</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div 
+                className="rounded-lg bg-gradient-to-br from-indigo-400 to-purple-500 ring-1 ring-indigo-200/60 flex items-center justify-center"
+                style={{ width: '20px', height: '20px' }}
+              >
+                <Target style={{ width: '10px', height: '10px' }} className="text-white" />
+              </div>
+              <span className="text-slate-600">Próxima meta</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div 
+                className="rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center"
+                style={{ width: '20px', height: '20px' }}
+              >
+                <Lock style={{ width: '10px', height: '10px' }} className="text-slate-400" />
+              </div>
+              <span className="text-slate-600">Bloqueado</span>
+            </div>
           </div>
         </div>
       </div>

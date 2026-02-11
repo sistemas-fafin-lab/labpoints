@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { User as UserIcon, History, Award, ChevronDown } from 'lucide-react';
+import { User as UserIcon, History, Award, ChevronDown, HelpCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../hooks/useTransactions';
 import { useRedemptions } from '../hooks/useRedemptions';
 import { useToast } from '../components/ui/Toast';
+import { useOnboardingContext } from '../components/OnboardingProvider';
 import { ProfilePhotoUpload } from '../components/ProfilePhotoUpload';
 import { PointsBadge } from '../components/ui/PointsBadge';
 import { Input } from '../components/ui/Input';
@@ -18,6 +19,7 @@ export function Profile() {
   const { transactions, loading: transactionsLoading } = useTransactions(user?.id);
   const { redemptions, loading: redemptionsLoading } = useRedemptions(user?.id);
   const { showToast } = useToast();
+  const { resetTutorial } = useOnboardingContext();
 
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [editing, setEditing] = useState(false);
@@ -206,6 +208,29 @@ export function Profile() {
                       </Button>
                     </>
                   )}
+                </div>
+
+                {/* Tutorial option */}
+                <div className="pt-8 border-t border-gray-200">
+                  <h3 className="text-sm font-dm-sans font-semibold text-gray-700 mb-3">
+                    Ajuda e Tutoriais
+                  </h3>
+                  <button
+                    onClick={() => {
+                      resetTutorial();
+                      showToast('Tutorial reiniciado! Recarregue a página para vê-lo.', 'success');
+                    }}
+                    className="
+                      flex items-center gap-2 px-4 py-2.5 rounded-xl
+                      bg-gray-50 hover:bg-gray-100 
+                      text-gray-600 hover:text-gray-800
+                      font-dm-sans text-sm font-medium
+                      transition-all duration-200
+                    "
+                  >
+                    <HelpCircle size={18} />
+                    <span>Rever tutorial do sistema</span>
+                  </button>
                 </div>
               </div>
             )}

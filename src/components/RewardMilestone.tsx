@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Award } from 'lucide-react';
+import { Lock, Gift, Target } from 'lucide-react';
 import { Button } from './ui/Button';
 import { PointsBadge } from './ui/PointsBadge';
 import { RewardDetailModal } from './RewardDetailModal';
@@ -79,8 +79,8 @@ export function RewardMilestone({
           <div 
             className={`absolute top-[50px] sm:top-[60px] left-0 w-4 sm:w-6 h-1 -translate-x-full -translate-y-1/2 transition-all duration-700 ease-in-out ${
               isUnlocked 
-                ? 'bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800' 
-                : 'bg-gray-300'
+                ? 'bg-gradient-to-r from-indigo-400 via-purple-500 to-indigo-600' 
+                : 'bg-slate-200'
             }`}
             style={{ 
               transitionDelay: `${position * 0.05}s` 
@@ -88,40 +88,41 @@ export function RewardMilestone({
           />
         )}
 
-        {/* Milestone Circle */}
+        {/* Milestone Circle - redesigned with AssignPointsModal visual approach */}
         <div
           className={`relative z-10 mb-4 sm:mb-5 transition-transform duration-300 ease-out ${
             isUnlocked || isNextTarget ? 'drop-shadow-xl' : ''
           }`}
         >
           <div
-            className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 ${
+            className={`rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 ${
               isUnlocked
-                ? 'bg-gradient-to-br from-blue-400 via-blue-600 to-blue-900 ring-4 ring-blue-300/40'
+                ? 'bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 ring-2 ring-white/40'
                 : isNextTarget
-                  ? 'bg-gradient-to-br from-blue-300 via-indigo-500 to-blue-600 ring-4 ring-blue-200/60 animate-pulse-glow-target-refined'
-                  : 'bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-gray-400'
+                  ? 'bg-gradient-to-br from-indigo-400 to-purple-500 ring-2 ring-indigo-200/60 animate-pulse-glow-target-refined'
+                  : 'bg-slate-100 border-2 border-slate-200'
             }`}
+            style={{ width: '80px', height: '80px' }}
           >
             {isUnlocked ? (
-              <Award size={64} className="text-white drop-shadow-lg" strokeWidth={2.5} />
+              <Gift style={{ width: '36px', height: '36px' }} className="text-white drop-shadow-lg" strokeWidth={2} />
             ) : isNextTarget ? (
-              <Award size={64} className="text-white drop-shadow-lg" strokeWidth={2.5} />
+              <Target style={{ width: '36px', height: '36px' }} className="text-white drop-shadow-lg" strokeWidth={2} />
             ) : (
-              <Lock size={36} className="text-gray-500" />
+              <Lock style={{ width: '28px', height: '28px' }} className="text-slate-400" />
             )}
           </div>
 
-          {/* Progress Percentage Badge - refined blue tones */}
+          {/* Progress Percentage Badge - refined with indigo/purple tones */}
           {isNextTarget && (
-            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-[10px] font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-md ring-2 ring-white">
+            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-[10px] font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-md ring-2 ring-white">
               {Math.round(progressToUnlock)}%
             </div>
           )}
           
           {/* Progress badge for other locked rewards */}
           {!isUnlocked && !isNextTarget && userPoints < points && (
-            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-gray-400 to-gray-500 text-white text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
+            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-slate-400 to-slate-500 text-white text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
               {Math.round((userPoints / points) * 100)}%
             </div>
           )}

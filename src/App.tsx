@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './components/ui/Toast';
 import { ProfilePreviewProvider } from './components/UserProfilePreviewModal';
+import { OnboardingProvider } from './components/OnboardingProvider';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Header } from './components/Header';
 // import { DebugPanel } from './components/DebugPanel';
@@ -110,7 +111,9 @@ function App() {
       <AuthProvider>
         <ToastProvider>
           <ProfilePreviewProvider>
-            <AppContent />
+            <OnboardingProvider>
+              <AppContent />
+            </OnboardingProvider>
           </ProfilePreviewProvider>
         </ToastProvider>
       </AuthProvider>
