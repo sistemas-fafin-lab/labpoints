@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut, User, Home, Gift, Settings, ChevronDown, Award, Bell } from 'lucide-react';
+import { Menu, X, LogOut, User, Home, Gift, Settings, ChevronDown, Award, Bell, Package } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePoints } from '../hooks/usePoints';
@@ -155,6 +155,24 @@ export function Header() {
                 isActive('/recompensas') ? 'text-white' : ''
               }`}>Recompensas</span>
             </Link>
+
+            {canAssignPoints && (
+              <Link
+                to="/controle-resgates"
+                className={`group flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  isActive('/controle-resgates')
+                    ? 'bg-lab-gradient shadow-lab-sm'
+                    : 'text-lab-gray hover:text-lab-primary hover:bg-lab-light'
+                }`}
+              >
+                <Package size={20} className={`transition-transform group-hover:scale-110 ${
+                  isActive('/controle-resgates') ? 'text-white' : ''
+                }`} />
+                <span className={`text-sm font-semibold ${
+                  isActive('/controle-resgates') ? 'text-white' : ''
+                }`}>Resgates</span>
+              </Link>
+            )}
 
             {user.role === 'adm' && (
               <Link
@@ -353,6 +371,21 @@ export function Header() {
               <Gift size={20} />
               <span className="font-semibold">Recompensas</span>
             </Link>
+
+            {canAssignPoints && (
+              <Link
+                to="/controle-resgates"
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  isActive('/controle-resgates')
+                    ? 'bg-lab-gradient text-white shadow-lab-sm'
+                    : 'text-lab-gray hover:bg-lab-light hover:text-lab-primary'
+                }`}
+                onClick={closeMobileMenu}
+              >
+                <Package size={20} />
+                <span className="font-semibold">Resgates</span>
+              </Link>
+            )}
 
             {user.role === 'adm' && (
               <Link

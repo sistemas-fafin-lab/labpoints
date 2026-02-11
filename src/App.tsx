@@ -13,6 +13,7 @@ import { Rewards } from './pages/Rewards';
 import { Profile } from './pages/Profile';
 import { Admin } from './pages/Admin';
 import { Approvals } from './pages/Approvals';
+import { RedeemControl } from './pages/RedeemControl';
 
 function AppContent() {
   const location = useLocation();
@@ -61,6 +62,14 @@ function AppContent() {
                 element={
                   <ProtectedRoute requireManager>
                     <Approvals />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/controle-resgates"
+                element={
+                  <ProtectedRoute requireManager>
+                    <RedeemControl />
                   </ProtectedRoute>
                 }
               />
