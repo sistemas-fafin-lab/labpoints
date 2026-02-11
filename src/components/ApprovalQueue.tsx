@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from './ui/Button';
-import { Avatar } from './ui/Avatar';
+import { AvatarWithPreview } from './AvatarWithPreview';
 import { useToast } from './ui/Toast';
 import { PendingPointAssignment, DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
 
@@ -137,11 +137,19 @@ export function ApprovalQueue({
           >
             {/* Request Info */}
             <div className="flex items-start gap-4 mb-6">
-              <Avatar
+              <AvatarWithPreview
                 src={(approval.target_user as any)?.avatar_url}
                 alt={(approval.target_user as any)?.nome || 'Usuário'}
                 size="sm"
                 fallbackText={(approval.target_user as any)?.nome}
+                user={{
+                  id: (approval.target_user as any)?.id || approval.target_user_id,
+                  nome: (approval.target_user as any)?.nome || 'Usuário',
+                  avatar_url: (approval.target_user as any)?.avatar_url,
+                  lab_points: (approval.target_user as any)?.lab_points || 0,
+                  department: (approval.target_user as any)?.department,
+                  role: (approval.target_user as any)?.role,
+                }}
               />
               <div className="flex-1 min-w-0">
                 <p className="font-ranade font-semibold text-gray-900 text-lg">

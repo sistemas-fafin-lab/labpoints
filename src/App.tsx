@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './components/ui/Toast';
+import { ProfilePreviewProvider } from './components/UserProfilePreviewModal';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Header } from './components/Header';
 // import { DebugPanel } from './components/DebugPanel';
@@ -108,7 +109,9 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
-          <AppContent />
+          <ProfilePreviewProvider>
+            <AppContent />
+          </ProfilePreviewProvider>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -1,5 +1,5 @@
 import { User, DEPARTMENT_LABELS } from '../lib/supabase';
-import { Avatar } from './ui/Avatar';
+import { AvatarWithPreview } from './AvatarWithPreview';
 import { PointsBadge } from './ui/PointsBadge';
 import { Button } from './ui/Button';
 
@@ -12,11 +12,20 @@ export function ColabCard({ user, onViewProfile }: ColabCardProps) {
   return (
     <div className="bg-white rounded-lab p-16 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100">
       <div className="flex flex-col items-center text-center gap-4">
-        <Avatar
+        <AvatarWithPreview
           src={user.avatar_url}
           alt={user.nome}
           size="lg"
           fallbackText={user.nome}
+          user={{
+            id: user.id,
+            nome: user.nome,
+            avatar_url: user.avatar_url,
+            lab_points: user.lab_points,
+            department: user.department,
+            role: user.role,
+            created_at: user.created_at,
+          }}
         />
 
         <div className="flex-1">

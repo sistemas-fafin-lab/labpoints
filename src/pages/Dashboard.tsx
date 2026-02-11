@@ -4,12 +4,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { useRewards } from '../hooks/useRewards';
 import { useTransactions } from '../hooks/useTransactions';
 import { usePointAssignments } from '../hooks/usePointAssignments';
+import { useTopUsers } from '../hooks/useTopUsers';
 import { RewardCard } from '../components/RewardCard';
-import { PointsBadge } from '../components/ui/PointsBadge';
+//import { PointsBadge } from '../components/ui/PointsBadge';
 import { RewardsTimeline } from '../components/RewardsTimeline';
 import { ApprovalQueue } from '../components/ApprovalQueue';
 import { RewardDetailModal } from '../components/RewardDetailModal';
 import { ValuesWheel } from '../components/ValuesWheel';
+import { TopUsersRanking } from '../components/TopUsersRanking';
 import { useState } from 'react';
 import { createRedemption } from '../hooks/useRedemptions';
 import { useToast } from '../components/ui/Toast';
@@ -18,6 +20,7 @@ export function Dashboard() {
   const { user, refreshUser } = useAuth();
   const { rewards, loading: rewardsLoading, refetch: refetchRewards } = useRewards(true);
   const { transactions, loading: transactionsLoading } = useTransactions(user?.id);
+  const { topUsers, loading: topUsersLoading } = useTopUsers(5);
   const { 
     pendingApprovals, 
     loadingApprovals, 
@@ -156,6 +159,15 @@ export function Dashboard() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Top Users Ranking */}
+        <div className="mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.25s' }}>
+          <TopUsersRanking
+            users={topUsers}
+            loading={topUsersLoading}
+            currentUserId={user.id}
+          />
         </div>
 
         {/* Rewards Timeline Section */}

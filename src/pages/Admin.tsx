@@ -5,7 +5,7 @@ import { useRewards, createReward, updateReward, deleteReward, uploadRewardImage
 import { useToast } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Avatar } from '../components/ui/Avatar';
+import { AvatarWithPreview } from '../components/AvatarWithPreview';
 import { PointsBadge } from '../components/ui/PointsBadge';
 import { UserManagementModal } from '../components/UserManagementModal';
 import { User, Reward, DEPARTMENT_LABELS } from '../lib/supabase';
@@ -301,11 +301,20 @@ export function Admin() {
                         className="flex items-center justify-between p-16 bg-lab-gray-100 rounded-lab"
                       >
                         <div className="flex items-center gap-4 flex-1">
-                          <Avatar
+                          <AvatarWithPreview
                             src={user.avatar_url}
                             alt={user.nome}
                             size="md"
                             fallbackText={user.nome}
+                            user={{
+                              id: user.id,
+                              nome: user.nome,
+                              avatar_url: user.avatar_url,
+                              lab_points: user.lab_points,
+                              department: user.department,
+                              role: user.role,
+                              created_at: user.created_at,
+                            }}
                           />
                           <div className="flex-1">
                             <h3 className="font-ranade font-bold text-gray-900">{user.nome}</h3>

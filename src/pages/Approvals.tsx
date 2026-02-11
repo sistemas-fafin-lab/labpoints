@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { usePointAssignments } from '../hooks/usePointAssignments';
 import { ApprovalQueue } from '../components/ApprovalQueue';
-import { Avatar } from '../components/ui/Avatar';
+import { AvatarWithPreview } from '../components/AvatarWithPreview';
 import { DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
 
 export function Approvals() {
@@ -190,11 +190,19 @@ export function Approvals() {
                 className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all gap-3"
               >
                 <div className="flex items-center gap-3 flex-1">
-                  <Avatar
+                  <AvatarWithPreview
                     src={(assignment.target_user as any)?.avatar_url}
                     alt={(assignment.target_user as any)?.nome || 'Usuário'}
                     size="sm"
                     fallbackText={(assignment.target_user as any)?.nome}
+                    user={{
+                      id: (assignment.target_user as any)?.id || assignment.target_user_id,
+                      nome: (assignment.target_user as any)?.nome || 'Usuário',
+                      avatar_url: (assignment.target_user as any)?.avatar_url,
+                      lab_points: (assignment.target_user as any)?.lab_points || 0,
+                      department: (assignment.target_user as any)?.department,
+                      role: (assignment.target_user as any)?.role,
+                    }}
                   />
                   <div className="flex-1 min-w-0">
                     <p className="font-ranade font-semibold text-gray-900">

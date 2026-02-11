@@ -1,5 +1,5 @@
 import { Gift, Clock, CheckCircle2, Package, XCircle, Calendar } from 'lucide-react';
-import { Avatar } from './ui/Avatar';
+import { AvatarWithPreview } from './AvatarWithPreview';
 import { PointsBadge } from './ui/PointsBadge';
 import { Button } from './ui/Button';
 import { RedemptionWithDetails, FulfillmentStatus } from '../hooks/useAllRedemptions';
@@ -119,12 +119,22 @@ export function RedemptionCard({ redemption, onStatusChange, loading }: Redempti
         {/* Info do Usuário */}
         <div className="flex items-center gap-3 mb-12 group/user">
           <div className="transition-transform duration-200 group-hover/user:scale-105">
-            <Avatar
-              src={redemption.user?.avatar_url}
-              alt={redemption.user?.nome || 'Usuário'}
-              size="sm"
-              fallbackText={redemption.user?.nome}
-            />
+            {redemption.user && (
+              <AvatarWithPreview
+                src={redemption.user.avatar_url}
+                alt={redemption.user.nome || 'Usuário'}
+                size="sm"
+                fallbackText={redemption.user.nome}
+                user={{
+                  id: redemption.user.id,
+                  nome: redemption.user.nome,
+                  avatar_url: redemption.user.avatar_url,
+                  lab_points: redemption.user.lab_points,
+                  department: redemption.user.department,
+                  role: redemption.user.role,
+                }}
+              />
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-ranade font-semibold text-gray-900 truncate group-hover/user:text-lab-primary transition-colors duration-200">
