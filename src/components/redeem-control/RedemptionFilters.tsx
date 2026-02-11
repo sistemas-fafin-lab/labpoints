@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, Filter, X } from 'lucide-react';
-import { RedemptionStatus } from '../../hooks/useAllRedemptions';
+import { FulfillmentStatus } from '../../hooks/useAllRedemptions';
 
-type FilterStatus = 'all' | RedemptionStatus;
+type FilterStatus = 'all' | FulfillmentStatus;
 
 interface RedemptionFiltersProps {
   searchTerm: string;
@@ -11,11 +11,12 @@ interface RedemptionFiltersProps {
   onFilterChange: (value: FilterStatus) => void;
 }
 
+// Status de fulfillment para filtro
 const STATUS_OPTIONS: { value: FilterStatus; label: string }[] = [
   { value: 'all', label: 'Todos os Status' },
   { value: 'pendente', label: 'Pendentes' },
   { value: 'aprovado', label: 'Aprovados' },
-  { value: 'resgatado', label: 'Resgatados' },
+  { value: 'entregue', label: 'Entregues' },
   { value: 'cancelado', label: 'Cancelados' },
 ];
 

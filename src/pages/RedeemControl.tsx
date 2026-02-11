@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useAllRedemptions, RedemptionStatus } from '../hooks/useAllRedemptions';
+import { useAllRedemptions, FulfillmentStatus } from '../hooks/useAllRedemptions';
 import { useRedemptionPeriodConfig } from '../hooks/useRedemptionPeriod';
 import { useToast } from '../components/ui/Toast';
 import { RedemptionCard } from '../components/RedemptionCard';
@@ -17,7 +17,7 @@ import {
   FiltersSkeleton,
 } from '../components/redeem-control';
 
-type FilterStatus = 'all' | RedemptionStatus;
+type FilterStatus = 'all' | FulfillmentStatus;
 
 export function RedeemControl() {
   const { user } = useAuth();
@@ -39,8 +39,8 @@ export function RedeemControl() {
   const [statusModal, setStatusModal] = useState<{
     isOpen: boolean;
     redemptionId: string;
-    currentStatus: RedemptionStatus;
-    newStatus: RedemptionStatus;
+    currentStatus: FulfillmentStatus;
+    newStatus: FulfillmentStatus;
     userName: string;
     rewardName: string;
   } | null>(null);
@@ -51,9 +51,10 @@ export function RedeemControl() {
 
   const isAdmin = user.role === 'adm';
 
-  // Filter redemptions
+  // Filter redemptions by fulfillment_status
   const filteredRedemptions = redemptions.filter((redemption) => {
-    const matchesStatus = filterStatus === 'all' || redemption.status === filterStatus;
+    const fulfillmentStatus = redemption.fulfillment_status || 'pendente';
+    const matchesStatus = filterStatus === 'all' || fulfillmentStatus === filterStatus;
     const matchesSearch =
       searchTerm === '' ||
       redemption.user?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,14 +78,16 @@ export function RedeemControl() {
     setFilterStatus('all');
   }, []);
 
-  const handleStatusChangeRequest = (redemptionId: string, newStatus: RedemptionStatus) => {
+  const handleStatusChangeRequest = (redemptionId: string, newStatus: FulfillmentStatus) => {
     const redemption = redemptions.find((r) => r.id === redemptionId);
     if (!redemption) return;
 
+    const currentFulfillmentStatus = redemption.fulfillment_status || 'pendente';
+    
     setStatusModal({
       isOpen: true,
       redemptionId,
-      currentStatus: redemption.status,
+      currentStatus: currentFulfillmentStatus,
       newStatus,
       userName: redemption.user?.nome || 'Usuário',
       rewardName: redemption.reward?.titulo || 'Recompensa',

@@ -2,37 +2,38 @@ import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
 import { X, AlertTriangle, CheckCircle2, Package, XCircle } from 'lucide-react';
 import { Button } from './ui/Button';
-import { RedemptionStatus } from '../hooks/useAllRedemptions';
+import { FulfillmentStatus } from '../hooks/useAllRedemptions';
 
 interface RedemptionStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   loading?: boolean;
-  currentStatus?: RedemptionStatus;
-  newStatus: RedemptionStatus;
+  currentStatus?: FulfillmentStatus;
+  newStatus: FulfillmentStatus;
   userName: string;
   rewardName: string;
 }
 
-const STATUS_LABELS: Record<RedemptionStatus, string> = {
+// Labels para status de fulfillment
+const STATUS_LABELS: Record<FulfillmentStatus, string> = {
   pendente: 'Pendente',
   aprovado: 'Aprovado',
-  resgatado: 'Resgatado',
+  entregue: 'Entregue',
   cancelado: 'Cancelado',
 };
 
-const STATUS_ICONS: Record<RedemptionStatus, React.ElementType> = {
+const STATUS_ICONS: Record<FulfillmentStatus, React.ElementType> = {
   pendente: AlertTriangle,
   aprovado: CheckCircle2,
-  resgatado: Package,
+  entregue: Package,
   cancelado: XCircle,
 };
 
-const STATUS_COLORS: Record<RedemptionStatus, { bg: string; text: string; icon: string }> = {
+const STATUS_COLORS: Record<FulfillmentStatus, { bg: string; text: string; icon: string }> = {
   pendente: { bg: 'bg-amber-100', text: 'text-amber-700', icon: 'text-amber-600' },
   aprovado: { bg: 'bg-blue-100', text: 'text-blue-700', icon: 'text-blue-600' },
-  resgatado: { bg: 'bg-green-100', text: 'text-green-700', icon: 'text-green-600' },
+  entregue: { bg: 'bg-green-100', text: 'text-green-700', icon: 'text-green-600' },
   cancelado: { bg: 'bg-red-100', text: 'text-red-700', icon: 'text-red-600' },
 };
 
@@ -70,8 +71,8 @@ export function RedemptionStatusModal({
     switch (newStatus) {
       case 'aprovado':
         return 'Ao aprovar, você confirma que o resgate está autorizado para entrega.';
-      case 'resgatado':
-        return 'Ao marcar como resgatado, você confirma que a recompensa foi entregue ao colaborador.';
+      case 'entregue':
+        return 'Ao marcar como entregue, você confirma que a recompensa foi entregue ao colaborador.';
       case 'cancelado':
         return 'Ao cancelar, o resgate será invalidado. Os pontos do colaborador não serão devolvidos automaticamente.';
       default:
@@ -102,7 +103,7 @@ export function RedemptionStatusModal({
           <div className={`relative p-7 text-white overflow-hidden ${
             newStatus === 'cancelado' 
               ? 'bg-gradient-to-br from-red-500 via-red-600 to-rose-600'
-              : newStatus === 'resgatado'
+              : newStatus === 'entregue'
               ? 'bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600'
               : 'bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600'
           }`}>

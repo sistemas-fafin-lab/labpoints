@@ -1,10 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, Redemption, User, Reward } from '../lib/supabase';
 
-export type RedemptionStatus = 'pendente' | 'aprovado' | 'resgatado' | 'cancelado';
+// Status da operação de resgate (pelo usuário)
+export type RedemptionOperationStatus = 'pendente' | 'concluido' | 'cancelado';
+
+// Status do processo de entrega (pelo gestor)
+export type FulfillmentStatus = 'pendente' | 'aprovado' | 'entregue' | 'cancelado';
+
+// Manter compatibilidade com código antigo
+export type RedemptionStatus = FulfillmentStatus;
 
 export interface RedemptionWithDetails extends Omit<Redemption, 'status'> {
-  status: RedemptionStatus;
+  status: RedemptionOperationStatus;
+  fulfillment_status: FulfillmentStatus;
+  processed_by?: string;
+  processed_at?: string;
   user?: User;
   reward?: Reward;
 }
@@ -20,19 +30,67 @@ export function useAllRedemptions() {
   const fetchRedemptions = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error: fetchError } = await supabase
+      
+      // Fetch redemptions with related data
+      const { data: redemptionsData, error: fetchError } = await supabase
         .from('redemptions')
-        .select(`
-          *,
-          user:users(*),
-          reward:rewards(*)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (fetchError) throw fetchError;
-      setRedemptions((data || []) as RedemptionWithDetails[]);
+      if (fetchError) {
+        console.error('Fetch redemptions error:', fetchError);
+        throw fetchError;
+      }
+
+      // If no redemptions, return empty array
+      if (!redemptionsData || redemptionsData.length === 0) {
+        setRedemptions([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
+      // Get unique user IDs and reward IDs
+      const userIds = [...new Set(redemptionsData.map(r => r.user_id))];
+      const rewardIds = [...new Set(redemptionsData.map(r => r.reward_id))];
+
+      // Fetch users
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select('*')
+        .in('id', userIds);
+
+      if (usersError) {
+        console.error('Fetch users error:', usersError);
+        throw usersError;
+      }
+
+      // Fetch rewards
+      const { data: rewardsData, error: rewardsError } = await supabase
+        .from('rewards')
+        .select('*')
+        .in('id', rewardIds);
+
+      if (rewardsError) {
+        console.error('Fetch rewards error:', rewardsError);
+        throw rewardsError;
+      }
+
+      // Create lookup maps
+      const usersMap = new Map(usersData?.map(u => [u.id, u]) || []);
+      const rewardsMap = new Map(rewardsData?.map(r => [r.id, r]) || []);
+
+      // Combine data
+      const transformedData = redemptionsData.map(redemption => ({
+        ...redemption,
+        user: usersMap.get(redemption.user_id),
+        reward: rewardsMap.get(redemption.reward_id),
+      }));
+      
+      setRedemptions(transformedData as RedemptionWithDetails[]);
       setError(null);
     } catch (err) {
+      console.error('Error fetching redemptions:', err);
       setError(err as Error);
     } finally {
       setLoading(false);
@@ -45,13 +103,14 @@ export function useAllRedemptions() {
 
   const updateRedemptionStatus = async (
     redemptionId: string, 
-    newStatus: RedemptionStatus
+    newStatus: FulfillmentStatus
   ): Promise<{ success: boolean; error?: string }> => {
     try {
       const { error: updateError } = await supabase
         .from('redemptions')
         .update({ 
-          status: newStatus,
+          fulfillment_status: newStatus,
+          processed_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
         .eq('id', redemptionId);
@@ -62,7 +121,12 @@ export function useAllRedemptions() {
       setRedemptions(prev => 
         prev.map(r => 
           r.id === redemptionId 
-            ? { ...r, status: newStatus, updated_at: new Date().toISOString() } 
+            ? { 
+                ...r, 
+                fulfillment_status: newStatus, 
+                processed_at: new Date().toISOString(),
+                updated_at: new Date().toISOString() 
+              } 
             : r
         )
       );
@@ -73,13 +137,13 @@ export function useAllRedemptions() {
     }
   };
 
-  // Estatísticas
+  // Estatísticas baseadas no fulfillment_status
   const stats = {
     total: redemptions.length,
-    pendente: redemptions.filter(r => r.status === 'pendente').length,
-    aprovado: redemptions.filter(r => r.status === 'aprovado').length,
-    resgatado: redemptions.filter(r => r.status === 'resgatado').length,
-    cancelado: redemptions.filter(r => r.status === 'cancelado').length,
+    pendente: redemptions.filter(r => r.fulfillment_status === 'pendente').length,
+    aprovado: redemptions.filter(r => r.fulfillment_status === 'aprovado').length,
+    entregue: redemptions.filter(r => r.fulfillment_status === 'entregue').length,
+    cancelado: redemptions.filter(r => r.fulfillment_status === 'cancelado').length,
   };
 
   return { 

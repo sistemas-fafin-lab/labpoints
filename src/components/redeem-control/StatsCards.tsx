@@ -1,12 +1,12 @@
 import { memo } from 'react';
-import { Clock, CheckCircle2, Gift, XCircle, LucideIcon } from 'lucide-react';
+import { Clock, CheckCircle2, Package, XCircle, LucideIcon } from 'lucide-react';
 import { useCountUp } from '../../hooks/useCountUp';
 
 interface StatsCardsProps {
   stats: {
     pendente: number;
     aprovado: number;
-    resgatado: number;
+    entregue: number;
     cancelado: number;
   };
   loading?: boolean;
@@ -42,9 +42,9 @@ const STATS_CONFIG: StatCardConfig[] = [
     glowColor: 'group-hover:shadow-blue-100/50',
   },
   {
-    key: 'resgatado',
-    label: 'Resgatados',
-    icon: Gift,
+    key: 'entregue',
+    label: 'Entregues',
+    icon: Package,
     iconBg: 'bg-emerald-50',
     iconColor: 'text-emerald-500',
     hoverBorder: 'hover:border-emerald-200/80',

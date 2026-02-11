@@ -2,16 +2,17 @@ import { Gift, Clock, CheckCircle2, Package, XCircle, Calendar } from 'lucide-re
 import { Avatar } from './ui/Avatar';
 import { PointsBadge } from './ui/PointsBadge';
 import { Button } from './ui/Button';
-import { RedemptionWithDetails, RedemptionStatus } from '../hooks/useAllRedemptions';
+import { RedemptionWithDetails, FulfillmentStatus } from '../hooks/useAllRedemptions';
 import { DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
 
 interface RedemptionCardProps {
   redemption: RedemptionWithDetails;
-  onStatusChange: (redemptionId: string, newStatus: RedemptionStatus) => void;
+  onStatusChange: (redemptionId: string, newStatus: FulfillmentStatus) => void;
   loading?: boolean;
 }
 
-const STATUS_CONFIG: Record<RedemptionStatus, { 
+// Status de fulfillment (processo de entrega da recompensa pelo gestor)
+const STATUS_CONFIG: Record<FulfillmentStatus, { 
   label: string; 
   icon: React.ElementType; 
   bgColor: string; 
@@ -32,8 +33,8 @@ const STATUS_CONFIG: Record<RedemptionStatus, {
     textColor: 'text-blue-700',
     borderColor: 'border-blue-200',
   },
-  resgatado: {
-    label: 'Resgatado',
+  entregue: {
+    label: 'Entregue',
     icon: Package,
     bgColor: 'bg-green-100',
     textColor: 'text-green-700',
@@ -49,7 +50,10 @@ const STATUS_CONFIG: Record<RedemptionStatus, {
 };
 
 export function RedemptionCard({ redemption, onStatusChange, loading }: RedemptionCardProps) {
-  const statusConfig = STATUS_CONFIG[redemption.status];
+  // Usar fulfillment_status para controlar o processo de entrega
+  const fulfillmentStatus = redemption.fulfillment_status || 'pendente';
+  const validStatus = STATUS_CONFIG[fulfillmentStatus] ? fulfillmentStatus : 'pendente';
+  const statusConfig = STATUS_CONFIG[validStatus];
   const StatusIcon = statusConfig.icon;
 
   const formatDate = (dateString: string) => {
@@ -63,30 +67,32 @@ export function RedemptionCard({ redemption, onStatusChange, loading }: Redempti
     });
   };
 
-  const getNextStatus = (currentStatus: RedemptionStatus): RedemptionStatus | null => {
+  const getNextStatus = (currentStatus: FulfillmentStatus): FulfillmentStatus | null => {
     switch (currentStatus) {
       case 'pendente':
         return 'aprovado';
       case 'aprovado':
-        return 'resgatado';
+        return 'entregue';
+      case 'entregue':
+      case 'cancelado':
       default:
         return null;
     }
   };
 
-  const getNextStatusLabel = (currentStatus: RedemptionStatus): string | null => {
+  const getNextStatusLabel = (currentStatus: FulfillmentStatus): string | null => {
     switch (currentStatus) {
       case 'pendente':
         return 'Aprovar';
       case 'aprovado':
-        return 'Marcar como Resgatado';
+        return 'Marcar como Entregue';
       default:
         return null;
     }
   };
 
-  const nextStatus = getNextStatus(redemption.status);
-  const nextStatusLabel = getNextStatusLabel(redemption.status);
+  const nextStatus = getNextStatus(fulfillmentStatus);
+  const nextStatusLabel = getNextStatusLabel(fulfillmentStatus);
 
   return (
     <div 
@@ -111,7 +117,7 @@ export function RedemptionCard({ redemption, onStatusChange, loading }: Redempti
       {/* Conteúdo */}
       <div className="p-5">
         {/* Info do Usuário */}
-        <div className="flex items-center gap-3 mb-4 group/user">
+        <div className="flex items-center gap-3 mb-12 group/user">
           <div className="transition-transform duration-200 group-hover/user:scale-105">
             <Avatar
               src={redemption.user?.avatar_url}
@@ -133,9 +139,9 @@ export function RedemptionCard({ redemption, onStatusChange, loading }: Redempti
         </div>
 
         {/* Info da Recompensa */}
-        <div className="bg-slate-50 rounded-xl p-4 mb-4 transition-all duration-200 hover:bg-slate-100/80 group/reward">
+        <div className="bg-slate-50 rounded-xl p-4 mt-4 mb-4 transition-all duration-200 hover:bg-slate-100/80 group/reward">
           <div className="flex items-start gap-3">
-            <div className="w-12 h-12 rounded-xl bg-lab-gradient flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover/reward:scale-110 group-hover/reward:rotate-3">
+            <div className="w-[48px] h-[48px] rounded-xl bg-lab-gradient flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover/reward:scale-110 group-hover/reward:rotate-3">
               {redemption.reward?.imagem_url ? (
                 <img
                   src={redemption.reward.imagem_url}
@@ -179,7 +185,7 @@ export function RedemptionCard({ redemption, onStatusChange, loading }: Redempti
             </Button>
           )}
           
-          {redemption.status === 'pendente' && (
+          {fulfillmentStatus === 'pendente' && (
             <Button
               variant="danger"
               size="sm"
@@ -192,16 +198,16 @@ export function RedemptionCard({ redemption, onStatusChange, loading }: Redempti
             </Button>
           )}
           
-          {redemption.status === 'resgatado' && (
+          {fulfillmentStatus === 'entregue' && (
             <div className="flex-1 flex items-center justify-center py-2 px-4 bg-green-50 rounded-lg border border-green-200 animate-fade-in">
               <span className="text-sm text-green-700 font-dm-sans font-medium flex items-center gap-2">
                 <CheckCircle2 size={16} className="animate-bounce-subtle" />
-                Concluído
+                Entregue
               </span>
             </div>
           )}
           
-          {redemption.status === 'cancelado' && (
+          {fulfillmentStatus === 'cancelado' && (
             <div className="flex-1 flex items-center justify-center py-2 px-4 bg-red-50 rounded-lg border border-red-200 animate-fade-in">
               <span className="text-sm text-red-700 font-dm-sans font-medium flex items-center gap-2">
                 <XCircle size={16} />
