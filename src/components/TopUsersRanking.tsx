@@ -163,10 +163,10 @@ export const TopUsersRanking = memo(function TopUsersRanking({
                 }
               }}
               className={`
-                relative flex-shrink-0 w-[130px] sm:w-[150px] lg:flex-1 lg:min-w-[130px]
+                relative flex-shrink-0 w-[150px] sm:w-[170px] lg:flex-1 lg:min-w-[150px]
                 bg-gradient-to-b ${config.bgGradient}
                 rounded-xl border-2 ${config.borderColor}
-                pt-5 pb-4 px-3 transition-all duration-300 cursor-pointer
+                pt-6 pb-5 px-4 transition-all duration-300 cursor-pointer
                 hover:scale-[1.02] hover:shadow-lg ${config.glowColor}
                 ${isCurrentUser ? 'ring-2 ring-lab-primary ring-offset-2' : ''}
                 animate-scale-in
@@ -177,37 +177,41 @@ export const TopUsersRanking = memo(function TopUsersRanking({
               {/* Position Badge */}
               <div
                 className={`
-                  absolute -top-2.5 left-2 w-7 h-7 rounded-full
+                  absolute -top-3 left-2.5 rounded-full
                   bg-gradient-to-br ${config.gradient}
                   flex items-center justify-center
-                  shadow-md text-white font-ranade font-bold text-xs
+                  shadow-md font-ranade font-bold text-sm
                   border-2 border-white z-10
                 `}
+                style={{ width: '32px', height: '32px', color: 'white' }}
               >
                 {config.label}
               </div>
 
               {/* Emoji for top 3 */}
               {index < 3 && (
-                <div className="absolute top-0.5 right-1.5 text-base">
+                <div className="absolute top-1 right-2 text-lg">
                   {config.emoji}
                 </div>
               )}
 
               {/* User Avatar */}
-              <div className="flex justify-center mb-2">
+              <div className="flex justify-center mb-3">
                 <div className="relative">
-                  <div className={index === 0 ? 'ring-2 ring-yellow-400 ring-offset-1 rounded-full' : ''}>
+                  <div className={index === 0 ? 'ring-2 ring-yellow-400 ring-offset-2 rounded-full' : ''}>
                     <Avatar
                       src={user.avatar_url}
                       alt={user.nome}
-                      size="sm"
+                      size="md"
                       fallbackText={user.nome}
                     />
                   </div>
                   {index === 0 && (
-                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-                      <Crown size={10} className="text-white" />
+                    <div 
+                      className="absolute -bottom-1 -right-1 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm"
+                      style={{ width: '20px', height: '20px' }}
+                    >
+                      <Crown style={{ width: '12px', height: '12px' }} className="text-white" />
                     </div>
                   )}
                 </div>
@@ -217,7 +221,7 @@ export const TopUsersRanking = memo(function TopUsersRanking({
               <div className="text-center">
                 <p
                   className={`
-                    font-ranade font-bold text-xs sm:text-sm truncate mb-0.5 px-1
+                    font-ranade font-bold text-sm sm:text-base truncate mb-1 px-1
                     ${isCurrentUser ? 'text-lab-primary' : 'text-gray-900'}
                   `}
                   title={user.nome}
@@ -225,11 +229,11 @@ export const TopUsersRanking = memo(function TopUsersRanking({
                   {user.nome.split(' ')[0]}
                 </p>
                 {isCurrentUser && (
-                  <p className="text-[9px] text-lab-primary font-dm-sans font-medium -mt-0.5 mb-0.5">
+                  <p className="text-[10px] text-lab-primary font-dm-sans font-medium -mt-0.5 mb-1">
                     (você)
                   </p>
                 )}
-                <p className="text-[9px] sm:text-[10px] text-gray-500 font-dm-sans truncate px-1 mb-2">
+                <p className="text-[10px] sm:text-xs text-gray-500 font-dm-sans truncate px-1 mb-3">
                   {user.department
                     ? DEPARTMENT_LABELS[user.department as DepartmentEnum]
                     : 'Colaborador'}
@@ -238,26 +242,26 @@ export const TopUsersRanking = memo(function TopUsersRanking({
                 {/* Points */}
                 <div
                   className={`
-                    inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                    inline-flex items-center gap-1.5 px-3 py-1 rounded-full
                     bg-gradient-to-r ${config.gradient}
-                    text-white font-ranade font-bold text-[10px] sm:text-xs
+                    font-ranade font-bold text-sm
                     shadow-sm
                   `}
+                  style={{ color: 'white' }}
                 >
-                  <RankIcon size={10} className="flex-shrink-0" />
-                  <span>{user.lab_points.toLocaleString('pt-BR')}</span>
+                  <RankIcon style={{ width: '14px', height: '14px', color: 'white' }} className="flex-shrink-0" />
+                  <span style={{ color: 'white' }}>{user.lab_points.toLocaleString('pt-BR')}</span>
                 </div>
               </div>
 
               {/* Streak indicator for top 3 */}
               {index < 3 && (
-                <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
+                <div className="absolute bottom-2 right-2 flex gap-0.5">
                   {Array.from({ length: 3 - index }).map((_, i) => (
                     <Flame
                       key={i}
-                      size={8}
                       className={`${config.iconColor} animate-pulse`}
-                      style={{ animationDelay: `${i * 0.2}s` }}
+                      style={{ width: '10px', height: '10px', animationDelay: `${i * 0.2}s` }}
                     />
                   ))}
                 </div>

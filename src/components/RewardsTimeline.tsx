@@ -67,7 +67,7 @@ export function RewardsTimeline({
                 className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
                 style={{ width: '56px', height: '56px' }}
               >
-                <TrendingUp style={{ width: '28px', height: '28px' }} className="text-white drop-shadow-lg" />
+                <TrendingUp style={{ width: '28px', height: '28px' }} className="text-white drop-shadow-lg mr-8" />
               </div>
               <div>
                 <h2 className="text-xl sm:text-2xl font-ranade font-bold text-white drop-shadow-sm">
