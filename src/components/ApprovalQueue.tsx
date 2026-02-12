@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2, AlertCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2, AlertCircle, Star, ChevronRight } from 'lucide-react';
 import { Button } from './ui/Button';
 import { AvatarWithPreview } from './AvatarWithPreview';
 import { useToast } from './ui/Toast';
@@ -66,35 +66,81 @@ export function ApprovalQueue({
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
-      month: '2-digit',
+      month: 'short',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     });
   };
 
+  // Loading State
   if (loading) {
     return (
-      <div className="bg-white rounded-lab p-8 shadow-lab-sm border border-gray-100">
-        <div className="flex items-center justify-center py-12">
-          <Loader2 size={40} className="animate-spin text-lab-primary" />
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 overflow-hidden" style={{ padding: '24px 28px' }}>
+          <div className="absolute inset-0 opacity-30 pointer-events-none">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
+          </div>
+          <div className="relative flex items-center" style={{ gap: '16px' }}>
+            <div 
+              className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
+              style={{ width: '52px', height: '52px' }}
+            >
+              <Clock style={{ width: '26px', height: '26px' }} className="text-white drop-shadow-lg" />
+            </div>
+            <div>
+              <h2 className="text-xl md:text-2xl font-ranade font-bold text-white drop-shadow-sm">
+                Aprovações Pendentes
+              </h2>
+              <p className="text-white/80 font-dm-sans" style={{ fontSize: '14px' }}>
+                Carregando solicitações...
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-center" style={{ padding: '64px 28px' }}>
+          <Loader2 style={{ width: '40px', height: '40px' }} className="animate-spin text-amber-500" />
         </div>
       </div>
     );
   }
 
+  // Empty State
   if (approvals.length === 0) {
     return (
-      <div className="bg-white rounded-lab p-8 shadow-lab-sm border border-gray-100">
-        <div className="text-center py-12">
-          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
-            <CheckCircle size={40} className="text-green-500" />
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-emerald-500 via-green-500 to-emerald-600 overflow-hidden" style={{ padding: '24px 28px' }}>
+          <div className="absolute inset-0 opacity-30 pointer-events-none">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
           </div>
-          <h3 className="text-xl font-ranade font-bold text-gray-900 mb-2">
-            Tudo em dia!
-          </h3>
-          <p className="text-gray-500 font-dm-sans">
-            Não há aprovações pendentes no momento.
+          <div className="relative flex items-center" style={{ gap: '16px' }}>
+            <div 
+              className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
+              style={{ width: '52px', height: '52px' }}
+            >
+              <CheckCircle style={{ width: '26px', height: '26px' }} className="text-white drop-shadow-lg" />
+            </div>
+            <div>
+              <h2 className="text-xl md:text-2xl font-ranade font-bold text-white drop-shadow-sm">
+                Tudo em Dia!
+              </h2>
+              <p className="text-white/80 font-dm-sans" style={{ fontSize: '14px' }}>
+                Não há aprovações pendentes
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="text-center" style={{ padding: '48px 28px' }}>
+          <div 
+            className="mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center animate-float-gentle"
+            style={{ width: '72px', height: '72px', marginBottom: '20px' }}
+          >
+            <CheckCircle style={{ width: '36px', height: '36px' }} className="text-emerald-500" />
+          </div>
+          <p className="text-slate-600 font-dm-sans" style={{ fontSize: '15px', maxWidth: '280px', margin: '0 auto' }}>
+            Todas as solicitações de pontos foram processadas. Volte mais tarde para verificar novas solicitações.
           </p>
         </div>
       </div>
@@ -102,229 +148,313 @@ export function ApprovalQueue({
   }
 
   return (
-    <div className="bg-white rounded-lab p-6 shadow-lab-sm border border-gray-100">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-            <Clock size={24} className="text-amber-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-ranade font-bold text-gray-900">
-              Aprovações Pendentes
-            </h2>
-            <p className="text-sm text-gray-500 font-dm-sans">
-              {approvals.length} {approvals.length === 1 ? 'solicitação aguardando' : 'solicitações aguardando'}
-            </p>
+    <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden transition-shadow duration-500 hover:shadow-2xl">
+      {/* Header com Gradiente */}
+      <div className="relative bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 overflow-hidden">
+        <div className="absolute inset-0 opacity-30 pointer-events-none">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
+        </div>
+        
+        <div className="relative" style={{ padding: '24px 28px' }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center" style={{ gap: '16px' }}>
+              <div 
+                className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg animate-icon-float"
+                style={{ width: '52px', height: '52px' }}
+              >
+                <Clock style={{ width: '26px', height: '26px' }} className="text-white drop-shadow-lg" />
+              </div>
+              <div style={{ marginLeft: '4px' }}>
+                <h2 className="text-xl md:text-2xl font-ranade font-bold text-white drop-shadow-sm" style={{ marginBottom: '2px' }}>
+                  Aprovações Pendentes
+                </h2>
+                <p className="text-white/80 font-dm-sans" style={{ fontSize: '14px' }}>
+                  {approvals.length} {approvals.length === 1 ? 'solicitação aguardando' : 'solicitações aguardando'} análise
+                </p>
+              </div>
+            </div>
+            
+            {/* Badge contador */}
+            <div 
+              className="bg-white/15 backdrop-blur-md border border-white/30 rounded-xl ring-1 ring-white/20 flex items-center"
+              style={{ padding: '10px 16px', gap: '8px' }}
+            >
+              <Star style={{ width: '18px', height: '18px' }} fill="currentColor" className="text-white" />
+              <span className="font-ranade font-bold text-white" style={{ fontSize: '18px' }}>
+                {approvals.reduce((sum, a) => sum + a.points, 0).toLocaleString('pt-BR')}
+              </span>
+              <span className="text-white/80 font-dm-sans" style={{ fontSize: '13px' }}>pts total</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-dm-sans flex items-center gap-2">
-          <AlertCircle size={18} />
-          {error}
-        </div>
-      )}
-
-      {/* Approvals List */}
-      <div className="space-y-5">
-        {approvals.map((approval) => (
-          <div
-            key={approval.id}
-            className="border border-gray-100 rounded-2xl p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-200 bg-white"
+      {/* Content */}
+      <div style={{ padding: '24px 28px' }}>
+        {/* Error Message */}
+        {error && (
+          <div 
+            className="flex items-center rounded-xl bg-red-50 border border-red-200 text-red-600 font-dm-sans animate-slide-up-fade"
+            style={{ padding: '12px 16px', marginBottom: '20px', gap: '10px', fontSize: '14px' }}
           >
-            {/* Request Info */}
-            <div className="flex items-start gap-4 mb-6">
-              <AvatarWithPreview
-                src={(approval.target_user as any)?.avatar_url}
-                alt={(approval.target_user as any)?.nome || 'Usuário'}
-                size="sm"
-                fallbackText={(approval.target_user as any)?.nome}
-                user={{
-                  id: (approval.target_user as any)?.id || approval.target_user_id,
-                  nome: (approval.target_user as any)?.nome || 'Usuário',
-                  avatar_url: (approval.target_user as any)?.avatar_url,
-                  lab_points: (approval.target_user as any)?.lab_points || 0,
-                  department: (approval.target_user as any)?.department,
-                  role: (approval.target_user as any)?.role,
-                }}
-              />
-              <div className="flex-1 min-w-0">
-                <p className="font-ranade font-semibold text-gray-900 text-lg">
-                  {(approval.target_user as any)?.nome || 'Usuário'}
-                </p>
-                <p className="text-sm text-gray-500 font-dm-sans mt-0.5">
-                  {(() => {
-                    const dept = (approval.target_user as any)?.department;
-                    if (dept && DEPARTMENT_LABELS[dept as DepartmentEnum]) {
-                      return DEPARTMENT_LABELS[dept as DepartmentEnum];
-                    }
-                    return (approval.target_user as any)?.email;
-                  })()}
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-lab-gradient shadow-sm">
-                  <Award size={18} className="text-white" />
-                  <span className="font-ranade font-bold text-white text-lg">{approval.points}</span>
-                  <span className="text-white/90 text-sm font-dm-sans">pts</span>
-                </div>
-              </div>
-            </div>
+            <AlertCircle style={{ width: '18px', height: '18px', flexShrink: 0 }} />
+            <span>{error}</span>
+          </div>
+        )}
 
-            {/* Justification */}
-            <div className="mb-5 p-4 rounded-xl bg-gray-50 border border-gray-100">
-              <div className="flex items-start gap-3">
-                <FileText size={18} className="text-gray-400 flex-shrink-0 mt-1" />
-                <div className="flex-1">
-                  <p className="text-xs font-dm-sans font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                    Justificativa
-                  </p>
-                  <p className="text-gray-700 font-dm-sans leading-relaxed">
-                    {approval.justification}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Requester and Approver Info */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-              <div className="flex items-center gap-3 text-sm font-dm-sans p-3 rounded-lg bg-blue-50/50 border border-blue-100/50">
-                <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <UserIcon size={16} className="text-blue-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-blue-600 font-medium uppercase tracking-wide mb-0.5">Solicitado por</p>
-                  <p className="font-semibold text-gray-900 truncate">
-                    {(approval.requester as any)?.nome || 'Gestor'}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3 text-sm font-dm-sans p-3 rounded-lg bg-amber-50/50 border border-amber-100/50">
-                <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-                  <CheckCircle size={16} className="text-amber-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-amber-600 font-medium uppercase tracking-wide mb-0.5">Atribuído para</p>
-                  <p className="font-semibold text-gray-900 truncate">
-                    {(approval.approver as any)?.nome || 'Aprovador'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Date Info */}
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-dm-sans mb-5">
-              <Clock size={12} />
-              <span>{formatDate(approval.created_at)}</span>
-            </div>
-
-            {/* Rejection Form */}
-            {rejectingId === approval.id ? (
-              <div className="space-y-3 pt-4 border-t border-gray-100">
-                <textarea
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                  placeholder="Motivo da rejeição (opcional)..."
-                  rows={2}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all font-dm-sans resize-none"
-                />
-                <div className="flex gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setRejectingId(null);
-                      setRejectReason('');
+        {/* Approvals List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {approvals.map((approval, index) => (
+            <div
+              key={approval.id}
+              className="animate-row-slide-in group border border-slate-100 rounded-2xl bg-gradient-to-r from-slate-50/50 to-white hover:border-slate-200 hover:shadow-lg transition-all duration-300"
+              style={{ padding: '24px', animationDelay: `${index * 0.08}s` }}
+            >
+              {/* Request Header - User Info + Points */}
+              <div className="flex items-center justify-between" style={{ marginBottom: '20px' }}>
+                <div className="flex items-center" style={{ gap: '14px' }}>
+                  <AvatarWithPreview
+                    src={(approval.target_user as any)?.avatar_url}
+                    alt={(approval.target_user as any)?.nome || 'Usuário'}
+                    size="md"
+                    fallbackText={(approval.target_user as any)?.nome}
+                    user={{
+                      id: (approval.target_user as any)?.id || approval.target_user_id,
+                      nome: (approval.target_user as any)?.nome || 'Usuário',
+                      avatar_url: (approval.target_user as any)?.avatar_url,
+                      lab_points: (approval.target_user as any)?.lab_points || 0,
+                      department: (approval.target_user as any)?.department,
+                      role: (approval.target_user as any)?.role,
                     }}
-                    disabled={processingId === approval.id}
-                    className="flex-1"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => handleReject(approval.id)}
-                    disabled={processingId === approval.id}
-                    loading={processingId === approval.id}
-                    className="flex-1 !bg-red-500 hover:!bg-red-600"
-                  >
-                    Confirmar Rejeição
-                  </Button>
-                </div>
-              </div>
-            ) : approvingId === approval.id ? (
-              /* Approval Confirmation */
-              <div className="space-y-3 pt-4 border-t border-gray-100">
-                <div className="p-4 rounded-xl bg-green-50 border border-green-200">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle size={20} className="text-white" />
-                    </div>
-                    <div>
-                      <p className="font-ranade font-bold text-gray-900 mb-1">
-                        Confirmar aprovação
-                      </p>
-                      <p className="text-sm text-gray-600 font-dm-sans">
-                        Você está prestes a aprovar <strong>{approval.points} pontos</strong> para{' '}
-                        <strong>{(approval.target_user as any)?.nome}</strong>. Esta ação não pode ser desfeita.
-                      </p>
-                    </div>
+                  />
+                  <div className="min-w-0">
+                    <p className="font-ranade font-bold text-slate-800 truncate" style={{ fontSize: '17px', marginBottom: '2px' }}>
+                      {(approval.target_user as any)?.nome || 'Usuário'}
+                    </p>
+                    <p className="text-slate-500 font-dm-sans truncate" style={{ fontSize: '13px' }}>
+                      {(() => {
+                        const dept = (approval.target_user as any)?.department;
+                        if (dept && DEPARTMENT_LABELS[dept as DepartmentEnum]) {
+                          return DEPARTMENT_LABELS[dept as DepartmentEnum];
+                        }
+                        return (approval.target_user as any)?.email;
+                      })()}
+                    </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                
+                {/* Points Badge */}
+                <div 
+                  className="flex items-center bg-gradient-to-br from-lab-primary to-indigo-600 rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-105"
+                  style={{ padding: '10px 16px', gap: '6px' }}
+                >
+                  <Star style={{ width: '18px', height: '18px' }} fill="currentColor" className="text-white" />
+                  <span className="font-ranade font-bold text-white" style={{ fontSize: '18px' }}>
+                    {approval.points}
+                  </span>
+                  <span className="text-white/80 font-dm-sans" style={{ fontSize: '12px' }}>pts</span>
+                </div>
+              </div>
+
+              {/* Justification Card */}
+              <div 
+                className="rounded-xl bg-slate-50/80 border border-slate-100"
+                style={{ padding: '16px', marginBottom: '16px' }}
+              >
+                <div className="flex items-start" style={{ gap: '12px' }}>
+                  <div 
+                    className="rounded-lg bg-slate-200/70 flex items-center justify-center flex-shrink-0"
+                    style={{ width: '36px', height: '36px' }}
+                  >
+                    <FileText style={{ width: '18px', height: '18px' }} className="text-slate-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-dm-sans font-semibold text-slate-500 uppercase tracking-wide" style={{ fontSize: '11px', marginBottom: '6px' }}>
+                      Justificativa
+                    </p>
+                    <p className="text-slate-700 font-dm-sans leading-relaxed" style={{ fontSize: '14px' }}>
+                      {approval.justification}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Cards Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: '12px', marginBottom: '16px' }}>
+                {/* Requester */}
+                <div 
+                  className="flex items-center rounded-xl bg-blue-50/70 border border-blue-100/60 transition-colors duration-300 hover:bg-blue-50"
+                  style={{ padding: '12px 14px', gap: '12px' }}
+                >
+                  <div 
+                    className="rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"
+                    style={{ width: '36px', height: '36px' }}
+                  >
+                    <UserIcon style={{ width: '16px', height: '16px' }} className="text-blue-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-dm-sans font-medium text-blue-600 uppercase tracking-wide" style={{ fontSize: '10px', marginBottom: '2px' }}>
+                      Solicitado por
+                    </p>
+                    <p className="font-dm-sans font-semibold text-slate-800 truncate" style={{ fontSize: '13px' }}>
+                      {(approval.requester as any)?.nome || 'Gestor'}
+                    </p>
+                  </div>
+                  <ChevronRight style={{ width: '14px', height: '14px' }} className="text-blue-300 flex-shrink-0" />
+                </div>
+                
+                {/* Approver */}
+                <div 
+                  className="flex items-center rounded-xl bg-amber-50/70 border border-amber-100/60 transition-colors duration-300 hover:bg-amber-50"
+                  style={{ padding: '12px 14px', gap: '12px' }}
+                >
+                  <div 
+                    className="rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0"
+                    style={{ width: '36px', height: '36px' }}
+                  >
+                    <CheckCircle style={{ width: '16px', height: '16px' }} className="text-amber-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-dm-sans font-medium text-amber-600 uppercase tracking-wide" style={{ fontSize: '10px', marginBottom: '2px' }}>
+                      Atribuído para
+                    </p>
+                    <p className="font-dm-sans font-semibold text-slate-800 truncate" style={{ fontSize: '13px' }}>
+                      {(approval.approver as any)?.nome || 'Aprovador'}
+                    </p>
+                  </div>
+                  <ChevronRight style={{ width: '14px', height: '14px' }} className="text-amber-300 flex-shrink-0" />
+                </div>
+              </div>
+
+              {/* Date Info */}
+              <div 
+                className="flex items-center text-slate-400 font-dm-sans"
+                style={{ gap: '6px', fontSize: '12px', marginBottom: '16px' }}
+              >
+                <Clock style={{ width: '12px', height: '12px' }} />
+                <span>{formatDate(approval.created_at)}</span>
+              </div>
+
+              {/* Rejection Form */}
+              {rejectingId === approval.id ? (
+                <div className="border-t border-slate-100" style={{ paddingTop: '16px' }}>
+                  <div style={{ marginBottom: '12px' }}>
+                    <textarea
+                      value={rejectReason}
+                      onChange={(e) => setRejectReason(e.target.value)}
+                      placeholder="Motivo da rejeição (opcional)..."
+                      rows={2}
+                      className="w-full rounded-xl border border-slate-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all font-dm-sans resize-none"
+                      style={{ padding: '12px 16px', fontSize: '14px' }}
+                    />
+                  </div>
+                  <div className="flex" style={{ gap: '10px' }}>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        setRejectingId(null);
+                        setRejectReason('');
+                      }}
+                      disabled={processingId === approval.id}
+                      className="flex-1 !rounded-xl"
+                      style={{ padding: '12px 16px' }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleReject(approval.id)}
+                      disabled={processingId === approval.id}
+                      loading={processingId === approval.id}
+                      className="flex-1 !bg-red-500 hover:!bg-red-600 !rounded-xl"
+                      style={{ padding: '12px 16px' }}
+                    >
+                      Confirmar Rejeição
+                    </Button>
+                  </div>
+                </div>
+              ) : approvingId === approval.id ? (
+                /* Approval Confirmation */
+                <div className="border-t border-slate-100" style={{ paddingTop: '16px' }}>
+                  <div 
+                    className="rounded-xl bg-emerald-50 border border-emerald-200"
+                    style={{ padding: '16px', marginBottom: '12px' }}
+                  >
+                    <div className="flex items-start" style={{ gap: '14px' }}>
+                      <div 
+                        className="rounded-xl bg-emerald-500 flex items-center justify-center flex-shrink-0"
+                        style={{ width: '44px', height: '44px' }}
+                      >
+                        <CheckCircle style={{ width: '22px', height: '22px' }} className="text-white" />
+                      </div>
+                      <div>
+                        <p className="font-ranade font-bold text-slate-800" style={{ fontSize: '15px', marginBottom: '4px' }}>
+                          Confirmar aprovação
+                        </p>
+                        <p className="text-slate-600 font-dm-sans" style={{ fontSize: '13px', lineHeight: '1.5' }}>
+                          Você está prestes a aprovar <strong>{approval.points} pontos</strong> para{' '}
+                          <strong>{(approval.target_user as any)?.nome}</strong>. Esta ação não pode ser desfeita.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex" style={{ gap: '10px' }}>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setApprovingId(null)}
+                      disabled={processingId === approval.id}
+                      className="flex-1 !rounded-xl"
+                      style={{ padding: '12px 16px' }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleApproveConfirm}
+                      disabled={processingId === approval.id}
+                      loading={processingId === approval.id}
+                      className="flex-1 !bg-emerald-500 hover:!bg-emerald-600 !rounded-xl"
+                      style={{ padding: '12px 16px' }}
+                    >
+                      Confirmar Aprovação
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                /* Action Buttons */
+                <div className="flex border-t border-slate-100" style={{ paddingTop: '16px', gap: '12px' }}>
                   <Button
                     variant="secondary"
-                    size="sm"
-                    onClick={() => setApprovingId(null)}
+                    size="md"
+                    onClick={() => setRejectingId(approval.id)}
                     disabled={processingId === approval.id}
-                    className="flex-1"
+                    className="flex-1 !border-red-200 !text-red-600 hover:!bg-red-50 !rounded-xl group/btn transition-all duration-300"
+                    style={{ padding: '14px 20px' }}
                   >
-                    Cancelar
+                    <XCircle style={{ width: '18px', height: '18px', marginRight: '8px' }} className="transition-transform duration-300 group-hover/btn:scale-110" />
+                    Rejeitar
                   </Button>
                   <Button
                     variant="primary"
-                    size="sm"
-                    onClick={handleApproveConfirm}
+                    size="md"
+                    onClick={() => setApprovingId(approval.id)}
                     disabled={processingId === approval.id}
-                    loading={processingId === approval.id}
-                    className="flex-1 !bg-green-500 hover:!bg-green-600"
+                    className="flex-1 !bg-emerald-500 hover:!bg-emerald-600 !rounded-xl group/btn transition-all duration-300"
+                    style={{ padding: '14px 20px' }}
                   >
-                    Confirmar Aprovação
+                    <CheckCircle style={{ width: '18px', height: '18px', marginRight: '8px' }} className="transition-transform duration-300 group-hover/btn:scale-110" />
+                    Aprovar
                   </Button>
                 </div>
-              </div>
-            ) : (
-              /* Action Buttons */
-              <div className="flex gap-3 pt-5 border-t border-gray-200">
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={() => setRejectingId(approval.id)}
-                  disabled={processingId === approval.id}
-                  className="flex-1 !border-red-200 !text-red-600 hover:!bg-red-50 !py-3"
-                >
-                  <XCircle size={18} className="mr-2" />
-                  Rejeitar
-                </Button>
-                <Button
-                  variant="primary"
-                  size="md"
-                  onClick={() => setApprovingId(approval.id)}
-                  disabled={processingId === approval.id}
-                  className="flex-1 !bg-green-500 hover:!bg-green-600 !py-3"
-                >
-                  <CheckCircle size={18} className="mr-2" />
-                  Aprovar
-                </Button>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
