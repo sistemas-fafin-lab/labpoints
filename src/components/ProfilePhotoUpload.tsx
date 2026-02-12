@@ -159,7 +159,7 @@ export function ProfilePhotoUpload({
       {editable && !uploading && !previewUrl && (
         <button
           onClick={() => setShowMenu(!showMenu)}
-          className="absolute bottom-0 right-0 w-10 h-10 bg-lab-primary rounded-full flex items-center justify-center shadow-lg border-3 border-white hover:bg-lab-primary/90 transition-all hover:scale-110"
+          className="absolute top-0 right-0 w-10 h-10 bg-lab-primary rounded-full flex items-center justify-center shadow-lg border-3 border-white hover:bg-lab-primary/90 transition-all hover:scale-110"
           aria-label="Alterar foto"
         >
           <Camera size={iconSizeClasses[size] - 4} className="text-white" />

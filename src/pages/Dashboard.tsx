@@ -308,11 +308,11 @@ export function Dashboard() {
           <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden transition-shadow duration-500 hover:shadow-2xl">
             
             {/* Header com Gradiente */}
-            <div className="relative bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 overflow-hidden">
+            <div className="relative bg-gradient-to-br from-lab-primary via-blue-500 to-indigo-600 overflow-hidden">
               {/* Background decorations */}
               <div className="absolute inset-0 opacity-30 pointer-events-none">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
+                <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
               </div>
               
               {/* Header Content */}
@@ -320,7 +320,7 @@ export function Dashboard() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ gap: '16px' }}>
                   <div className="flex items-center" style={{ gap: '16px' }}>
                     <div 
-                      className="rounded-2xl bg-white/15 ring-2 ring-white/30 flex items-center justify-center backdrop-blur-sm shadow-lg animate-icon-float"
+                      className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg animate-icon-float"
                       style={{ width: '52px', height: '52px', animationDelay: '0.5s' }}
                     >
                       <Clock style={{ width: '26px', height: '26px' }} strokeWidth={2} className="drop-shadow-lg text-white" />
@@ -329,7 +329,7 @@ export function Dashboard() {
                       <h2 className="text-xl md:text-2xl font-ranade font-bold tracking-tight drop-shadow-sm" style={{ color: 'white', marginBottom: '2px' }}>
                         Transações Recentes
                       </h2>
-                      <p className="text-white/70 font-dm-sans" style={{ fontSize: '13px', lineHeight: '18px' }}>
+                      <p className="text-white/80 font-dm-sans" style={{ fontSize: '13px', lineHeight: '18px' }}>
                         Acompanhe seus ganhos e resgates
                       </p>
                     </div>
@@ -337,7 +337,7 @@ export function Dashboard() {
                   
                   <Link
                     to="/perfil"
-                    className="flex items-center self-start sm:self-auto bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-slate-700 hover:scale-105 active:scale-95 group ring-1 ring-white/10"
+                    className="flex items-center self-start sm:self-auto bg-white/15 backdrop-blur-md border border-white/30 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-lab-primary hover:scale-105 active:scale-95 group ring-1 ring-white/20"
                     style={{ padding: '10px 18px', fontSize: '14px', gap: '8px' }}
                   >
                     Ver Histórico
