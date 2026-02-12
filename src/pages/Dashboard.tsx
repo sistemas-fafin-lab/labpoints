@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { TrendingUp, Award, History } from 'lucide-react';
+import { TrendingUp, History, Gift, ArrowRight, Clock, Star } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRewards } from '../hooks/useRewards';
 import { useTransactions } from '../hooks/useTransactions';
@@ -90,30 +90,33 @@ export function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-lab-gray-100 pt-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 pt-6">
+      <div className="max-w-7xl mx-auto" style={{ padding: '24px 16px 48px 16px' }}>
         {/* Welcome Section */}
-        <div className="mb-6 sm:mb-8 animate-fade-in">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-gray-900 mb-2">
+        <div className="animate-fade-in" style={{ marginBottom: '32px' }}>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-slate-900" style={{ marginBottom: '8px' }}>
             Olá, {user.nome.split(' ')[0]}! 👋
           </h1>
-          <p className="text-sm sm:text-base text-lab-gray-700 font-dm-sans">
+          <p className="text-sm sm:text-base text-slate-600 font-dm-sans">
             Bem-vindo ao seu painel de recompensas Lab Points!
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" style={{ marginBottom: '32px' }}>
           {/* Hero Balance Card - Primary focal point */}
-          <div className="hero-balance-card rounded-lab p-5 sm:p-6 hover-lift">
-            <div className="flex items-center gap-5 sm:gap-6">
+          <div className="hero-balance-card rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" style={{ padding: '24px 28px' }}>
+            <div className="flex items-center" style={{ gap: '24px' }}>
               {/* Larger icon with matching blue palette */}
-              <div className="p-4 bg-white/15 backdrop-blur-sm rounded-xl shadow-lg mr-2">
-                <Award className="text-white drop-shadow-md" size={48} />
+              <div 
+                className="bg-white/15 backdrop-blur-sm rounded-2xl shadow-lg ring-2 ring-white/30 flex items-center justify-center"
+                style={{ width: '64px', height: '64px' }}
+              >
+                <Star className="text-white drop-shadow-md" fill="currentColor" style={{ width: '32px', height: '32px' }} />
               </div>
               <div className="flex-1 min-w-0">
                 {/* Upper label - small, subtle */}
-                <p className="text-[10px] sm:text-sm font-dm-sans font-bold text-white uppercase tracking-wider mb-1">
+                <p className="text-xs font-dm-sans font-bold text-white/90 uppercase tracking-wider" style={{ marginBottom: '6px' }}>
                   Seu Saldo
                 </p>
                 {/* Prominent balance value */}
@@ -121,39 +124,51 @@ export function Dashboard() {
                   {user.lab_points.toLocaleString('pt-BR')}
                 </p>
                 {/* Subtle supporting text */}
-                <p className="text-xs sm:text-sm font-dm-sans text-white/70 mt-1">
+                <p className="text-sm font-dm-sans text-white/70" style={{ marginTop: '4px' }}>
                   Lab Points disponíveis
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lab p-5 sm:p-6 shadow-lab-sm hover-lift border border-gray-100 animate-scale-in" style={{ animationDelay: '0.1s' }}>
-            <div className="flex items-center gap-5 sm:gap-6">
-              <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lab-sm mr-2">
-                <TrendingUp className="text-white" size={24} />
+          <div 
+            className="bg-white rounded-2xl shadow-lg border border-slate-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-scale-in" 
+            style={{ padding: '24px 28px', animationDelay: '0.1s' }}
+          >
+            <div className="flex items-center" style={{ gap: '20px' }}>
+              <div 
+                className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg flex items-center justify-center"
+                style={{ width: '52px', height: '52px' }}
+              >
+                <TrendingUp className="text-white" style={{ width: '26px', height: '26px' }} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm sm:text-base font-dm-sans text-lab-gray-700 mb-1">
+                <p className="text-sm font-dm-sans text-slate-500 font-medium" style={{ marginBottom: '4px' }}>
                   Total Ganho
                 </p>
-                <p className="text-2xl sm:text-3xl font-ranade font-bold text-gray-900">
+                <p className="text-2xl sm:text-3xl font-ranade font-bold text-slate-800">
                   {totalEarned.toLocaleString('pt-BR')}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lab p-5 sm:p-6 shadow-lab-sm hover-lift border border-gray-100 animate-scale-in sm:col-span-2 lg:col-span-1" style={{ animationDelay: '0.2s' }}>
-            <div className="flex items-center gap-5 sm:gap-6">
-              <div className="p-3 bg-gradient-to-br from-lab-accent to-red-500 rounded-lg shadow-lab-sm mr-2">
-                <History className="text-white" size={24} />
+          <div 
+            className="bg-white rounded-2xl shadow-lg border border-slate-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-scale-in sm:col-span-2 lg:col-span-1" 
+            style={{ padding: '24px 28px', animationDelay: '0.2s' }}
+          >
+            <div className="flex items-center" style={{ gap: '20px' }}>
+              <div 
+                className="bg-gradient-to-br from-rose-500 to-red-600 rounded-xl shadow-lg flex items-center justify-center"
+                style={{ width: '52px', height: '52px' }}
+              >
+                <Gift className="text-white" style={{ width: '26px', height: '26px' }} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm sm:text-base font-dm-sans text-lab-gray-700 mb-1">
+                <p className="text-sm font-dm-sans text-slate-500 font-medium" style={{ marginBottom: '4px' }}>
                   Total Resgatado
                 </p>
-                <p className="text-2xl sm:text-3xl font-ranade font-bold text-gray-900">
+                <p className="text-2xl sm:text-3xl font-ranade font-bold text-slate-800">
                   {totalRedeemed.toLocaleString('pt-BR')}
                 </p>
               </div>
@@ -162,7 +177,7 @@ export function Dashboard() {
         </div>
 
         {/* Top Users Ranking */}
-        <div className="mb-6 mt-24 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.25s' }}>
+        <div className="animate-fade-in" style={{ marginBottom: '32px', marginTop: '96px', animationDelay: '0.25s' }}>
           <TopUsersRanking
             users={topUsers}
             loading={topUsersLoading}
@@ -171,7 +186,7 @@ export function Dashboard() {
         </div>
 
         {/* Rewards Timeline Section */}
-        <div className="mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+        <div className="animate-fade-in" style={{ marginBottom: '32px', animationDelay: '0.3s' }}>
           {timelineRewards.length > 0 && (
             <RewardsTimeline
               rewards={timelineRewards}
@@ -185,7 +200,7 @@ export function Dashboard() {
 
         {/* Approval Queue Section - Managers and Admins only */}
         {canManageApprovals && pendingApprovals.length > 0 && (
-          <div className="mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.35s' }}>
+          <div className="animate-fade-in" style={{ marginBottom: '32px', animationDelay: '0.35s' }}>
             <ApprovalQueue
               approvals={pendingApprovals}
               loading={loadingApprovals}
@@ -195,116 +210,224 @@ export function Dashboard() {
           </div>
         )}
 
-        {/* Rewards Section */}
-        <div className="mb-6 sm:mb-24 mt-24 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
-            <h2 className="text-xl sm:text-2xl font-ranade font-bold text-gray-900">
-              Recompensas em Destaque
-            </h2>
-            <Link
-              to="/recompensas"
-              className="text-lab-primary hover:text-lab-primary-dark font-dm-sans font-medium transition-colors inline-flex items-center gap-2 group"
-            >
-              Ver Todas
-              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-
-          {rewardsLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-lab h-80 animate-shimmer border border-gray-100"
-                />
-              ))}
-            </div>
-          ) : featuredRewards.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {featuredRewards.map((reward, index) => (
-                <div key={reward.id} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <RewardCard
-                    reward={reward}
-                    userPoints={user.lab_points}
-                    onCardClick={() => setSelectedReward(reward)}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-lab p-8 sm:p-12 text-center shadow-lab-sm border border-gray-100">
-              <Award size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-30" />
-              <p className="text-lab-gray-700 font-dm-sans text-sm sm:text-base">
-                Nenhuma recompensa disponível no momento
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Transactions Section */}
-        <div>
-          <h2 className="text-xl sm:text-2xl font-ranade font-bold text-gray-900 mb-4 sm:mb-6">
-            Transações Recentes
-          </h2>
-
-          {transactionsLoading ? (
-            <div className="bg-white rounded-lab p-6 sm:p-8 shadow-lab-sm border border-gray-100">
-              <div className="space-y-3">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-16 bg-gray-200 rounded-lg animate-shimmer" />
-                ))}
+        {/* Rewards Section - Premium Card Design */}
+        <div className="animate-fade-in" style={{ marginBottom: '32px', marginTop: '96px', animationDelay: '0.4s' }}>
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden">
+            
+            {/* Header com Gradiente */}
+            <div className="relative bg-gradient-to-br from-lab-primary via-blue-500 to-indigo-600 overflow-hidden">
+              {/* Background decorations */}
+              <div className="absolute inset-0 opacity-30 pointer-events-none">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
               </div>
-            </div>
-          ) : recentTransactions.length > 0 ? (
-            <div className="bg-white rounded-lab p-4 sm:p-6 shadow-lab-sm border border-gray-100">
-              <div className="space-y-3">
-                {recentTransactions.map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="flex items-start justify-between p-4 rounded-lg bg-lab-gray-100 hover:bg-gray-200 transition-colors"
-                  >
-                    <div className="flex-1 min-w-0 pr-4">
-                      <p className="font-dm-sans text-sm sm:text-base text-gray-900 font-medium truncate">
-                        {transaction.descricao}
-                      </p>
-                      <p className="text-xs sm:text-sm font-dm-sans text-lab-gray-700 mt-1">
-                        {new Date(transaction.created_at).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
+              
+              {/* Header Content */}
+              <div className="relative" style={{ padding: '24px 28px' }}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ gap: '16px' }}>
+                  <div className="flex items-center" style={{ gap: '16px' }}>
+                    <div 
+                      className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
+                      style={{ width: '52px', height: '52px' }}
+                    >
+                      <Gift style={{ width: '26px', height: '26px' }} strokeWidth={2} className="drop-shadow-lg text-white" />
+                    </div>
+                    <div style={{ marginLeft: '4px' }}>
+                      <h2 className="text-xl md:text-2xl font-ranade font-bold tracking-tight drop-shadow-sm" style={{ color: 'white', marginBottom: '2px' }}>
+                        Recompensas em Destaque
+                      </h2>
+                      <p className="text-white/80 font-dm-sans" style={{ fontSize: '13px', lineHeight: '18px' }}>
+                        As melhores opções para resgatar seus pontos
                       </p>
                     </div>
-                    <span
-                      className={`font-ranade font-bold text-base sm:text-lg whitespace-nowrap ${
-                        transaction.tipo === 'credito'
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      }`}
-                    >
-                      {transaction.tipo === 'credito' ? '+' : '-'}
-                      {transaction.valor}
-                    </span>
                   </div>
-                ))}
+                  
+                  <Link
+                    to="/recompensas"
+                    className="flex items-center self-start sm:self-auto bg-white/15 backdrop-blur-md border border-white/30 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-lab-primary group ring-1 ring-white/20"
+                    style={{ padding: '10px 18px', fontSize: '14px', gap: '8px' }}
+                  >
+                    Ver Todas
+                    <ArrowRight style={{ width: '16px', height: '16px' }} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                </div>
               </div>
-              <Link
-                to="/perfil"
-                className="block text-center mt-6 text-lab-primary hover:text-lab-primary-dark font-dm-sans font-medium transition-colors hover:underline"
-              >
-                Ver Histórico Completo
-              </Link>
             </div>
-          ) : (
-            <div className="bg-white rounded-lab p-8 sm:p-12 text-center shadow-lab-sm border border-gray-100">
-              <History size={48} className="mx-auto text-lab-gray-700 mb-4 opacity-30" />
-              <p className="text-lab-gray-700 font-dm-sans text-sm sm:text-base">
-                Nenhuma transação registrada
-              </p>
+
+            {/* Content */}
+            <div style={{ padding: '28px' }}>
+              {rewardsLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div
+                      key={i}
+                      className="bg-gradient-to-br from-slate-50 to-white rounded-2xl h-80 animate-shimmer border border-slate-100"
+                    />
+                  ))}
+                </div>
+              ) : featuredRewards.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {featuredRewards.map((reward, index) => (
+                    <div 
+                      key={reward.id} 
+                      className="animate-scale-in group"
+                      style={{ animationDelay: `${index * 0.08}s` }}
+                    >
+                      <div className="transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl rounded-2xl">
+                        <RewardCard
+                          reward={reward}
+                          userPoints={user.lab_points}
+                          onCardClick={() => setSelectedReward(reward)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-100" style={{ padding: '48px 32px' }}>
+                  <div className="text-center">
+                    <div 
+                      className="mx-auto rounded-2xl bg-slate-100 flex items-center justify-center"
+                      style={{ width: '64px', height: '64px', marginBottom: '16px' }}
+                    >
+                      <Gift style={{ width: '32px', height: '32px' }} className="text-slate-400" />
+                    </div>
+                    <p className="text-slate-500 font-dm-sans" style={{ fontSize: '15px' }}>
+                      Nenhuma recompensa disponível no momento
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+        </div>
+
+        {/* Transactions Section - Premium Card Design */}
+        <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden">
+            
+            {/* Header com Gradiente */}
+            <div className="relative bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 overflow-hidden">
+              {/* Background decorations */}
+              <div className="absolute inset-0 opacity-30 pointer-events-none">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2" />
+              </div>
+              
+              {/* Header Content */}
+              <div className="relative" style={{ padding: '24px 28px' }}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ gap: '16px' }}>
+                  <div className="flex items-center" style={{ gap: '16px' }}>
+                    <div 
+                      className="rounded-2xl bg-white/15 ring-2 ring-white/30 flex items-center justify-center backdrop-blur-sm shadow-lg"
+                      style={{ width: '52px', height: '52px' }}
+                    >
+                      <Clock style={{ width: '26px', height: '26px' }} strokeWidth={2} className="drop-shadow-lg text-white" />
+                    </div>
+                    <div style={{ marginLeft: '4px' }}>
+                      <h2 className="text-xl md:text-2xl font-ranade font-bold tracking-tight drop-shadow-sm" style={{ color: 'white', marginBottom: '2px' }}>
+                        Transações Recentes
+                      </h2>
+                      <p className="text-white/70 font-dm-sans" style={{ fontSize: '13px', lineHeight: '18px' }}>
+                        Acompanhe seus ganhos e resgates
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <Link
+                    to="/perfil"
+                    className="flex items-center self-start sm:self-auto bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-slate-700 group ring-1 ring-white/10"
+                    style={{ padding: '10px 18px', fontSize: '14px', gap: '8px' }}
+                  >
+                    Ver Histórico
+                    <ArrowRight style={{ width: '16px', height: '16px' }} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: '24px 28px' }}>
+              {transactionsLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="h-20 bg-gradient-to-r from-slate-50 to-white rounded-xl animate-shimmer border border-slate-100" />
+                  ))}
+                </div>
+              ) : recentTransactions.length > 0 ? (
+                <div className="space-y-3">
+                  {recentTransactions.map((transaction, index) => (
+                    <div
+                      key={transaction.id}
+                      className="group flex items-center justify-between rounded-xl bg-gradient-to-r from-slate-50/80 to-white border border-slate-100 transition-all duration-300 hover:border-slate-200 hover:shadow-md hover:-translate-y-0.5"
+                      style={{ padding: '16px 20px', animationDelay: `${index * 0.05}s` }}
+                    >
+                      <div className="flex items-center" style={{ gap: '16px' }}>
+                        {/* Icon indicator */}
+                        <div 
+                          className={`rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
+                            transaction.tipo === 'credito'
+                              ? 'bg-gradient-to-br from-emerald-100 to-green-50'
+                              : 'bg-gradient-to-br from-red-100 to-rose-50'
+                          }`}
+                          style={{ width: '44px', height: '44px' }}
+                        >
+                          {transaction.tipo === 'credito' ? (
+                            <TrendingUp style={{ width: '20px', height: '20px' }} className="text-emerald-600" />
+                          ) : (
+                            <Gift style={{ width: '20px', height: '20px' }} className="text-rose-500" />
+                          )}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <p className="font-dm-sans text-slate-800 font-medium truncate" style={{ fontSize: '15px', marginBottom: '2px' }}>
+                            {transaction.descricao}
+                          </p>
+                          <p className="text-slate-500 font-dm-sans" style={{ fontSize: '13px' }}>
+                            {new Date(transaction.created_at).toLocaleDateString('pt-BR', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Points value */}
+                      <div 
+                        className={`flex items-center font-ranade font-bold ${
+                          transaction.tipo === 'credito'
+                            ? 'text-emerald-600'
+                            : 'text-rose-500'
+                        }`}
+                        style={{ fontSize: '17px', gap: '4px' }}
+                      >
+                        <Star style={{ width: '16px', height: '16px' }} fill="currentColor" className="opacity-70" />
+                        <span>
+                          {transaction.tipo === 'credito' ? '+' : '-'}
+                          {transaction.valor.toLocaleString('pt-BR')}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-100" style={{ padding: '48px 32px' }}>
+                  <div className="text-center">
+                    <div 
+                      className="mx-auto rounded-2xl bg-slate-100 flex items-center justify-center"
+                      style={{ width: '64px', height: '64px', marginBottom: '16px' }}
+                    >
+                      <History style={{ width: '32px', height: '32px' }} className="text-slate-400" />
+                    </div>
+                    <p className="text-slate-500 font-dm-sans" style={{ fontSize: '15px' }}>
+                      Nenhuma transação registrada
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Reward Detail Modal */}

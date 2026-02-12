@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle, Tag, ChevronDown } from 'lucide-react';
 import { Button } from './ui/Button';
-import { Avatar } from './ui/Avatar';
+import { AvatarWithPreview } from './AvatarWithPreview';
 import { useToast } from './ui/Toast';
-import { User, DEPARTMENT_LABELS, TransactionReasonEnum, TRANSACTION_REASONS_LIST } from '../lib/supabase';
+import { User, DEPARTMENT_LABELS, TransactionReasonEnum } from '../lib/supabase';
 
 interface AssignPointsModalProps {
   isOpen: boolean;
@@ -302,11 +302,22 @@ export function AssignPointsModal({
                         onClick={() => handleSelectUser(user)}
                         className="neon-card-content w-full flex items-center gap-4 p-4 bg-white transition-all duration-300 group hover:-translate-y-0.5 hover:shadow-lg"
                       >
-                        <Avatar
+                        <AvatarWithPreview
                           src={user.avatar_url}
                           alt={user.nome}
                           size="sm"
                           fallbackText={user.nome}
+                          user={{
+                            id: user.id,
+                            nome: user.nome,
+                            avatar_url: user.avatar_url,
+                            lab_points: user.lab_points,
+                            department: user.department,
+                            role: user.role,
+                            created_at: user.created_at,
+                          }}
+                          hoverDelay={3000}
+                          showProgressRing={true}
                         />
                         <div className="flex-1 text-left min-w-0">
                           <p className="font-ranade font-semibold text-slate-800 group-hover:text-blue-600 transition-colors truncate">
@@ -331,11 +342,22 @@ export function AssignPointsModal({
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Selected User Display */}
               <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-lab-light/50 to-indigo-50/50 border-2 border-lab-primary/20">
-                <Avatar
+                <AvatarWithPreview
                   src={selectedUser?.avatar_url}
                   alt={selectedUser?.nome || 'Usuário'}
                   size="md"
                   fallbackText={selectedUser?.nome}
+                  user={selectedUser ? {
+                    id: selectedUser.id,
+                    nome: selectedUser.nome,
+                    avatar_url: selectedUser.avatar_url,
+                    lab_points: selectedUser.lab_points,
+                    department: selectedUser.department,
+                    role: selectedUser.role,
+                    created_at: selectedUser.created_at,
+                  } : undefined}
+                  hoverDelay={3000}
+                  showProgressRing={true}
                 />
                 <div className="flex-1 min-w-0">
                   <p className="font-ranade font-semibold text-slate-800 truncate">

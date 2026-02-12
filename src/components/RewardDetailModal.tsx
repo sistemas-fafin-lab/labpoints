@@ -1,8 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Gift, Star, Award, Clock, CheckCircle, Sparkles } from 'lucide-react';
 import { Button } from './ui/Button';
 import { PointsBadge } from './ui/PointsBadge';
+import { RedeemModal } from './RedeemModal';
+import type { Reward } from '../lib/supabase';
 
 interface RewardDetailModalProps {
   isOpen: boolean;
@@ -28,6 +30,8 @@ export function RewardDetailModal({
   onRedeem,
   loading
 }: RewardDetailModalProps) {
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   // Block body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -207,10 +211,7 @@ export function RewardDetailModal({
             </Button>
             {isUnlocked && (
               <button
-                onClick={() => {
-                  onRedeem(reward.id);
-                  onClose();
-                }}
+                onClick={() => setIsConfirmModalOpen(true)}
                 disabled={loading}
                 className="relative flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-lab-primary via-indigo-500 to-purple-600 text-white font-ranade font-semibold shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden group"
               >
@@ -225,6 +226,30 @@ export function RewardDetailModal({
             )}
           </div>
         </div>
+
+        {/* Modal de Confirmação de Resgate */}
+        <RedeemModal
+          reward={{
+            id: reward.id,
+            titulo: reward.name,
+            descricao: reward.descricao || '',
+            custo_points: reward.points,
+            categoria: reward.categoria || '',
+            ativo: true,
+            created_at: '',
+            updated_at: '',
+            imagem_url: reward.imagem_url || null
+          } as Reward}
+          userPoints={userPoints}
+          isOpen={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          onConfirm={() => {
+            onRedeem(reward.id);
+            setIsConfirmModalOpen(false);
+            onClose();
+          }}
+          loading={loading}
+        />
         </div>
       </div>
     </div>

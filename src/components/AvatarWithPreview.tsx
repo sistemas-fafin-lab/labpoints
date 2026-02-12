@@ -8,10 +8,11 @@ interface AvatarWithPreviewProps {
   alt: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   fallbackText?: string;
-  user: PreviewUser;
+  user?: PreviewUser;
   hoverDelay?: number;
   showProgressRing?: boolean;
   disabled?: boolean;
+  enableClick?: boolean;
 }
 
 export function AvatarWithPreview({
@@ -23,14 +24,22 @@ export function AvatarWithPreview({
   hoverDelay = 3000,
   showProgressRing = true,
   disabled = false,
+  enableClick = true,
 }: AvatarWithPreviewProps) {
   const { openPreview } = useProfilePreview();
 
   const handleTrigger = useCallback(() => {
-    if (!disabled) {
+    if (!disabled && user) {
       openPreview(user);
     }
   }, [openPreview, user, disabled]);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!disabled && enableClick && user) {
+      openPreview(user);
+    }
+  }, [openPreview, user, disabled, enableClick]);
 
   const { isHovering, progress, handlers } = useHoverDelay({
     delay: hoverDelay,
@@ -54,6 +63,7 @@ export function AvatarWithPreview({
   return (
     <div 
       className="relative cursor-pointer group"
+      onClick={handleClick}
       {...(disabled ? {} : handlers)}
     >
       <Avatar

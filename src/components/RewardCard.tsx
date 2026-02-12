@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Reward } from '../lib/supabase';
 import { Button } from './ui/Button';
 import { PointsBadge } from './ui/PointsBadge';
+import { RedeemModal } from './RedeemModal';
 import { Tag } from 'lucide-react';
 
 interface RewardCardProps {
@@ -12,6 +14,7 @@ interface RewardCardProps {
 }
 
 export function RewardCard({ reward, userPoints, onRedeem, onCardClick, loading }: RewardCardProps) {
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const canRedeem = userPoints !== undefined && userPoints >= reward.custo_points;
 
   const handleCardClick = () => {
@@ -23,8 +26,15 @@ export function RewardCard({ reward, userPoints, onRedeem, onCardClick, loading 
   const handleRedeemClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (canRedeem && onRedeem) {
+      setIsConfirmModalOpen(true);
+    }
+  };
+
+  const handleConfirmRedeem = () => {
+    if (onRedeem) {
       onRedeem();
     }
+    setIsConfirmModalOpen(false);
   };
 
   return (
@@ -74,6 +84,18 @@ export function RewardCard({ reward, userPoints, onRedeem, onCardClick, loading 
           )}
         </div>
       </div>
+
+      {/* Modal de Confirmação de Resgate */}
+      {userPoints !== undefined && (
+        <RedeemModal
+          reward={reward}
+          userPoints={userPoints}
+          isOpen={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          onConfirm={handleConfirmRedeem}
+          loading={loading}
+        />
+      )}
     </div>
   );
 }

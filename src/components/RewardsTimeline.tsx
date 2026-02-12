@@ -1,6 +1,5 @@
-import { TrendingUp, Gift, Target, Lock } from 'lucide-react';
+import { TrendingUp, Gift, Target, Lock, Star } from 'lucide-react';
 import { RewardMilestone } from './RewardMilestone';
-import { PointsBadge } from './ui/PointsBadge';
 
 export interface TimelineReward {
   id: string;
@@ -53,8 +52,8 @@ export function RewardsTimeline({
   if (orientation === 'vertical') {
     return (
       <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
-        {/* Header - redesigned with AssignPointsModal visual approach */}
-        <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-6 sm:p-7 overflow-hidden">
+        {/* Header - redesigned with navy blue tones */}
+        <div className="relative bg-gradient-to-br from-lab-primary via-blue-500 to-indigo-600 p-6 sm:p-7 overflow-hidden">
           {/* Background decorations */}
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2" />
@@ -67,7 +66,7 @@ export function RewardsTimeline({
                 className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
                 style={{ width: '56px', height: '56px' }}
               >
-                <TrendingUp style={{ width: '28px', height: '28px' }} className="text-white drop-shadow-lg mr-8" />
+                <TrendingUp style={{ width: '28px', height: '28px' }} className="text-white drop-shadow-lg" />
               </div>
               <div>
                 <h2 className="text-xl sm:text-2xl font-ranade font-bold text-white drop-shadow-sm">
@@ -78,7 +77,12 @@ export function RewardsTimeline({
                 </p>
               </div>
             </div>
-            <PointsBadge points={userPoints} size="lg" animated />
+            {/* Points badge with glassmorphism */}
+            <div className="inline-flex items-center px-4 py-3 bg-white/15 backdrop-blur-md text-white rounded-full font-ranade font-bold shadow-lg border border-white/30 ring-2 ring-white/20">
+              <Star size={20} fill="currentColor" className="drop-shadow" />
+              <span className="text-white ml-2">{userPoints.toLocaleString('pt-BR')}</span>
+              <span className="font-dm-sans font-normal text-xs opacity-90 text-white ml-2">pts</span>
+            </div>
           </div>
         </div>
 
@@ -149,8 +153,8 @@ export function RewardsTimeline({
   // Horizontal Timeline
   return (
     <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl mt-32 shadow-2xl border border-white/50 overflow-hidden">
-      {/* Header - redesigned with AssignPointsModal visual approach */}
-      <div className="relative bg-gradient-to-br from-lab-primary via-indigo-500 to-purple-600 p-6 sm:p-7 overflow-hidden">
+      {/* Header - redesigned with navy blue tones */}
+      <div className="relative bg-gradient-to-br from-lab-primary via-blue-500 to-indigo-600 p-6 sm:p-7 overflow-hidden">
         {/* Background decorations */}
         <div className="absolute inset-0 opacity-30 pointer-events-none">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2" />
@@ -174,7 +178,12 @@ export function RewardsTimeline({
               </p>
             </div>
           </div>
-          <PointsBadge points={userPoints} size="lg" animated />
+          {/* Points badge with glassmorphism */}
+          <div className="inline-flex items-center px-4 py-3 bg-white/15 backdrop-blur-md text-white rounded-full font-ranade font-bold shadow-lg border border-white/30 ring-2 ring-white/20">
+            <Star size={20} fill="currentColor" className="drop-shadow" />
+            <span className="text-white ml-2">{userPoints.toLocaleString('pt-BR')}</span>
+            <span className="font-dm-sans font-normal text-xs opacity-90 text-white ml-2">pts</span>
+          </div>
         </div>
       </div>
 
