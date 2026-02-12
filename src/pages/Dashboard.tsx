@@ -93,7 +93,7 @@ export function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 pt-6">
       <div className="max-w-7xl mx-auto" style={{ padding: '24px 16px 48px 16px' }}>
         {/* Welcome Section */}
-        <div className="animate-fade-in" style={{ marginBottom: '32px' }}>
+        <div className="animate-fade-in" style={{ marginBottom: '48px' }}>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-slate-900" style={{ marginBottom: '8px' }}>
             Olá, {user.nome.split(' ')[0]}! 👋
           </h1>
@@ -103,7 +103,7 @@ export function Dashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" style={{ marginBottom: '32px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" style={{ marginBottom: '48px' }}>
           {/* Hero Balance Card - Primary focal point */}
           <div className="hero-balance-card rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" style={{ padding: '24px 28px' }}>
             <div className="flex items-center" style={{ gap: '24px' }}>
@@ -177,7 +177,7 @@ export function Dashboard() {
         </div>
 
         {/* Top Users Ranking */}
-        <div className="animate-fade-in" style={{ marginBottom: '32px', marginTop: '96px', animationDelay: '0.25s' }}>
+        <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.25s' }}>
           <TopUsersRanking
             users={topUsers}
             loading={topUsersLoading}
@@ -186,7 +186,7 @@ export function Dashboard() {
         </div>
 
         {/* Rewards Timeline Section */}
-        <div className="animate-fade-in" style={{ marginBottom: '32px', animationDelay: '0.3s' }}>
+        <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.3s' }}>
           {timelineRewards.length > 0 && (
             <RewardsTimeline
               rewards={timelineRewards}
@@ -200,7 +200,7 @@ export function Dashboard() {
 
         {/* Approval Queue Section - Managers and Admins only */}
         {canManageApprovals && pendingApprovals.length > 0 && (
-          <div className="animate-fade-in" style={{ marginBottom: '32px', animationDelay: '0.35s' }}>
+          <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.35s' }}>
             <ApprovalQueue
               approvals={pendingApprovals}
               loading={loadingApprovals}
@@ -211,7 +211,7 @@ export function Dashboard() {
         )}
 
         {/* Rewards Section - Premium Card Design */}
-        <div className="animate-fade-in" style={{ marginBottom: '32px', marginTop: '96px', animationDelay: '0.4s' }}>
+        <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.4s' }}>
           <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden">
             
             {/* Header com Gradiente */}
