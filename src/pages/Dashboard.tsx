@@ -93,23 +93,23 @@ export function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 pt-6">
       <div className="max-w-7xl mx-auto" style={{ padding: '24px 16px 48px 16px' }}>
         {/* Welcome Section */}
-        <div className="animate-fade-in" style={{ marginBottom: '48px' }}>
+        <div className="animate-slide-in-left" style={{ marginBottom: '48px' }}>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-ranade font-bold text-slate-900" style={{ marginBottom: '8px' }}>
             Olá, {user.nome.split(' ')[0]}! 👋
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 font-dm-sans">
+          <p className="text-sm sm:text-base text-slate-600 font-dm-sans animate-slide-in-left" style={{ animationDelay: '0.1s' }}>
             Bem-vindo ao seu painel de recompensas Lab Points!
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" style={{ marginBottom: '48px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children" style={{ marginBottom: '48px' }}>
           {/* Hero Balance Card - Primary focal point */}
-          <div className="hero-balance-card rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" style={{ padding: '24px 28px' }}>
+          <div className="hero-balance-card card-shine-effect rounded-2xl shadow-xl card-hover-lift animate-scale-up-bounce animate-hero-glow" style={{ padding: '24px 28px' }}>
             <div className="flex items-center" style={{ gap: '24px' }}>
               {/* Larger icon with matching blue palette */}
               <div 
-                className="bg-white/15 backdrop-blur-sm rounded-2xl shadow-lg ring-2 ring-white/30 flex items-center justify-center"
+                className="bg-white/15 backdrop-blur-sm rounded-2xl shadow-lg ring-2 ring-white/30 flex items-center justify-center animate-icon-float"
                 style={{ width: '64px', height: '64px' }}
               >
                 <Star className="text-white drop-shadow-md" fill="currentColor" style={{ width: '32px', height: '32px' }} />
@@ -120,7 +120,7 @@ export function Dashboard() {
                   Seu Saldo
                 </p>
                 {/* Prominent balance value */}
-                <p className="text-3xl sm:text-4xl font-ranade font-bold text-white drop-shadow-sm">
+                <p className="text-3xl sm:text-4xl font-ranade font-bold text-white drop-shadow-sm transition-transform duration-300 hover:scale-105">
                   {user.lab_points.toLocaleString('pt-BR')}
                 </p>
                 {/* Subtle supporting text */}
@@ -132,12 +132,12 @@ export function Dashboard() {
           </div>
 
           <div 
-            className="bg-white rounded-2xl shadow-lg border border-slate-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-scale-in" 
-            style={{ padding: '24px 28px', animationDelay: '0.1s' }}
+            className="bg-white rounded-2xl shadow-lg border border-slate-100 card-hover-lift animate-slide-up-fade group" 
+            style={{ padding: '24px 28px', animationDelay: '0.15s' }}
           >
             <div className="flex items-center" style={{ gap: '20px' }}>
               <div 
-                className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg flex items-center justify-center"
+                className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
                 style={{ width: '52px', height: '52px' }}
               >
                 <TrendingUp className="text-white" style={{ width: '26px', height: '26px' }} />
@@ -146,7 +146,7 @@ export function Dashboard() {
                 <p className="text-sm font-dm-sans text-slate-500 font-medium" style={{ marginBottom: '4px' }}>
                   Total Ganho
                 </p>
-                <p className="text-2xl sm:text-3xl font-ranade font-bold text-slate-800">
+                <p className="text-2xl sm:text-3xl font-ranade font-bold text-slate-800 transition-colors duration-300 group-hover:text-emerald-600">
                   {totalEarned.toLocaleString('pt-BR')}
                 </p>
               </div>
@@ -154,12 +154,12 @@ export function Dashboard() {
           </div>
 
           <div 
-            className="bg-white rounded-2xl shadow-lg border border-slate-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-scale-in sm:col-span-2 lg:col-span-1" 
-            style={{ padding: '24px 28px', animationDelay: '0.2s' }}
+            className="bg-white rounded-2xl shadow-lg border border-slate-100 card-hover-lift animate-slide-up-fade sm:col-span-2 lg:col-span-1 group" 
+            style={{ padding: '24px 28px', animationDelay: '0.25s' }}
           >
             <div className="flex items-center" style={{ gap: '20px' }}>
               <div 
-                className="bg-gradient-to-br from-rose-500 to-red-600 rounded-xl shadow-lg flex items-center justify-center"
+                className="bg-gradient-to-br from-rose-500 to-red-600 rounded-xl shadow-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
                 style={{ width: '52px', height: '52px' }}
               >
                 <Gift className="text-white" style={{ width: '26px', height: '26px' }} />
@@ -168,7 +168,7 @@ export function Dashboard() {
                 <p className="text-sm font-dm-sans text-slate-500 font-medium" style={{ marginBottom: '4px' }}>
                   Total Resgatado
                 </p>
-                <p className="text-2xl sm:text-3xl font-ranade font-bold text-slate-800">
+                <p className="text-2xl sm:text-3xl font-ranade font-bold text-slate-800 transition-colors duration-300 group-hover:text-rose-500">
                   {totalRedeemed.toLocaleString('pt-BR')}
                 </p>
               </div>
@@ -177,7 +177,7 @@ export function Dashboard() {
         </div>
 
         {/* Top Users Ranking */}
-        <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.25s' }}>
+        <div className="animate-slide-up-fade" style={{ marginBottom: '48px', animationDelay: '0.35s' }}>
           <TopUsersRanking
             users={topUsers}
             loading={topUsersLoading}
@@ -186,7 +186,7 @@ export function Dashboard() {
         </div>
 
         {/* Rewards Timeline Section */}
-        <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.3s' }}>
+        <div className="animate-slide-up-fade" style={{ marginBottom: '48px', animationDelay: '0.45s' }}>
           {timelineRewards.length > 0 && (
             <RewardsTimeline
               rewards={timelineRewards}
@@ -200,7 +200,7 @@ export function Dashboard() {
 
         {/* Approval Queue Section - Managers and Admins only */}
         {canManageApprovals && pendingApprovals.length > 0 && (
-          <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.35s' }}>
+          <div className="animate-slide-up-fade" style={{ marginBottom: '48px', animationDelay: '0.55s' }}>
             <ApprovalQueue
               approvals={pendingApprovals}
               loading={loadingApprovals}
@@ -211,8 +211,8 @@ export function Dashboard() {
         )}
 
         {/* Rewards Section - Premium Card Design */}
-        <div className="animate-fade-in" style={{ marginBottom: '48px', animationDelay: '0.4s' }}>
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden">
+        <div className="animate-slide-up-fade" style={{ marginBottom: '48px', animationDelay: '0.6s' }}>
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden transition-shadow duration-500 hover:shadow-2xl">
             
             {/* Header com Gradiente */}
             <div className="relative bg-gradient-to-br from-lab-primary via-blue-500 to-indigo-600 overflow-hidden">
@@ -227,7 +227,7 @@ export function Dashboard() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ gap: '16px' }}>
                   <div className="flex items-center" style={{ gap: '16px' }}>
                     <div 
-                      className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
+                      className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg animate-icon-float"
                       style={{ width: '52px', height: '52px' }}
                     >
                       <Gift style={{ width: '26px', height: '26px' }} strokeWidth={2} className="drop-shadow-lg text-white" />
@@ -244,7 +244,7 @@ export function Dashboard() {
                   
                   <Link
                     to="/recompensas"
-                    className="flex items-center self-start sm:self-auto bg-white/15 backdrop-blur-md border border-white/30 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-lab-primary group ring-1 ring-white/20"
+                    className="flex items-center self-start sm:self-auto bg-white/15 backdrop-blur-md border border-white/30 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-lab-primary hover:scale-105 active:scale-95 group ring-1 ring-white/20"
                     style={{ padding: '10px 18px', fontSize: '14px', gap: '8px' }}
                   >
                     Ver Todas
@@ -262,18 +262,19 @@ export function Dashboard() {
                     <div
                       key={i}
                       className="bg-gradient-to-br from-slate-50 to-white rounded-2xl h-80 animate-shimmer border border-slate-100"
+                      style={{ animationDelay: `${i * 0.1}s` }}
                     />
                   ))}
                 </div>
               ) : featuredRewards.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
                   {featuredRewards.map((reward, index) => (
                     <div 
                       key={reward.id} 
-                      className="animate-scale-in group"
-                      style={{ animationDelay: `${index * 0.08}s` }}
+                      className="animate-slide-up-fade"
+                      style={{ animationDelay: `${0.7 + index * 0.08}s` }}
                     >
-                      <div className="transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl rounded-2xl">
+                      <div className="card-hover-lift rounded-2xl">
                         <RewardCard
                           reward={reward}
                           userPoints={user.lab_points}
@@ -287,7 +288,7 @@ export function Dashboard() {
                 <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-100" style={{ padding: '48px 32px' }}>
                   <div className="text-center">
                     <div 
-                      className="mx-auto rounded-2xl bg-slate-100 flex items-center justify-center"
+                      className="mx-auto rounded-2xl bg-slate-100 flex items-center justify-center animate-float-gentle"
                       style={{ width: '64px', height: '64px', marginBottom: '16px' }}
                     >
                       <Gift style={{ width: '32px', height: '32px' }} className="text-slate-400" />
@@ -303,8 +304,8 @@ export function Dashboard() {
         </div>
 
         {/* Transactions Section - Premium Card Design */}
-        <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden">
+        <div className="animate-slide-up-fade" style={{ animationDelay: '0.75s' }}>
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden transition-shadow duration-500 hover:shadow-2xl">
             
             {/* Header com Gradiente */}
             <div className="relative bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 overflow-hidden">
@@ -319,8 +320,8 @@ export function Dashboard() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ gap: '16px' }}>
                   <div className="flex items-center" style={{ gap: '16px' }}>
                     <div 
-                      className="rounded-2xl bg-white/15 ring-2 ring-white/30 flex items-center justify-center backdrop-blur-sm shadow-lg"
-                      style={{ width: '52px', height: '52px' }}
+                      className="rounded-2xl bg-white/15 ring-2 ring-white/30 flex items-center justify-center backdrop-blur-sm shadow-lg animate-icon-float"
+                      style={{ width: '52px', height: '52px', animationDelay: '0.5s' }}
                     >
                       <Clock style={{ width: '26px', height: '26px' }} strokeWidth={2} className="drop-shadow-lg text-white" />
                     </div>
@@ -336,7 +337,7 @@ export function Dashboard() {
                   
                   <Link
                     to="/perfil"
-                    className="flex items-center self-start sm:self-auto bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-slate-700 group ring-1 ring-white/10"
+                    className="flex items-center self-start sm:self-auto bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl font-dm-sans font-medium transition-all duration-300 hover:bg-white hover:text-slate-700 hover:scale-105 active:scale-95 group ring-1 ring-white/10"
                     style={{ padding: '10px 18px', fontSize: '14px', gap: '8px' }}
                   >
                     Ver Histórico
@@ -351,7 +352,11 @@ export function Dashboard() {
               {transactionsLoading ? (
                 <div className="space-y-3">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="h-20 bg-gradient-to-r from-slate-50 to-white rounded-xl animate-shimmer border border-slate-100" />
+                    <div 
+                      key={i} 
+                      className="h-20 bg-gradient-to-r from-slate-50 to-white rounded-xl animate-shimmer border border-slate-100" 
+                      style={{ animationDelay: `${i * 0.1}s` }}
+                    />
                   ))}
                 </div>
               ) : recentTransactions.length > 0 ? (
@@ -359,17 +364,17 @@ export function Dashboard() {
                   {recentTransactions.map((transaction, index) => (
                     <div
                       key={transaction.id}
-                      className="group flex items-center justify-between rounded-xl bg-gradient-to-r from-slate-50/80 to-white border border-slate-100 transition-all duration-300 hover:border-slate-200 hover:shadow-md hover:-translate-y-0.5"
-                      style={{ padding: '16px 20px', animationDelay: `${index * 0.05}s` }}
+                      className="animate-row-slide-in group flex items-center justify-between rounded-xl bg-gradient-to-r from-slate-50/80 to-white border border-slate-100 transition-all duration-300 hover:border-slate-200 hover:shadow-md hover:-translate-y-0.5 hover:bg-white"
+                      style={{ padding: '16px 20px', animationDelay: `${0.8 + index * 0.08}s` }}
                     >
                       <div className="flex items-center" style={{ gap: '16px' }}>
                         {/* Icon indicator */}
                         <div 
-                          className={`rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
+                          className={`rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 ${
                             transaction.tipo === 'credito'
-                              ? 'bg-gradient-to-br from-emerald-100 to-green-50'
-                              : 'bg-gradient-to-br from-red-100 to-rose-50'
-                          }`}
+                              ? 'bg-gradient-to-br from-emerald-100 to-green-50 group-hover:shadow-emerald-200/50'
+                              : 'bg-gradient-to-br from-red-100 to-rose-50 group-hover:shadow-rose-200/50'
+                          } group-hover:shadow-lg`}
                           style={{ width: '44px', height: '44px' }}
                         >
                           {transaction.tipo === 'credito' ? (
@@ -380,10 +385,10 @@ export function Dashboard() {
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <p className="font-dm-sans text-slate-800 font-medium truncate" style={{ fontSize: '15px', marginBottom: '2px' }}>
+                          <p className="font-dm-sans text-slate-800 font-medium truncate transition-colors duration-300 group-hover:text-slate-900" style={{ fontSize: '15px', marginBottom: '2px' }}>
                             {transaction.descricao}
                           </p>
-                          <p className="text-slate-500 font-dm-sans" style={{ fontSize: '13px' }}>
+                          <p className="text-slate-500 font-dm-sans transition-colors duration-300 group-hover:text-slate-600" style={{ fontSize: '13px' }}>
                             {new Date(transaction.created_at).toLocaleDateString('pt-BR', {
                               day: '2-digit',
                               month: 'short',
@@ -395,14 +400,14 @@ export function Dashboard() {
                       
                       {/* Points value */}
                       <div 
-                        className={`flex items-center font-ranade font-bold ${
+                        className={`flex items-center font-ranade font-bold transition-transform duration-300 group-hover:scale-110 ${
                           transaction.tipo === 'credito'
                             ? 'text-emerald-600'
                             : 'text-rose-500'
                         }`}
                         style={{ fontSize: '17px', gap: '4px' }}
                       >
-                        <Star style={{ width: '16px', height: '16px' }} fill="currentColor" className="opacity-70" />
+                        <Star style={{ width: '16px', height: '16px' }} fill="currentColor" className="opacity-70 transition-opacity duration-300 group-hover:opacity-100" />
                         <span>
                           {transaction.tipo === 'credito' ? '+' : '-'}
                           {transaction.valor.toLocaleString('pt-BR')}
@@ -415,7 +420,7 @@ export function Dashboard() {
                 <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-100" style={{ padding: '48px 32px' }}>
                   <div className="text-center">
                     <div 
-                      className="mx-auto rounded-2xl bg-slate-100 flex items-center justify-center"
+                      className="mx-auto rounded-2xl bg-slate-100 flex items-center justify-center animate-float-gentle"
                       style={{ width: '64px', height: '64px', marginBottom: '16px' }}
                     >
                       <History style={{ width: '32px', height: '32px' }} className="text-slate-400" />
