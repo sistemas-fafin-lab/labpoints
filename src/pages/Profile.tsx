@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User as UserIcon, History, ChevronDown, HelpCircle, Sparkles, TrendingUp, TrendingDown, Gift, Calendar, Mail, Building2, Shield, RefreshCw, Star } from 'lucide-react';
+import { User as UserIcon, History, ChevronDown, HelpCircle, Sparkles, TrendingUp, TrendingDown, Gift, Calendar, Mail, Building2, Shield, RefreshCw, Star, UserRound} from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../hooks/useTransactions';
 import { useRedemptions } from '../hooks/useRedemptions';
@@ -75,7 +75,7 @@ export function Profile() {
                   className="rounded-2xl bg-white/20 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm shadow-lg"
                   style={{ width: '56px', height: '56px' }}
                 >
-                  <Sparkles style={{ width: '28px', height: '28px' }} strokeWidth={2} className="drop-shadow-lg text-white" />
+                  <UserRound style={{ width: '28px', height: '28px' }} strokeWidth={2} className="drop-shadow-lg text-white" />
                 </div>
                 <div style={{ marginLeft: '4px' }}>
                   <h1 className="text-2xl md:text-3xl font-ranade font-bold tracking-tight drop-shadow-sm" style={{ color: 'white', marginBottom: '4px' }}>

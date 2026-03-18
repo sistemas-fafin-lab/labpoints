@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Users, Target, Shield, Rocket, Heart, TrendingUp, Sparkles } from 'lucide-react';
+import { X, Users, Target, Shield, Rocket, Heart, TrendingUp, Sparkles, HandHeart } from 'lucide-react';
 
 interface Value {
   id: number;
@@ -92,7 +92,7 @@ export function ValuesWheel() {
                 
                 <div className="relative flex items-center gap-3">
                   <div className="w-11 h-11 rounded-xl bg-white/25 ring-2 ring-white/40 flex items-center justify-center backdrop-blur-sm">
-                    <Sparkles size={22} className="text-white" strokeWidth={2.5} />
+                    <HandHeart size={22} className="text-white" strokeWidth={2.5} />
                   </div>
                   <div>
                     <h3 className="text-xl font-ranade font-bold text-white drop-shadow-sm">
@@ -191,7 +191,7 @@ export function ValuesWheel() {
             {isOpen ? (
               <X size={28} className="text-slate-700" strokeWidth={3} />
             ) : (
-              <Sparkles size={28} className="text-white drop-shadow-lg" strokeWidth={2.5} />
+              <HandHeart size={28} className="text-white drop-shadow-lg" strokeWidth={2.5} />
             )}
           </span>
         </button>

@@ -69,7 +69,7 @@ export function RewardsTimeline({
                 <TrendingUp style={{ width: '28px', height: '28px' }} className="text-white drop-shadow-lg" />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-ranade font-bold text-white drop-shadow-sm">
+                <h2 className="text-xl sm:text-2xl font-ranade font-bold text-white drop-shadow-sm mr-6">
                   Próximas Recompensas
                 </h2>
                 <p className="text-sm text-white/80 font-dm-sans mt-0.5">
