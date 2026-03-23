@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User as UserIcon, History, ChevronDown, HelpCircle, Sparkles, TrendingUp, TrendingDown, Gift, Calendar, Mail, Building2, Shield, RefreshCw, Star, UserRound} from 'lucide-react';
+import { User as UserIcon, History, ChevronDown, HelpCircle, TrendingUp, TrendingDown, Gift, Calendar, Mail, Building2, Shield, RefreshCw, Star, UserRound} from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../hooks/useTransactions';
 import { useRedemptions } from '../hooks/useRedemptions';

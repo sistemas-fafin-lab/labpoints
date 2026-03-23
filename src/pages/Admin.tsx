@@ -1,19 +1,22 @@
 import { useState, useRef } from 'react';
-import { Users, Search, Edit, Plus, Trash2, Image, X, Settings, Gift, Star, Tag } from 'lucide-react';
+import { Users, Search, Edit, Plus, Trash2, Image, X, Settings, Gift, Star, Tag, UserCheck, Shield, Shuffle } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useRewards, createReward, updateReward, deleteReward, uploadRewardImage, deleteRewardImage } from '../hooks/useRewards';
+import { useCustomApprovers } from '../hooks/useCustomApprovers';
 import { useToast } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { AvatarWithPreview } from '../components/AvatarWithPreview';
 import { UserManagementModal } from '../components/UserManagementModal';
+import { ApproverSelectionModal } from '../components/ApproverSelectionModal';
 import { User, Reward, DEPARTMENT_LABELS } from '../lib/supabase';
 
-type Tab = 'users' | 'rewards';
+type Tab = 'users' | 'rewards' | 'approvers';
 
 export function Admin() {
   const { users, loading: usersLoading, refetch: refetchUsers } = useUsers();
   const { rewards, loading: rewardsLoading, refetch: refetchRewards } = useRewards(false);
+  const { settings: approvalSettings } = useCustomApprovers();
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<Tab>('users');
@@ -22,6 +25,9 @@ export function Admin() {
   // User modal state
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [userModalOpen, setUserModalOpen] = useState(false);
+  
+  // Approver selection modal state
+  const [approverModalOpen, setApproverModalOpen] = useState(false);
 
   const [editingReward, setEditingReward] = useState<Reward | null>(null);
   const [rewardForm, setRewardForm] = useState({
@@ -294,27 +300,41 @@ export function Admin() {
                 <Gift style={{ width: '18px', height: '18px' }} />
                 Recompensas
               </button>
+              <button
+                onClick={() => setActiveTab('approvers')}
+                className={`flex items-center rounded-xl font-dm-sans font-medium transition-all duration-300 ${
+                  activeTab === 'approvers'
+                    ? 'bg-white text-lab-primary shadow-md'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                }`}
+                style={{ gap: '8px', padding: '12px 20px', fontSize: '14px' }}
+              >
+                <UserCheck style={{ width: '18px', height: '18px' }} />
+                Aprovadores
+              </button>
             </div>
 
-            {/* Barra de Busca Modernizada */}
-            <div style={{ marginBottom: '24px' }}>
-              <div className="relative">
-                <Search
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"
-                  style={{ width: '20px', height: '20px' }}
-                />
-                <input
-                  type="text"
-                  placeholder={
-                    activeTab === 'users' ? 'Buscar usuários por nome ou email...' : 'Buscar recompensas...'
-                  }
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-2xl bg-slate-50 border-2 border-transparent focus:border-lab-primary focus:bg-white focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all duration-300 font-dm-sans text-slate-800 placeholder:text-slate-400"
-                  style={{ paddingLeft: '48px', paddingRight: '16px', paddingTop: '14px', paddingBottom: '14px', fontSize: '15px' }}
-                />
+            {/* Barra de Busca Modernizada - Hide on approvers tab */}
+            {activeTab !== 'approvers' && (
+              <div style={{ marginBottom: '24px' }}>
+                <div className="relative">
+                  <Search
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"
+                    style={{ width: '20px', height: '20px' }}
+                  />
+                  <input
+                    type="text"
+                    placeholder={
+                      activeTab === 'users' ? 'Buscar usuários por nome ou email...' : 'Buscar recompensas...'
+                    }
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full rounded-2xl bg-slate-50 border-2 border-transparent focus:border-lab-primary focus:bg-white focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all duration-300 font-dm-sans text-slate-800 placeholder:text-slate-400"
+                    style={{ paddingLeft: '48px', paddingRight: '16px', paddingTop: '14px', paddingBottom: '14px', fontSize: '15px' }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {activeTab === 'users' && (
               <div>
@@ -692,6 +712,188 @@ export function Admin() {
                 )}
               </div>
             )}
+
+            {/* Approvers Tab */}
+            {activeTab === 'approvers' && (
+              <div>
+                {/* Current Mode Card */}
+                <div 
+                  className={`relative rounded-2xl border-2 transition-all duration-300 ${
+                    approvalSettings?.use_custom_approvers 
+                      ? 'border-lab-primary bg-gradient-to-br from-lab-light/50 to-indigo-50/50' 
+                      : 'border-slate-200 bg-gradient-to-br from-slate-50 to-white'
+                  }`}
+                  style={{ padding: '24px', marginBottom: '24px' }}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between" style={{ gap: '16px' }}>
+                    <div className="flex items-center" style={{ gap: '16px' }}>
+                      <div 
+                        className={`rounded-xl flex items-center justify-center transition-all duration-300 ${
+                          approvalSettings?.use_custom_approvers 
+                            ? 'bg-lab-primary text-white' 
+                            : 'bg-slate-200 text-slate-500'
+                        }`}
+                        style={{ width: '56px', height: '56px' }}
+                      >
+                        {approvalSettings?.use_custom_approvers ? (
+                          <UserCheck style={{ width: '28px', height: '28px' }} />
+                        ) : (
+                          <Shuffle style={{ width: '28px', height: '28px' }} />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-ranade font-bold text-slate-800" style={{ fontSize: '18px', marginBottom: '4px' }}>
+                          {approvalSettings?.use_custom_approvers ? 'Modo: Aprovadores Selecionados' : 'Modo: Seleção Aleatória'}
+                        </h3>
+                        <p className="text-slate-500 font-dm-sans" style={{ fontSize: '14px' }}>
+                          {approvalSettings?.use_custom_approvers 
+                            ? 'Apenas os aprovadores selecionados podem aprovar atribuições de pontos'
+                            : 'Qualquer gestor ou admin é selecionado automaticamente para aprovar'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <Button
+                      variant="primary"
+                      onClick={() => setApproverModalOpen(true)}
+                      style={{ padding: '12px 20px' }}
+                    >
+                      <Settings style={{ width: '18px', height: '18px', marginRight: '8px' }} />
+                      Configurar Aprovadores
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: '16px', marginBottom: '24px' }}>
+                  {/* Custom Approvers Count */}
+                  <div 
+                    className="bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300"
+                    style={{ padding: '20px' }}
+                  >
+                    <div className="flex items-center" style={{ gap: '16px' }}>
+                      <div className="rounded-xl bg-lab-light flex items-center justify-center" style={{ width: '48px', height: '48px' }}>
+                        <Users style={{ width: '24px', height: '24px' }} className="text-lab-primary" />
+                      </div>
+                      <div>
+                        <p className="font-ranade font-bold text-slate-800" style={{ fontSize: '24px' }}>
+                          {approvalSettings?.custom_approvers?.length || 0}
+                        </p>
+                        <p className="text-slate-500 font-dm-sans" style={{ fontSize: '13px' }}>
+                          Aprovadores Selecionados
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Mode Status */}
+                  <div 
+                    className="bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300"
+                    style={{ padding: '20px' }}
+                  >
+                    <div className="flex items-center" style={{ gap: '16px' }}>
+                      <div 
+                        className={`rounded-xl flex items-center justify-center ${
+                          approvalSettings?.use_custom_approvers ? 'bg-emerald-100' : 'bg-amber-100'
+                        }`}
+                        style={{ width: '48px', height: '48px' }}
+                      >
+                        <Shield style={{ width: '24px', height: '24px' }} className={
+                          approvalSettings?.use_custom_approvers ? 'text-emerald-600' : 'text-amber-600'
+                        } />
+                      </div>
+                      <div>
+                        <p className="font-ranade font-bold text-slate-800" style={{ fontSize: '18px' }}>
+                          {approvalSettings?.use_custom_approvers ? 'Customizado' : 'Aleatório'}
+                        </p>
+                        <p className="text-slate-500 font-dm-sans" style={{ fontSize: '13px' }}>
+                          Modo Atual
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Current Approvers List */}
+                {approvalSettings?.use_custom_approvers && approvalSettings.custom_approvers && approvalSettings.custom_approvers.length > 0 && (
+                  <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-slate-50 to-white border-b border-slate-100"
+                      style={{ padding: '16px 20px' }}
+                    >
+                      <h3 className="font-ranade font-bold text-slate-800" style={{ fontSize: '16px' }}>
+                        Aprovadores Ativos
+                      </h3>
+                    </div>
+                    <div style={{ padding: '8px' }}>
+                      {approvalSettings.custom_approvers.map((approver) => (
+                        <div
+                          key={approver.id}
+                          className="flex items-center hover:bg-slate-50 rounded-xl transition-colors"
+                          style={{ padding: '12px', gap: '12px' }}
+                        >
+                          <AvatarWithPreview
+                            src={approver.user.avatar_url}
+                            alt={approver.user.nome}
+                            size="sm"
+                            fallbackText={approver.user.nome}
+                            user={{
+                              id: approver.user.id,
+                              nome: approver.user.nome,
+                              avatar_url: approver.user.avatar_url,
+                              lab_points: 0,
+                              department: approver.user.department,
+                              role: approver.user.role,
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-ranade font-semibold text-slate-800 truncate" style={{ fontSize: '14px' }}>
+                              {approver.user.nome}
+                            </p>
+                            <p className="font-dm-sans text-slate-400 truncate" style={{ fontSize: '12px' }}>
+                              {approver.user.department ? DEPARTMENT_LABELS[approver.user.department] : 'Sem departamento'}
+                            </p>
+                          </div>
+                          <span
+                            className={`rounded-full font-dm-sans font-medium ${
+                              approver.user.role === 'adm'
+                                ? 'bg-purple-100 text-purple-700'
+                                : 'bg-blue-100 text-blue-700'
+                            }`}
+                            style={{ padding: '4px 12px', fontSize: '12px' }}
+                          >
+                            {approver.user.role === 'adm' ? 'Admin' : 'Gestor'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Empty State */}
+                {approvalSettings?.use_custom_approvers && (!approvalSettings.custom_approvers || approvalSettings.custom_approvers.length === 0) && (
+                  <div 
+                    className="bg-amber-50 border border-amber-200 rounded-2xl text-center"
+                    style={{ padding: '32px' }}
+                  >
+                    <Users style={{ width: '48px', height: '48px', marginBottom: '16px' }} className="text-amber-400 mx-auto" />
+                    <h3 className="font-ranade font-bold text-amber-800" style={{ fontSize: '16px', marginBottom: '8px' }}>
+                      Nenhum aprovador selecionado
+                    </h3>
+                    <p className="font-dm-sans text-amber-600" style={{ fontSize: '14px', marginBottom: '16px' }}>
+                      Configure os aprovadores para que as atribuições de pontos funcionem corretamente
+                    </p>
+                    <Button
+                      variant="primary"
+                      onClick={() => setApproverModalOpen(true)}
+                    >
+                      Configurar Agora
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -702,6 +904,12 @@ export function Admin() {
         onClose={handleCloseUserModal}
         user={editingUser}
         onUpdate={refetchUsers}
+      />
+
+      {/* Approver Selection Modal */}
+      <ApproverSelectionModal
+        isOpen={approverModalOpen}
+        onClose={() => setApproverModalOpen(false)}
       />
     </div>
   );

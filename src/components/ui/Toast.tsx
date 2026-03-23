@@ -15,12 +15,120 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
+/**
+ * Traduz mensagens de erro técnicas para linguagem natural em português
+ */
+function translateErrorMessage(message: string): string {
+  const lowerMessage = message.toLowerCase();
+  
+  // Erros de autenticação
+  if (lowerMessage.includes('invalid login credentials') || lowerMessage.includes('invalid credentials')) {
+    return 'Email ou senha incorretos. Verifique suas credenciais e tente novamente.';
+  }
+  if (lowerMessage.includes('email not confirmed')) {
+    return 'Seu email ainda não foi confirmado. Verifique sua caixa de entrada.';
+  }
+  if (lowerMessage.includes('user already registered') || lowerMessage.includes('user already exists')) {
+    return 'Este email já está cadastrado. Tente fazer login ou recuperar sua senha.';
+  }
+  if (lowerMessage.includes('invalid email')) {
+    return 'Email inválido. Digite um endereço de email válido.';
+  }
+  if (lowerMessage.includes('password') && lowerMessage.includes('short')) {
+    return 'A senha deve ter pelo menos 6 caracteres.';
+  }
+  if (lowerMessage.includes('invalid refresh token') || lowerMessage.includes('refresh token not found')) {
+    return 'Sua sessão expirou. Faça login novamente.';
+  }
+  
+  // Erros de banco de dados
+  if (lowerMessage.includes('update requires a where clause')) {
+    return 'Erro na atualização dos dados. Entre em contato com o suporte.';
+  }
+  if (lowerMessage.includes('foreign key violation') || lowerMessage.includes('violates foreign key')) {
+    return 'Não é possível realizar esta ação pois existem dados relacionados.';
+  }
+  if (lowerMessage.includes('unique constraint') || lowerMessage.includes('duplicate key')) {
+    return 'Este registro já existe no sistema.';
+  }
+  if (lowerMessage.includes('not null violation')) {
+    return 'Preencha todos os campos obrigatórios.';
+  }
+  if (lowerMessage.includes('permission denied') || lowerMessage.includes('insufficient privileges')) {
+    return 'Você não tem permissão para realizar esta ação.';
+  }
+  if (lowerMessage.includes('row level security')) {
+    return 'Acesso negado. Você não tem permissão para acessar este recurso.';
+  }
+  
+  // Erros de rede
+  if (lowerMessage.includes('network') || lowerMessage.includes('fetch failed') || lowerMessage.includes('failed to fetch')) {
+    return 'Erro de conexão. Verifique sua internet e tente novamente.';
+  }
+  if (lowerMessage.includes('timeout')) {
+    return 'A operação demorou muito. Tente novamente.';
+  }
+  
+  // Erros de validação
+  if (lowerMessage.includes('invalid input') || lowerMessage.includes('validation error')) {
+    return 'Dados inválidos. Verifique as informações e tente novamente.';
+  }
+  if (lowerMessage.includes('required field') || lowerMessage.includes('campo obrigatório')) {
+    return 'Preencha todos os campos obrigatórios.';
+  }
+  
+  // Erros de operação
+  if (lowerMessage.includes('not found') || lowerMessage.includes('não encontrado')) {
+    return 'Registro não encontrado.';
+  }
+  if (lowerMessage.includes('already exists') || lowerMessage.includes('já existe')) {
+    return 'Este item já existe no sistema.';
+  }
+  if (lowerMessage.includes('insufficient') && lowerMessage.includes('points')) {
+    return 'Você não possui pontos suficientes para esta ação.';
+  }
+  
+  // Erros do sistema de aprovação
+  if (lowerMessage.includes('approver') && lowerMessage.includes('not found')) {
+    return 'Nenhum aprovador disponível. Entre em contato com um administrador.';
+  }
+  if (lowerMessage.includes('select_random_approver') || lowerMessage.includes('get_approval_settings')) {
+    return 'Sistema de aprovação não configurado. Entre em contato com um administrador.';
+  }
+  
+  // Erros de arquivo/upload
+  if (lowerMessage.includes('file too large') || lowerMessage.includes('arquivo muito grande')) {
+    return 'Arquivo muito grande. O tamanho máximo permitido é 2MB.';
+  }
+  if (lowerMessage.includes('invalid file type') || lowerMessage.includes('tipo de arquivo')) {
+    return 'Tipo de arquivo não permitido. Use apenas imagens (JPG, PNG).';
+  }
+  
+  // Erros genéricos do Supabase
+  if (lowerMessage.includes('jwt') && lowerMessage.includes('expired')) {
+    return 'Sua sessão expirou. Faça login novamente.';
+  }
+  if (lowerMessage.includes('function') && lowerMessage.includes('does not exist')) {
+    return 'Funcionalidade não disponível. O sistema precisa ser atualizado.';
+  }
+  
+  // Se a mensagem já está em português e clara, retorna ela mesma
+  if (!lowerMessage.match(/[a-z]+\s*\([^)]*\)|code:|error:/i) && message.length < 100) {
+    return message;
+  }
+  
+  // Fallback: mensagem genérica
+  return 'Ocorreu um erro. Tente novamente ou entre em contato com o suporte.';
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = useCallback((message: string, type: ToastType) => {
     const id = Math.random().toString(36).substring(7);
-    setToasts((prev) => [...prev, { id, message, type }]);
+    // Traduz mensagens de erro para português natural
+    const translatedMessage = type === 'error' ? translateErrorMessage(message) : message;
+    setToasts((prev) => [...prev, { id, message: translatedMessage, type }]);
 
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));

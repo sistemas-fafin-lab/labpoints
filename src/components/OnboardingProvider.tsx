@@ -1,4 +1,5 @@
 import { createContext, useContext, useCallback, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useOnboarding } from '../hooks/useOnboarding';
 import { OnboardingTutorial } from './OnboardingTutorial';
@@ -24,8 +25,12 @@ interface OnboardingProviderProps {
   children: ReactNode;
 }
 
+const AUTH_ROUTES = ['/login', '/cadastro', '/esqueci-senha', '/redefinir-senha'];
+
 export function OnboardingProvider({ children }: OnboardingProviderProps) {
   const { user } = useAuth();
+  const location = useLocation();
+  const isAuthRoute = AUTH_ROUTES.includes(location.pathname);
   
   const hasPhoto = Boolean(user?.avatar_url);
   
@@ -60,9 +65,9 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     markPhotoPromptShown();
   }, [markPhotoPromptShown]);
 
-  // Don't render onboarding until loaded and user exists
-  const showTutorial = Boolean(isLoaded && user && currentStep === 'tutorial');
-  const showPhotoPrompt = Boolean(isLoaded && user && currentStep === 'photo-prompt');
+  // Don't render onboarding until loaded, user exists and we're not on an auth route
+  const showTutorial = Boolean(isLoaded && user && !isAuthRoute && currentStep === 'tutorial');
+  const showPhotoPrompt = Boolean(isLoaded && user && !isAuthRoute && currentStep === 'photo-prompt');
 
   return (
     <OnboardingContext.Provider value={{ resetTutorial, isFirstAccess, tutorialCompleted }}>
