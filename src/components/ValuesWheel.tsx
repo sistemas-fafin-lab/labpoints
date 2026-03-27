@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Users, Target, Shield, Rocket, Heart, TrendingUp, Sparkles, HandHeart } from 'lucide-react';
+import { X, Users, Target, Shield, Rocket, Heart, TrendingUp, HandHeart } from 'lucide-react';
 
 interface Value {
   id: number;

@@ -16,7 +16,7 @@ type Tab = 'users' | 'rewards' | 'approvers';
 export function Admin() {
   const { users, loading: usersLoading, refetch: refetchUsers } = useUsers();
   const { rewards, loading: rewardsLoading, refetch: refetchRewards } = useRewards(false);
-  const { settings: approvalSettings } = useCustomApprovers();
+  const { settings: approvalSettings, fetchSettings: refetchApprovalSettings } = useCustomApprovers();
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<Tab>('users');
@@ -28,6 +28,12 @@ export function Admin() {
   
   // Approver selection modal state
   const [approverModalOpen, setApproverModalOpen] = useState(false);
+
+  // Handle closing approver modal with refetch
+  const handleApproverModalClose = async () => {
+    setApproverModalOpen(false);
+    await refetchApprovalSettings();
+  };
 
   const [editingReward, setEditingReward] = useState<Reward | null>(null);
   const [rewardForm, setRewardForm] = useState({
@@ -909,7 +915,7 @@ export function Admin() {
       {/* Approver Selection Modal */}
       <ApproverSelectionModal
         isOpen={approverModalOpen}
-        onClose={() => setApproverModalOpen(false)}
+        onClose={handleApproverModalClose}
       />
     </div>
   );

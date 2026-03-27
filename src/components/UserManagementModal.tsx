@@ -11,19 +11,20 @@ import {
   AlertCircle,
   Sparkles,
   Plus,
-  Minus
+  Minus,
+  Loader2,
+  PlusCircle
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { 
   User, 
   UserRole, 
-  DepartmentEnum, 
-  DEPARTMENTS_LIST,
   supabase
 } from '../lib/supabase';
 import { updateUser } from '../hooks/useUsers';
 import { createTransaction } from '../hooks/useTransactions';
 import { useToast } from './ui/Toast';
+import { useDepartments } from '../hooks/useDepartments';
 
 interface UserManagementModalProps {
   isOpen: boolean;
@@ -41,14 +42,20 @@ export function UserManagementModal({
   onUpdate
 }: UserManagementModalProps) {
   const { showToast } = useToast();
+  const { departments, loading: loadingDepartments, createDepartment } = useDepartments();
   
   // Tab state
   const [activeTab, setActiveTab] = useState<TabType>('settings');
   
   // Settings state
   const [role, setRole] = useState<UserRole>('colaborador');
-  const [department, setDepartment] = useState<DepartmentEnum | ''>('');
-  const [gestorDepartments, setGestorDepartments] = useState<DepartmentEnum[]>([]);
+  const [department, setDepartment] = useState<string>('');
+  
+  // New department state
+  const [showNewDeptInput, setShowNewDeptInput] = useState(false);
+  const [newDeptName, setNewDeptName] = useState('');
+  const [creatingDept, setCreatingDept] = useState(false);
+  const [gestorDepartments, setGestorDepartments] = useState<string[]>([]);
   const [savingSettings, setSavingSettings] = useState(false);
   
   // Points state
@@ -106,12 +113,32 @@ export function UserManagementModal({
     }
   };
 
-  const toggleGestorDepartment = (dept: DepartmentEnum) => {
+  const toggleGestorDepartment = (dept: string) => {
     setGestorDepartments(prev => 
       prev.includes(dept)
         ? prev.filter(d => d !== dept)
         : [...prev, dept]
     );
+  };
+
+  const handleCreateDepartment = async () => {
+    if (!newDeptName.trim()) {
+      showToast('Digite o nome do departamento', 'error');
+      return;
+    }
+
+    setCreatingDept(true);
+    const result = await createDepartment(newDeptName);
+    setCreatingDept(false);
+
+    if (result.success && result.department) {
+      setDepartment(result.department.slug);
+      setNewDeptName('');
+      setShowNewDeptInput(false);
+      showToast('Departamento criado com sucesso', 'success');
+    } else {
+      showToast(result.error || 'Erro ao criar departamento', 'error');
+    }
   };
 
   const handleSaveSettings = async () => {
@@ -349,21 +376,75 @@ export function UserManagementModal({
                     <Building2 size={16} className="text-lab-primary" />
                     Departamento
                   </label>
-                  <div className="relative">
-                    <select
-                      value={department}
-                      onChange={(e) => setDepartment(e.target.value as DepartmentEnum)}
-                      className="w-full px-4 py-4 rounded-2xl bg-slate-100 border-2 border-transparent appearance-none focus:border-lab-primary focus:bg-white focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all duration-300 font-dm-sans text-slate-800 pr-12"
-                    >
-                      <option value="">Selecione o departamento</option>
-                      {DEPARTMENTS_LIST.map((dept) => (
-                        <option key={dept.value} value={dept.value}>
-                          {dept.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                  </div>
+                  
+                  {showNewDeptInput ? (
+                    <div className="space-y-3">
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={newDeptName}
+                          onChange={(e) => setNewDeptName(e.target.value)}
+                          placeholder="Nome do novo departamento"
+                          className="w-full px-4 py-4 rounded-2xl bg-slate-100 border-2 border-transparent focus:border-lab-primary focus:bg-white focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all duration-300 font-dm-sans text-slate-800"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={handleCreateDepartment}
+                          disabled={creatingDept || !newDeptName.trim()}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-lab-primary to-indigo-500 text-white font-dm-sans font-medium text-sm disabled:opacity-50 transition-all duration-200 hover:shadow-lg"
+                        >
+                          {creatingDept ? (
+                            <>
+                              <Loader2 size={16} className="animate-spin" />
+                              Criando...
+                            </>
+                          ) : (
+                            <>
+                              <Check size={16} />
+                              Criar Departamento
+                            </>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setShowNewDeptInput(false); setNewDeptName(''); }}
+                          className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-dm-sans font-medium text-sm hover:bg-slate-200 transition-all duration-200"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <select
+                          value={department}
+                          onChange={(e) => setDepartment(e.target.value)}
+                          disabled={loadingDepartments}
+                          className="w-full px-4 py-4 rounded-2xl bg-slate-100 border-2 border-transparent appearance-none focus:border-lab-primary focus:bg-white focus:ring-4 focus:ring-lab-primary/10 outline-none transition-all duration-300 font-dm-sans text-slate-800 pr-12 disabled:opacity-50"
+                        >
+                          <option value="">Selecione o departamento</option>
+                          {departments.map((dept) => (
+                            <option key={dept.slug} value={dept.slug}>
+                              {dept.label}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowNewDeptInput(true)}
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-dm-sans font-medium text-lab-primary hover:bg-lab-primary/10 transition-all duration-200"
+                      >
+                        <PlusCircle size={16} />
+                        Adicionar novo departamento
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Gestor Departments */}
@@ -377,18 +458,18 @@ export function UserManagementModal({
                       Selecione os departamentos que este gestor pode gerenciar
                     </p>
                     <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1">
-                      {DEPARTMENTS_LIST.map((dept) => (
+                      {departments.map((dept) => (
                         <button
-                          key={dept.value}
+                          key={dept.slug}
                           type="button"
-                          onClick={() => toggleGestorDepartment(dept.value)}
+                          onClick={() => toggleGestorDepartment(dept.slug)}
                           className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-dm-sans text-left transition-all duration-200 ${
-                            gestorDepartments.includes(dept.value)
-                              ? 'bg-gradient-to-r from-lab-primary to-indigo-500 text-white-700 shadow-md'
+                            gestorDepartments.includes(dept.slug)
+                              ? 'bg-gradient-to-r from-lab-primary to-indigo-500 text-white shadow-md'
                               : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                           }`}
                         >
-                          {gestorDepartments.includes(dept.value) && (
+                          {gestorDepartments.includes(dept.slug) && (
                             <Check size={14} strokeWidth={3} className="flex-shrink-0 text-white" />
                           )}
                           <span className="truncate">{dept.label}</span>

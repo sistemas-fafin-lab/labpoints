@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
-import { DEPARTMENTS_LIST, DepartmentEnum } from '../lib/supabase';
+import { useDepartments } from '../hooks/useDepartments';
 import { Mail, Lock, User, Building2, ArrowRight, ArrowLeft, Sparkles, Eye, EyeOff, CheckCircle2, Shield, Zap, X, AlertTriangle, Inbox } from 'lucide-react';
 import logoIcon from '../assets/logo/LAB POINTS LOGIN.png';
 
@@ -11,7 +11,7 @@ export function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nome, setNome] = useState('');
-  const [department, setDepartment] = useState<DepartmentEnum | ''>('');
+  const [department, setDepartment] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
@@ -27,6 +27,7 @@ export function Signup() {
   const { signUp } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { departments, getDepartmentLabel } = useDepartments();
 
   const validateStep1 = () => {
     const newErrors: typeof errors = {};
@@ -77,7 +78,7 @@ export function Signup() {
 
     setLoading(true);
 
-    const { error } = await signUp(email, password, nome, department as DepartmentEnum);
+    const { error } = await signUp(email, password, nome, department || null);
 
     if (error) {
       showToast(error.message || 'Erro ao criar conta', 'error');
@@ -258,7 +259,7 @@ export function Signup() {
                     </div>
                     <select
                       value={department}
-                      onChange={(e) => setDepartment(e.target.value as DepartmentEnum)}
+                      onChange={(e) => setDepartment(e.target.value)}
                       onFocus={() => setFocusedField('department')}
                       onBlur={() => setFocusedField(null)}
                       className={`w-full pl-14 pr-12 py-4 rounded-2xl border-2 appearance-none transition-all duration-300 font-dm-sans text-slate-800 outline-none cursor-pointer ${
@@ -268,8 +269,8 @@ export function Signup() {
                       } ${!department ? 'text-slate-400' : ''}`}
                     >
                       <option value="">Selecione seu departamento</option>
-                      {DEPARTMENTS_LIST.map((dept) => (
-                        <option key={dept.value} value={dept.value}>
+                      {departments.map((dept) => (
+                        <option key={dept.slug} value={dept.slug}>
                           {dept.label}
                         </option>
                       ))}
@@ -451,7 +452,7 @@ export function Signup() {
                 <div>
                   <p className="font-ranade font-semibold text-slate-800 text-sm">{nome || 'Nome'}</p>
                   <p className="text-xs text-slate-500 font-dm-sans">
-                    {DEPARTMENTS_LIST.find(d => d.value === department)?.label || 'Departamento'}
+                    {getDepartmentLabel(department) || 'Departamento'}
                   </p>
                 </div>
               </div>

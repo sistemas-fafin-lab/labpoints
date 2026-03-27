@@ -273,8 +273,8 @@ BEGIN
     END IF;
   END LOOP;
   
-  -- Limpar aprovadores existentes
-  DELETE FROM custom_approvers;
+  -- Limpar aprovadores existentes (WHERE true para satisfazer requirement)
+  DELETE FROM custom_approvers WHERE true;
   
   -- Inserir novos aprovadores
   INSERT INTO custom_approvers (user_id, added_by)

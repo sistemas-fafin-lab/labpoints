@@ -25,8 +25,8 @@ export type DepartmentEnum =
   | 'estoque'
   | 'copa_limpeza';
 
-// Labels legíveis para os departamentos
-export const DEPARTMENT_LABELS: Record<DepartmentEnum, string> = {
+// Labels legíveis para os departamentos (fallback para departamentos estáticos)
+export const DEPARTMENT_LABELS: Record<string, string> = {
   financeiro: 'Financeiro',
   faturamento: 'Faturamento',
   transporte: 'Transporte',
@@ -110,7 +110,7 @@ export type User = {
   avatar_url: string | null;
   lab_points: number;
   role: UserRole;
-  department: DepartmentEnum | null;
+  department: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -118,7 +118,7 @@ export type User = {
 export type GestorDepartment = {
   id: string;
   gestor_id: string;
-  department: DepartmentEnum;
+  department: string;
   created_at: string;
 };
 

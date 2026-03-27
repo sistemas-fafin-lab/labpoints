@@ -10,7 +10,7 @@ import { PointsBadge } from '../components/ui/PointsBadge';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { updateUser } from '../hooks/useUsers';
-import { DEPARTMENTS_LIST, DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
+import { useDepartments } from '../hooks/useDepartments';
 
 type Tab = 'info' | 'transactions' | 'redemptions';
 
@@ -20,11 +20,12 @@ export function Profile() {
   const { redemptions, loading: redemptionsLoading } = useRedemptions(user?.id);
   const { showToast } = useToast();
   const { resetTutorial } = useOnboardingContext();
+  const { departments, getDepartmentLabel } = useDepartments();
 
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [editing, setEditing] = useState(false);
   const [nome, setNome] = useState(user?.nome || '');
-  const [department, setDepartment] = useState<DepartmentEnum | ''>(user?.department || '');
+  const [department, setDepartment] = useState<string>(user?.department || '');
   const [saving, setSaving] = useState(false);
 
   if (!user) return null;
@@ -37,7 +38,7 @@ export function Profile() {
 
     setSaving(true);
     try {
-      await updateUser(user.id, { nome, department: department as DepartmentEnum });
+      await updateUser(user.id, { nome, department: department || null });
       await refreshUser();
       showToast('Perfil atualizado com sucesso', 'success');
       setEditing(false);
@@ -137,7 +138,7 @@ export function Profile() {
                   >
                     <span className="flex items-center" style={{ gap: '6px' }}>
                       <Building2 style={{ width: '16px', height: '16px' }} className="text-slate-400" />
-                      {user.department ? DEPARTMENT_LABELS[user.department] : 'Sem departamento'}
+                      {getDepartmentLabel(user.department)}
                     </span>
                     <span className="hidden sm:inline text-slate-300">•</span>
                     <span className="flex items-center" style={{ gap: '6px' }}>
@@ -264,7 +265,7 @@ export function Profile() {
                       <div className="relative">
                         <select
                           value={department}
-                          onChange={(e) => setDepartment(e.target.value as DepartmentEnum)}
+                          onChange={(e) => setDepartment(e.target.value)}
                           disabled={!editing}
                           className={`w-full rounded-xl border-2 appearance-none transition-all duration-200 font-dm-sans text-slate-800 ${
                             editing
@@ -274,8 +275,8 @@ export function Profile() {
                           style={{ padding: '12px 44px 12px 16px', fontSize: '15px' }}
                         >
                           <option value="">Selecione seu departamento</option>
-                          {DEPARTMENTS_LIST.map((dept) => (
-                            <option key={dept.value} value={dept.value}>
+                          {departments.map((dept) => (
+                            <option key={dept.slug} value={dept.slug}>
                               {dept.label}
                             </option>
                           ))}
