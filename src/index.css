@@ -11,6 +11,13 @@
 /* Global Typography and Base Styles */
 html {
   font-size: 100%; /* Default base font size */
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 /* Increase font size for large screens (>1600px) */

@@ -3,7 +3,7 @@ import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2
 import { Button } from './ui/Button';
 import { AvatarWithPreview } from './AvatarWithPreview';
 import { useToast } from './ui/Toast';
-import { PendingPointAssignment, DEPARTMENT_LABELS, DepartmentEnum } from '../lib/supabase';
+import { PendingPointAssignment, DEPARTMENT_LABELS, DepartmentEnum, TRANSACTION_REASON_LABELS, TransactionReasonEnum } from '../lib/supabase';
 
 interface ApprovalQueueProps {
   approvals: PendingPointAssignment[];
@@ -257,25 +257,53 @@ export function ApprovalQueue({
                 </div>
               </div>
 
-              {/* Justification Card */}
-              <div 
-                className="rounded-xl bg-slate-50/80 border border-slate-100"
-                style={{ padding: '16px', marginBottom: '16px' }}
-              >
-                <div className="flex items-start" style={{ gap: '12px' }}>
+              {/* Reason and Justification Cards */}
+              <div className="grid grid-cols-1 gap-3" style={{ marginBottom: '16px' }}>
+                {/* Reason Card */}
+                {approval.reason && (
                   <div 
-                    className="rounded-lg bg-slate-200/70 flex items-center justify-center flex-shrink-0"
-                    style={{ width: '36px', height: '36px' }}
+                    className="rounded-xl bg-indigo-50/80 border border-indigo-100"
+                    style={{ padding: '16px' }}
                   >
-                    <FileText style={{ width: '18px', height: '18px' }} className="text-slate-500" />
+                    <div className="flex items-start" style={{ gap: '12px' }}>
+                      <div 
+                        className="rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0"
+                        style={{ width: '36px', height: '36px' }}
+                      >
+                        <Award style={{ width: '18px', height: '18px' }} className="text-indigo-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-dm-sans font-semibold text-indigo-500 uppercase tracking-wide" style={{ fontSize: '11px', marginBottom: '6px' }}>
+                          Motivo
+                        </p>
+                        <p className="text-slate-700 font-dm-sans font-medium leading-relaxed" style={{ fontSize: '14px' }}>
+                          {TRANSACTION_REASON_LABELS[approval.reason as TransactionReasonEnum] || approval.reason}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-dm-sans font-semibold text-slate-500 uppercase tracking-wide" style={{ fontSize: '11px', marginBottom: '6px' }}>
-                      Justificativa
-                    </p>
-                    <p className="text-slate-700 font-dm-sans leading-relaxed" style={{ fontSize: '14px' }}>
-                      {approval.justification}
-                    </p>
+                )}
+
+                {/* Justification Card */}
+                <div 
+                  className="rounded-xl bg-slate-50/80 border border-slate-100"
+                  style={{ padding: '16px' }}
+                >
+                  <div className="flex items-start" style={{ gap: '12px' }}>
+                    <div 
+                      className="rounded-lg bg-slate-200/70 flex items-center justify-center flex-shrink-0"
+                      style={{ width: '36px', height: '36px' }}
+                    >
+                      <FileText style={{ width: '18px', height: '18px' }} className="text-slate-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-dm-sans font-semibold text-slate-500 uppercase tracking-wide" style={{ fontSize: '11px', marginBottom: '6px' }}>
+                        Justificativa
+                      </p>
+                      <p className="text-slate-700 font-dm-sans leading-relaxed" style={{ fontSize: '14px' }}>
+                        {approval.justification}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

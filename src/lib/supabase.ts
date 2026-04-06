@@ -163,6 +163,7 @@ export type PendingPointAssignment = {
   target_user_id: string;
   points: number;
   justification: string;
+  reason?: TransactionReasonEnum | null;
   selected_approver_id: string | null;
   status: AssignmentStatus;
   rejection_reason: string | null;
