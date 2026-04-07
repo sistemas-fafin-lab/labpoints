@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePoints } from '../hooks/usePoints';
 import { usePointAssignments } from '../hooks/usePointAssignments';
 import { Avatar } from './ui/Avatar';
+import { useProfilePreview } from './UserProfilePreviewModal';
 import { PointsBadge } from './ui/PointsBadge';
 import { AssignPointsModal } from './AssignPointsModal';
 // @ts-ignore - asset import (PNG) may lack type declaration in project
@@ -19,6 +20,7 @@ export function Header() {
   const { user, signOut } = useAuth();
   const points = usePoints();
   const location = useLocation();
+  const { openPreview } = useProfilePreview();
   
   // Point assignments hook for managers and admins
   const {
@@ -107,10 +109,10 @@ export function Header() {
   }
 
   return (
-    <header className={`bg-white border-b border-gray-200 w-full sticky top-0 z-50 transition-all duration-300 overflow-x-hidden ${
+    <header className={`bg-white border-b border-gray-200 w-full sticky top-0 z-50 transition-all duration-300 ${
       scrolled ? 'shadow-lab-md backdrop-blur-lg bg-opacity-95' : 'shadow-sm'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="min-h-[80px] sm:min-h-[96px] flex items-center justify-between py-3 gap-2">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center gap-3 group flex-shrink-0">
@@ -213,11 +215,11 @@ export function Header() {
             {canAssignPoints && (
               <button
                 onClick={() => setAssignModalOpen(true)}
-                className="hidden md:flex items-center gap-2 px-3 lg:px-4 py-2.5 bg-lab-gradient text-white rounded-xl font-medium text-sm hover:shadow-lab-md hover:scale-105 transition-all duration-300"
+                className="hidden md:flex items-center gap-1 px-3 lg:px-4 py-2.5 bg-lab-gradient text-white rounded-xl font-medium text-sm hover:shadow-lab-md hover:scale-105 transition-all duration-300"
                 title="Atribuir Pontos"
               >
-                <Award size={18} className="text-white" />
-                <span className="hidden lg:inline text-white">Atribuir Pontos</span>
+                <Award size={18} className="text-white ml-1" />
+                <span className="hidden lg:inline text-white mr-1">Atribuir Pontos</span>
               </button>
             )}
 
@@ -249,7 +251,9 @@ export function Header() {
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-lab-light transition-all duration-300 group"
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl transition-all duration-300 group ${
+                  userMenuOpen ? 'bg-lab-light ring-2 ring-lab-primary ring-opacity-30' : 'hover:bg-lab-light'
+                }`}
                 aria-label="Menu do usuário"
                 aria-expanded={userMenuOpen}
               >
@@ -260,17 +264,17 @@ export function Header() {
                   fallbackText={user.nome} 
                 />
                 <div className="hidden lg:flex flex-col items-start">
-                  <span className="text-sm font-semibold text-lab-black">
+                  <span className="text-sm font-semibold text-lab-black leading-tight">
                     {user.nome.split(' ')[0]}
                   </span>
-                  <span className="text-xs text-lab-gray">
-                    {user.role === 'adm' ? 'Admin' : 'Colaborador'}
+                  <span className="text-xs text-lab-gray leading-tight">
+                    {user.role === 'adm' ? 'Admin' : user.role === 'gestor' ? 'Gestor' : 'Colaborador'}
                   </span>
                 </div>
                 <ChevronDown 
-                  size={16} 
+                  size={15} 
                   className={`hidden lg:block text-lab-gray transition-transform duration-300 ${
-                    userMenuOpen ? 'rotate-180' : ''
+                    userMenuOpen ? 'rotate-180 text-lab-primary' : ''
                   }`} 
                 />
               </button>
@@ -278,56 +282,132 @@ export function Header() {
               {userMenuOpen && (
                 <>
                   <div
-                    className="fixed inset-0 z-10"
+                    style={{ position: 'fixed', inset: 0, zIndex: 10 }}
                     onClick={() => setUserMenuOpen(false)}
                   />
-                  <div className="absolute right-0 mt-3 bg-white rounded-2xl shadow-2xl py-2 z-20 animate-scale-in w-72 border border-gray-100 overflow-hidden">
-                    {/* User Info Header */}
-                    <div className="px-4 py-4 bg-gradient-to-br from-lab-light to-white border-b border-gray-100">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Avatar 
-                          src={user.avatar_url} 
-                          alt={user.nome} 
-                          size="md" 
-                          fallbackText={user.nome} 
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-lab-black truncate">{user.nome}</p>
-                          <p className="text-sm text-lab-gray truncate">{user.email}</p>
+                  <div
+                    style={{
+                      position: 'absolute', right: 0, marginTop: '8px', zIndex: 20,
+                      width: '320px', borderRadius: '16px', overflow: 'hidden',
+                      border: '1px solid rgba(203,213,225,0.8)',
+                      boxShadow: '0 20px 60px -10px rgba(0,0,0,0.18), 0 8px 24px -6px rgba(0,0,0,0.1)'
+                    }}>
+
+                    {/* Gradient Header */}
+                    <div style={{
+                      position: 'relative', padding: '20px',
+                      background: 'linear-gradient(135deg, var(--lab-primary) 0%, #6366f1 50%, #9333ea 100%)',
+                      overflow: 'hidden'
+                    }}>
+                      {/* Decorative blobs */}
+                      <div style={{ position: 'absolute', top: '-24px', right: '-24px', width: '96px', height: '96px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', filter: 'blur(24px)', pointerEvents: 'none' }} />
+                      <div style={{ position: 'absolute', bottom: '-16px', left: '-16px', width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', filter: 'blur(24px)', pointerEvents: 'none' }} />
+
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        {/* Avatar 64x64px with click-to-preview */}
+                        <div 
+                          onClick={() => openPreview({
+                            id: user.id,
+                            nome: user.nome,
+                            avatar_url: user.avatar_url ?? null,
+                            lab_points: user.lab_points ?? 0,
+                            department: user.department ?? null,
+                            role: user.role,
+                            created_at: user.created_at,
+                          })}
+                          style={{ 
+                            width: '64px', 
+                            height: '64px', 
+                            borderRadius: '50%', 
+                            border: '3px solid rgba(255,255,255,0.5)',
+                            overflow: 'hidden',
+                            flexShrink: 0,
+                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s, border-color 0.2s'
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; }}
+                        >
+                          {user.avatar_url ? (
+                            <img
+                              src={user.avatar_url}
+                              alt={user.nome}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                            />
+                          ) : (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <span style={{ color: 'white', fontWeight: 700, fontSize: '18px' }}>
+                                {user.nome?.trim().split(' ').filter(Boolean).map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontWeight: 700, color: 'white', fontSize: '15px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3, marginBottom: '2px' }}>{user.nome}</p>
+                          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3, marginBottom: '8px' }}>{user.email}</p>
+                          {/* Role badge */}
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center',
+                            padding: '2px 10px', borderRadius: '999px',
+                            fontSize: '11px', fontWeight: 600,
+                            background: 'rgba(255,255,255,0.2)',
+                            color: 'white',
+                            border: '1px solid rgba(255,255,255,0.3)'
+                          }}>
+                            {user.role === 'adm' ? '⚙ Admin' : user.role === 'gestor' ? '👥 Gestor' : '⭐ Colaborador'}
+                          </span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg border border-lab-primary border-opacity-20">
-                        <span className="text-xs font-medium text-lab-gray">Seus pontos</span>
-                        <PointsBadge points={user.lab_points} size="sm" />
+
+                      {/* Points pill */}
+                      <div style={{
+                        position: 'relative', marginTop: '12px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)',
+                        borderRadius: '12px', padding: '10px 16px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Award size={20} style={{ color: 'rgba(255,255,255,0.85)', flexShrink: 0 }} />
+                          <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '16px', fontWeight: 500 }}>Seus pontos</span>
+                        </div>
+                        <span style={{ color: 'white', fontWeight: 700, fontSize: '18px', lineHeight: 1, marginRight: '4px' }}>{(user.lab_points ?? 0).toLocaleString('pt-BR')}</span>
                       </div>
                     </div>
 
                     {/* Menu Items */}
-                    <div className="py-2">
+                    <div style={{ background: 'white', paddingTop: '8px', paddingBottom: '8px' }}>
                       <Link
                         to="/perfil"
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-lab-light transition-all duration-300 group"
+                        style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', textDecoration: 'none', transition: 'background 0.15s' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#f8fafc')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                         onClick={() => setUserMenuOpen(false)}
                       >
-                        <div className="p-2 rounded-lg bg-lab-light group-hover:bg-lab-primary group-hover:bg-opacity-10 transition-colors">
-                          <User size={18} className="text-lab-primary" />
+                        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <User size={17} style={{ color: '#4f46e5' }} />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-lab-black">Meu Perfil</p>
-                          <p className="text-xs text-lab-gray">Gerencie suas informações</p>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b', margin: 0 }}>Meu Perfil</p>
+                          <p style={{ fontSize: '11px', color: '#94a3b8', margin: 0 }}>Gerencie suas informações</p>
                         </div>
                       </Link>
 
+                      <div style={{ margin: '4px 16px', borderTop: '1px solid #f1f5f9' }} />
+
                       <button
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-all duration-300 group"
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: 'transparent', border: 'none', cursor: 'pointer', transition: 'background 0.15s' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(254,242,242,0.7)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
-                        <div className="p-2 rounded-lg bg-red-50 group-hover:bg-red-100 transition-colors">
-                          <LogOut size={18} className="text-red-600" />
+                        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <LogOut size={17} style={{ color: '#ef4444' }} />
                         </div>
-                        <div className="flex-1 text-left">
-                          <p className="text-sm font-semibold text-red-600">Sair da conta</p>
-                          <p className="text-xs text-lab-gray">Até logo!</p>
+                        <div style={{ flex: 1, textAlign: 'left' }}>
+                          <p style={{ fontSize: '13px', fontWeight: 600, color: '#dc2626', margin: 0 }}>Sair da conta</p>
+                          <p style={{ fontSize: '11px', color: '#94a3b8', margin: 0 }}>Até logo!</p>
                         </div>
                       </button>
                     </div>
@@ -424,7 +504,7 @@ export function Header() {
                 border: '1px solid rgba(255,255,255,0.2)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Award style={{ width: '20px', height: '20px', color: '#fde047' }} />
+                  <Award style={{ width: '20px', height: '20px', color: 'rgba(255,255,255,0.85)' }} />
                   <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', fontWeight: 500 }}>Seus pontos</span>
                 </div>
                 <span style={{ color: 'white', fontWeight: 700, fontSize: '20px' }}>{points.toLocaleString('pt-BR')}</span>
@@ -567,7 +647,7 @@ export function Header() {
                     <div style={{ 
                       padding: '8px', 
                       borderRadius: '8px', 
-                      backgroundColor: isActive('/aprovacoes') ? 'rgba(255,255,255,0.2)' : '#fef3c7' 
+                      backgroundColor: isActive('/aprovacoes') ? 'rgba(255,255,255,0.2)' : '#c7cffe' 
                     }}>
                       <ClipboardCheck style={{ width: '20px', height: '20px', color: isActive('/aprovacoes') ? 'white' : '#d97706' }} />
                     </div>
