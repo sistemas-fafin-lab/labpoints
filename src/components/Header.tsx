@@ -215,11 +215,19 @@ export function Header() {
             {canAssignPoints && (
               <button
                 onClick={() => setAssignModalOpen(true)}
-                className="hidden md:flex items-center gap-1 px-3 lg:px-4 py-2.5 bg-lab-gradient text-white rounded-xl font-medium text-sm hover:shadow-lab-md hover:scale-105 transition-all duration-300"
+                className="hidden md:flex items-center justify-center bg-lab-gradient text-white rounded-xl font-medium hover:shadow-lab-md hover:scale-105 transition-all duration-300"
+                style={{
+                  gap: '8px',
+                  height: '40px',
+                  padding: '0 14px',
+                  fontSize: '14px',
+                  lineHeight: 1,
+                  whiteSpace: 'nowrap'
+                }}
                 title="Atribuir Pontos"
               >
-                <Award size={18} className="text-white ml-1" />
-                <span className="hidden lg:inline text-white mr-1">Atribuir Pontos</span>
+                <Award size={18} style={{ color: 'white', flexShrink: 0 }} />
+                <span className="hidden lg:inline" style={{ color: 'white', fontWeight: 600 }}>Atribuir Pontos</span>
               </button>
             )}
 
@@ -227,13 +235,37 @@ export function Header() {
             {canAssignPoints && (
               <Link
                 to="/aprovacoes"
-                className="relative hidden md:flex items-center gap-2 px-3 lg:px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200/60 hover:border-amber-300 transition-all duration-300 group"
+                className="relative hidden md:flex items-center gap-2 px-3 lg:px-4 rounded-xl transition-all duration-300"
+                style={{
+                  height: '40px',
+                  background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(79,70,229,0.1) 100%)',
+                  border: '1px solid rgba(99,102,241,0.25)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 8px rgba(99,102,241,0.12), inset 0 1px 0 rgba(255,255,255,0.25)'
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(79,70,229,0.18) 100%)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(99,102,241,0.25), inset 0 1px 0 rgba(255,255,255,0.3)';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(99,102,241,0.45)';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(79,70,229,0.1) 100%)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(99,102,241,0.12), inset 0 1px 0 rgba(255,255,255,0.25)';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(99,102,241,0.25)';
+                }}
                 title={pendingCount > 0 ? `${pendingCount} aprovação(ões) pendente(s)` : 'Central de Aprovações'}
               >
-                <ClipboardCheck size={18} className="text-amber-600 flex-shrink-0" />
-                <span className="hidden lg:inline text-sm font-semibold text-amber-700">Aprovações</span>
+                <ClipboardCheck size={18} style={{ color: '#6366f1', flexShrink: 0 }} />
+                <span className="hidden lg:inline" style={{ fontSize: '14px', fontWeight: 600, color: '#4f46e5' }}>Aprovações</span>
                 {pendingCount > 0 && (
-                  <span className="w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse flex-shrink-0">
+                  <span style={{
+                    width: '20px', height: '20px', flexShrink: 0,
+                    background: '#ef4444', color: 'white',
+                    fontSize: '11px', fontWeight: 700,
+                    borderRadius: '50%', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center'
+                  }} className="animate-pulse">
                     {pendingCount > 9 ? '9+' : pendingCount}
                   </span>
                 )}
