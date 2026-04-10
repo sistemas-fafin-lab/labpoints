@@ -35,10 +35,10 @@ export function AssignPointsModal({
 
   // Filter users based on search
   const filteredUsers = users.filter(user => {
-    const departmentLabel = user.department ? DEPARTMENT_LABELS[user.department] : '';
+    const departmentLabel = user.department ? (DEPARTMENT_LABELS[user.department] ?? '') : '';
     return (
-      user.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.nome ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.email ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       departmentLabel.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
