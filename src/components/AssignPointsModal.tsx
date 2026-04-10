@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle, Tag, ChevronDown, HandCoins } from 'lucide-react';
+import { X, Search, User as UserIcon, Award, FileText, Loader2, ChevronLeft, Sparkles, Check, AlertCircle, Tag, ChevronDown, HandCoins, Heart } from 'lucide-react';
 import { Button } from './ui/Button';
 import { AvatarWithPreview } from './AvatarWithPreview';
 import { useToast } from './ui/Toast';
-import { User, DEPARTMENT_LABELS, TransactionReasonEnum } from '../lib/supabase';
+import { User, DEPARTMENT_LABELS, TransactionReasonEnum, LabValueEnum, LAB_VALUES_LIST } from '../lib/supabase';
 
 interface AssignPointsModalProps {
   isOpen: boolean;
   onClose: () => void;
   users: User[];
   loadingUsers: boolean;
-  onSubmit: (targetUserId: string, points: number, justification: string, reason: TransactionReasonEnum) => Promise<{ success: boolean; error?: string }>;
+  onSubmit: (targetUserId: string, points: number, justification: string, reason: TransactionReasonEnum, labValue: LabValueEnum) => Promise<{ success: boolean; error?: string }>;
 }
 
 export function AssignPointsModal({
@@ -25,12 +25,15 @@ export function AssignPointsModal({
   const [points, setPoints] = useState('');
   const [justification, setJustification] = useState('');
   const [reason, setReason] = useState<TransactionReasonEnum | ''>('');
+  const [labValue, setLabValue] = useState<LabValueEnum | ''>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<'select' | 'form'>('select');
   const [reasonDropdownOpen, setReasonDropdownOpen] = useState(false);
+  const [labValueDropdownOpen, setLabValueDropdownOpen] = useState(false);
   const reasonDropdownRef = useRef<HTMLDivElement>(null);
+  const labValueDropdownRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
 
   // Filter users based on search
@@ -50,10 +53,12 @@ export function AssignPointsModal({
       setPoints('');
       setJustification('');
       setReason('');
+      setLabValue('');
       setSearchTerm('');
       setError(null);
       setStep('select');
       setReasonDropdownOpen(false);
+      setLabValueDropdownOpen(false);
     }
   }, [isOpen]);
 
@@ -63,13 +68,16 @@ export function AssignPointsModal({
       if (reasonDropdownRef.current && !reasonDropdownRef.current.contains(event.target as Node)) {
         setReasonDropdownOpen(false);
       }
+      if (labValueDropdownRef.current && !labValueDropdownRef.current.contains(event.target as Node)) {
+        setLabValueDropdownOpen(false);
+      }
     };
 
-    if (reasonDropdownOpen) {
+    if (reasonDropdownOpen || labValueDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [reasonDropdownOpen]);
+  }, [reasonDropdownOpen, labValueDropdownOpen]);
 
   // Block body scroll when modal is open
   useEffect(() => {
@@ -96,6 +104,7 @@ export function AssignPointsModal({
     setStep('select');
     setError(null);
     setReasonDropdownOpen(false);
+    setLabValueDropdownOpen(false);
   };
 
   const reasonGroups = [
@@ -142,6 +151,8 @@ export function AssignPointsModal({
     .flatMap(g => g.options)
     .find(opt => opt.value === reason)?.label || '';
 
+  const selectedLabValueLabel = LAB_VALUES_LIST.find(v => v.value === labValue)?.label || '';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -161,6 +172,11 @@ export function AssignPointsModal({
       return;
     }
 
+    if (!labValue) {
+      setError('Selecione um valor do Lab');
+      return;
+    }
+
     if (!justification.trim()) {
       setError('Insira uma justificativa');
       return;
@@ -169,7 +185,7 @@ export function AssignPointsModal({
     setLoading(true);
     setError(null);
 
-    const result = await onSubmit(selectedUser.id, pointsNum, justification.trim(), reason as TransactionReasonEnum);
+    const result = await onSubmit(selectedUser.id, pointsNum, justification.trim(), reason as TransactionReasonEnum, labValue as LabValueEnum);
 
     setLoading(false);
 
@@ -466,6 +482,69 @@ export function AssignPointsModal({
                 </div>
                 <p className="mt-2 text-xs text-slate-500 font-dm-sans">
                   Selecione a categoria que melhor representa o reconhecimento
+                </p>
+              </div>
+
+              {/* Lab Value Select */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-dm-sans font-semibold text-slate-700 mb-2.5">
+                  <Heart size={16} className="text-lab-primary" />
+                  Valor do Lab
+                </label>
+                <div className="relative" ref={labValueDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setLabValueDropdownOpen(!labValueDropdownOpen)}
+                    className={`w-full px-4 py-4 rounded-2xl bg-gradient-to-r from-slate-50 to-slate-100 border-2 transition-all duration-300 font-dm-sans text-left flex items-center justify-between ${
+                      labValueDropdownOpen 
+                        ? 'border-lab-primary bg-white ring-4 ring-lab-primary/10' 
+                        : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <span className={labValue ? 'text-slate-800' : 'text-slate-400'}>
+                      {labValue ? selectedLabValueLabel : 'Selecione o valor do Lab...'}
+                    </span>
+                    <ChevronDown 
+                      size={20} 
+                      className={`text-lab-primary transition-transform duration-300 ${labValueDropdownOpen ? 'rotate-180' : ''}`} 
+                    />
+                  </button>
+
+                  {/* Custom Dropdown */}
+                  {labValueDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border-2 border-slate-200 max-h-80 overflow-y-auto animate-scale-in origin-top">
+                      <div className="py-1">
+                        {LAB_VALUES_LIST.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => {
+                              setLabValue(option.value as LabValueEnum);
+                              setLabValueDropdownOpen(false);
+                            }}
+                            className={`w-full px-4 py-3 text-left font-dm-sans transition-all duration-200 flex items-center justify-between group ${
+                              labValue === option.value
+                                ? 'bg-gradient-to-r from-lab-primary/10 to-indigo-50'
+                                : 'hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="flex-1">
+                              <span className={`text-sm ${labValue === option.value ? 'text-lab-primary font-semibold' : 'text-slate-700'}`}>
+                                {option.label}
+                              </span>
+                              <p className="text-xs text-slate-500 mt-0.5">{option.description}</p>
+                            </div>
+                            {labValue === option.value && (
+                              <Check size={16} className="text-lab-primary flex-shrink-0 ml-2" strokeWidth={3} />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <p className="mt-2 text-xs text-slate-500 font-dm-sans">
+                  Selecione o valor que o colaborador demonstrou
                 </p>
               </div>
 

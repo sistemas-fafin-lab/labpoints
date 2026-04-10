@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2, AlertCircle, Star, ChevronRight } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, User as UserIcon, Award, FileText, Loader2, AlertCircle, Star, ChevronRight, Heart } from 'lucide-react';
 import { Button } from './ui/Button';
 import { AvatarWithPreview } from './AvatarWithPreview';
 import { useToast } from './ui/Toast';
-import { PendingPointAssignment, DEPARTMENT_LABELS, DepartmentEnum, TRANSACTION_REASON_LABELS, TransactionReasonEnum } from '../lib/supabase';
+import { PendingPointAssignment, DEPARTMENT_LABELS, DepartmentEnum, TRANSACTION_REASON_LABELS, TransactionReasonEnum, LAB_VALUE_LABELS, LabValueEnum } from '../lib/supabase';
 
 interface ApprovalQueueProps {
   approvals: PendingPointAssignment[];
@@ -278,6 +278,31 @@ export function ApprovalQueue({
                         </p>
                         <p className="text-slate-700 font-dm-sans font-medium leading-relaxed" style={{ fontSize: '14px' }}>
                           {TRANSACTION_REASON_LABELS[approval.reason as TransactionReasonEnum] || approval.reason}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Lab Value Card */}
+                {approval.lab_value && (
+                  <div 
+                    className="rounded-xl bg-pink-50/80 border border-pink-100"
+                    style={{ padding: '16px' }}
+                  >
+                    <div className="flex items-start" style={{ gap: '12px' }}>
+                      <div 
+                        className="rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0"
+                        style={{ width: '36px', height: '36px' }}
+                      >
+                        <Heart style={{ width: '18px', height: '18px' }} className="text-pink-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-dm-sans font-semibold text-pink-500 uppercase tracking-wide" style={{ fontSize: '11px', marginBottom: '6px' }}>
+                          Valor do Lab
+                        </p>
+                        <p className="text-slate-700 font-dm-sans font-medium leading-relaxed" style={{ fontSize: '14px' }}>
+                          {LAB_VALUE_LABELS[approval.lab_value as LabValueEnum] || approval.lab_value}
                         </p>
                       </div>
                     </div>

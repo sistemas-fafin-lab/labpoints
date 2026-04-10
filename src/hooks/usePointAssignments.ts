@@ -15,7 +15,7 @@ interface UsePointAssignmentsReturn {
   loadingUsers: boolean;
   
   // Actions
-  createAssignment: (targetUserId: string, points: number, justification: string, reason: string) => Promise<{ success: boolean; error?: string; assignmentId?: string }>;
+  createAssignment: (targetUserId: string, points: number, justification: string, reason: string, labValue: string) => Promise<{ success: boolean; error?: string; assignmentId?: string }>;
   approveAssignment: (assignmentId: string) => Promise<{ success: boolean; error?: string }>;
   rejectAssignment: (assignmentId: string, reason?: string) => Promise<{ success: boolean; error?: string }>;
   refreshApprovals: () => Promise<void>;
@@ -141,7 +141,8 @@ export function usePointAssignments(userId: string | undefined): UsePointAssignm
     targetUserId: string,
     points: number,
     justification: string,
-    reason: string
+    reason: string,
+    labValue: string
   ): Promise<{ success: boolean; error?: string; assignmentId?: string }> => {
     if (!userId) {
       return { success: false, error: 'Usuário não autenticado' };
@@ -155,7 +156,8 @@ export function usePointAssignments(userId: string | undefined): UsePointAssignm
         p_target_user_id: targetUserId,
         p_points: points,
         p_justification: justification,
-        p_reason: reason
+        p_reason: reason,
+        p_lab_value: labValue
       });
 
       if (error) throw error;

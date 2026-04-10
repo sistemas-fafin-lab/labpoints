@@ -103,6 +103,45 @@ export const TRANSACTION_REASONS_LIST: { value: TransactionReasonEnum; label: st
   { value: 'responsabilidade_compromisso', label: 'Responsabilidade e compromisso' },
 ];
 
+// Valores do Lab
+export type LabValueEnum =
+  | 'senso_de_time'
+  | 'foco_no_cliente'
+  | 'autorresponsabilidade'
+  | 'espirito_empreendedor'
+  | 'empatia'
+  | 'constante_evolucao';
+
+// Labels legíveis para os valores do Lab
+export const LAB_VALUE_LABELS: Record<LabValueEnum, string> = {
+  senso_de_time: 'Senso de Time',
+  foco_no_cliente: 'Foco no Cliente',
+  autorresponsabilidade: 'Autorresponsabilidade',
+  espirito_empreendedor: 'Espírito Empreendedor',
+  empatia: 'Empatia',
+  constante_evolucao: 'Constante Evolução',
+};
+
+// Descrições dos valores do Lab
+export const LAB_VALUE_DESCRIPTIONS: Record<LabValueEnum, string> = {
+  senso_de_time: 'Trabalhamos juntos, celebramos juntos',
+  foco_no_cliente: 'O cliente sempre no centro de tudo',
+  autorresponsabilidade: 'Donos do nosso próprio destino',
+  espirito_empreendedor: 'Inovamos e criamos oportunidades',
+  empatia: 'Nos colocamos no lugar do outro',
+  constante_evolucao: 'Aprendemos e melhoramos sempre',
+};
+
+// Lista de valores para selects
+export const LAB_VALUES_LIST: { value: LabValueEnum; label: string; description: string }[] = [
+  { value: 'senso_de_time', label: 'Senso de Time', description: 'Trabalhamos juntos, celebramos juntos' },
+  { value: 'foco_no_cliente', label: 'Foco no Cliente', description: 'O cliente sempre no centro de tudo' },
+  { value: 'autorresponsabilidade', label: 'Autorresponsabilidade', description: 'Donos do nosso próprio destino' },
+  { value: 'espirito_empreendedor', label: 'Espírito Empreendedor', description: 'Inovamos e criamos oportunidades' },
+  { value: 'empatia', label: 'Empatia', description: 'Nos colocamos no lugar do outro' },
+  { value: 'constante_evolucao', label: 'Constante Evolução', description: 'Aprendemos e melhoramos sempre' },
+];
+
 export type User = {
   id: string;
   email: string;
@@ -141,6 +180,7 @@ export type Transaction = {
   valor: number;
   descricao: string;
   reason?: TransactionReasonEnum | null;
+  lab_value?: LabValueEnum | null;
   created_at: string;
 };
 
@@ -164,6 +204,7 @@ export type PendingPointAssignment = {
   points: number;
   justification: string;
   reason?: TransactionReasonEnum | null;
+  lab_value?: LabValueEnum | null;
   selected_approver_id: string | null;
   status: AssignmentStatus;
   rejection_reason: string | null;
